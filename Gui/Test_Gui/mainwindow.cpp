@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "portsetup.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -7,47 +8,34 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    COMPORT = new QSerialPort();
-    COMPORT->setPortName(Current_Comport);
-    COMPORT->setBaudRate(QSerialPort::BaudRate::Baud9600);
-    COMPORT->setParity(QSerialPort::Parity::NoParity);
-    COMPORT->setDataBits(QSerialPort::DataBits::Data8);
-    COMPORT->setStopBits(QSerialPort::StopBits::OneStop);
-    COMPORT->setFlowControl(QSerialPort::FlowControl::NoFlowControl);
-    COMPORT->open(QIODevice::ReadWrite);
+    //connects to the right comport and puts all the setting right
+    PortSetup portSetup;
+    comport = portSetup.COMPORT;
+    connect(comport, SIGNAL(readyRead()), this, SLOT(readData()));
 
-    if(COMPORT->isOpen()) {
-        qDebug() << "Serial Port is connected";
-    }
-    else {
-        qDebug() << "Serial Port is not connected";
-        qDebug() << COMPORT->error();
-    }
-
-    connect(COMPORT, SIGNAL(readyRead()), this, SLOT(readData()));
     ui->label_Data_Recieved->setText("");
 
 }
 
 void MainWindow::on_pushButton_Send_clicked()
 {
-    if(COMPORT->isOpen())
+    if(comport->isOpen())
     {
         //char(10) = \n
         //char(13) = \r
-        COMPORT->write(ui->lineEdit_Serial_Data->text().toLatin1() + char(10) );
-        COMPORT->flush();
+        comport->write(ui->lineEdit_Serial_Data->text().toLatin1() + char(10) );
+        comport->flush();
     }
 }
 
 void MainWindow::readData()
 {
-    if(COMPORT->isOpen())
+    if(comport->isOpen())
     {
         //Reads uart
-        while(COMPORT->bytesAvailable())
+        while(comport->bytesAvailable())
         {
-            Data_From_SerialPort += COMPORT->readAll();
+            Data_From_SerialPort += comport->readAll();
 
             //Checks if the line has ended
             if(Data_From_SerialPort.at(Data_From_SerialPort.length() - 1) == char(10))

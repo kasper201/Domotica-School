@@ -26,12 +26,9 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    QSerialPort* COMPORT;
+    QSerialPort* comport;
     QString Data_From_SerialPort;
     bool Is_Data_Recieved = false;
-
-    //COMPORT!!
-    QString Current_Comport = "COM3";
 
     //Items in ui
     QLabel* label_Data_Recieved = new QLabel;
