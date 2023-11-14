@@ -8,12 +8,10 @@
 #include <QString>
 #include <QLabel>
 
-#include "mainwindow.h"
-
 class PortSetup
 {
 public:
-    PortSetup();
+    PortSetup(const QString &comPortName);
     QSerialPort* COMPORT;
 
 private:

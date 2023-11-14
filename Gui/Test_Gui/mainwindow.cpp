@@ -46,10 +46,10 @@ void MainWindow::on_pushButton_Connect_clicked()
 {
     QString comString = comportList->currentItem()->text();
     QString firstSixCharacters = comString.left(6);
-    noWhiteSpaces =firstSixCharacters.replace(" ", "");
+    QString comPortName =firstSixCharacters.replace(" ", "");
 
     //connects to the right comport and puts all the setting right
-    PortSetup portSetup;
+    PortSetup portSetup(comPortName);
     comport = portSetup.COMPORT;
     connect(comport, SIGNAL(readyRead()), this, SLOT(readData()));
 
@@ -61,6 +61,7 @@ void MainWindow::on_pushButton_Connect_clicked()
     sendButton->show();
     dataOutput->show();
 }
+
 
 //Sends data to the comport
 void MainWindow::on_pushButton_Send_clicked()

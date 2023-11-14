@@ -1,7 +1,17 @@
 #include "portsetup.h"
 
-PortSetup::PortSetup()
+PortSetup::PortSetup(const QString &comPortName)
 {
+
+    if(comPortName == "COM3")
+    {
+        qDebug() << "yes";
+    } else
+    {
+        qDebug() << "no";
+        qDebug() << comPortName;
+    }
+    Current_Comport = comPortName;
     COMPORT = new QSerialPort();
     COMPORT->setPortName(Current_Comport);
     COMPORT->setBaudRate(QSerialPort::BaudRate::Baud9600);

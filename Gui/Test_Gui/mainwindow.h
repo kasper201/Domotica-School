@@ -22,8 +22,6 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    QString noWhiteSpaces;
-
 private slots:
     void on_pushButton_Send_clicked();
     void readData();
