@@ -27,7 +27,10 @@ private slots:
     void on_pushButton_Connect_clicked();
 
     void on_pushButton_Send_clicked();
+    void on_pushButton_Reconnect_clicked();
     void readData();
+
+    void on_pushButton_Refresh_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -42,11 +45,14 @@ private:
     //connect to comport
     QListWidget* comportList;
     QPushButton* connectComport;
+    QPushButton* refreshComport;
 
     //send data over uart
     QLabel* dataLabel;
     QPushButton* sendButton;
     QLineEdit* dataOutput;
+    QLabel* comLabel;
+    QPushButton* reconnectComport;
 
 };
 #endif // MAINWINDOW_H

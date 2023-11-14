@@ -12,6 +12,7 @@ class PortSetup
 {
 public:
     PortSetup(const QString &comPortName);
+    ~PortSetup();
     QSerialPort* COMPORT;
 
 private:

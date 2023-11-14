@@ -2,15 +2,6 @@
 
 PortSetup::PortSetup(const QString &comPortName)
 {
-
-    if(comPortName == "COM3")
-    {
-        qDebug() << "yes";
-    } else
-    {
-        qDebug() << "no";
-        qDebug() << comPortName;
-    }
     Current_Comport = comPortName;
     COMPORT = new QSerialPort();
     COMPORT->setPortName(Current_Comport);
@@ -28,4 +19,10 @@ PortSetup::PortSetup(const QString &comPortName)
         qDebug() << "Serial Port is not connected";
         qDebug() << COMPORT->error();
     }
+}
+
+PortSetup::~PortSetup()
+{
+    COMPORT->close();
+    delete COMPORT;
 }

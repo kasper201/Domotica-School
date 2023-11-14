@@ -13,15 +13,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     comportList = ui->listWidget_Comport;   //list of available comports
     connectComport = ui->pushButton_Connect;//Connect to the selected comport
+    refreshComport = ui->pushButton_Refresh;//Refreshes the comport list
 
     dataLabel = ui->label_Data_Recieved;    //label that shows uart string
     sendButton = ui->pushButton_Send;       //Button that sends the data to uart
     dataOutput = ui->lineEdit_Serial_Data;  //Line with the data to send over uart
-
-    //hide for now not needed elements
-    dataLabel->hide();
-    sendButton->hide();
-    dataOutput->hide();
+    comLabel = ui->label_Comport;           //Label that shows the current comport
+    reconnectComport = ui->pushButton_Reconnect;//goes back so you can choose the comport again
 
     setupComportList();
 
@@ -45,8 +43,26 @@ void MainWindow::setupComportList()
         QString portCombined = portName + "| " + portDescription;
         comportList->addItem(portCombined);
     }
+
+    //Shows current elements
+    comportList->show();
+    connectComport->show();
+    refreshComport->show();
+
+    //hide for cuurently not needed elements
+    dataLabel->hide();
+    sendButton->hide();
+    dataOutput->hide();
+    comLabel->hide();
+    reconnectComport->hide();
 }
 
+//Refreshes the listWidget with comports
+void MainWindow::on_pushButton_Refresh_clicked()
+{
+    comportList->clear();
+    setupComportList();
+}
 
 //Connect to the comport
 void MainWindow::on_pushButton_Connect_clicked()
@@ -60,13 +76,20 @@ void MainWindow::on_pushButton_Connect_clicked()
     comport = portSetup.COMPORT;
     connect(comport, SIGNAL(readyRead()), this, SLOT(readData()));
 
+    //Puts the right Com into comLabel
+    QString comportDescription = comportList->currentItem()->text();
+    comLabel->setText("Comport: " + comportDescription);
+
     //update ui
     comportList->hide();
     connectComport->hide();
+    refreshComport->hide();
 
     dataLabel->show();
     sendButton->show();
     dataOutput->show();
+    comLabel->show();
+    reconnectComport->show();
 }
 
 
@@ -80,6 +103,13 @@ void MainWindow::on_pushButton_Send_clicked()
         comport->write(dataOutput->text().toLatin1() + char(10) );
         comport->flush();
     }
+}
+
+//Goes back to the connect options
+void MainWindow::on_pushButton_Reconnect_clicked()
+{
+    comportList->clear();
+    setupComportList();
 }
 
 //Reads data from the comport
@@ -109,3 +139,4 @@ void MainWindow::readData()
         }
     }
 }
+
