@@ -8,6 +8,8 @@
 #include <QString>
 #include <QLabel>
 
+#include "mainwindow.h"
+
 class PortSetup
 {
 public:
@@ -16,7 +18,7 @@ public:
 
 private:
     //COMPORT!!
-    QString Current_Comport = "COM3";
+    QString Current_Comport;
 
 
 };
