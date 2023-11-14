@@ -23,10 +23,11 @@ public:
     ~MainWindow();
 
 private slots:
+    void setupComportList();
+    void on_pushButton_Connect_clicked();
+
     void on_pushButton_Send_clicked();
     void readData();
-
-    void on_pushButton_Connect_clicked();
 
 private:
     Ui::MainWindow *ui;

@@ -23,14 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
     sendButton->hide();
     dataOutput->hide();
 
-    //Puts all comports in a list
-    Q_FOREACH(QSerialPortInfo port, QSerialPortInfo::availablePorts()) {
-        QString portName = port.portName();
-        portName = portName.leftJustified(8, ' ');
-        QString portDescription = port.description();
-        QString portCombined = portName + "| " + portDescription;
-        comportList->addItem(portCombined);
-    }
+    setupComportList();
 
     dataLabel->setText("");
 
@@ -40,6 +33,20 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+//sets up the listWidget with all available comport names
+void MainWindow::setupComportList()
+{
+    //Puts all comports in a list
+    Q_FOREACH(QSerialPortInfo port, QSerialPortInfo::availablePorts()) {
+        QString portName = port.portName();
+        portName = portName.leftJustified(8, ' ');
+        QString portDescription = port.description();
+        QString portCombined = portName + "| " + portDescription;
+        comportList->addItem(portCombined);
+    }
+}
+
 
 //Connect to the comport
 void MainWindow::on_pushButton_Connect_clicked()
