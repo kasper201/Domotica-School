@@ -145,79 +145,90 @@ void MainWindow::readData()
             //dataLabel->setText(Data_From_SerialPort);
             Is_Data_Recieved = false;
 
-            //*
-            Node node;
-            if(Data_From_SerialPort.contains("AddNode") && nodeAddState == 0) //Start the process of adding a new node
-            {
-                nodeAddState = 1; //add node
-            }  else if(nodeAddState == 1)        //Adds node name
-            {
-                //Adds node name to class
-                Data_From_SerialPort.remove("\r").remove("\n");
-
-                if(preventMoreNodeNames)
-                {
-                    node.setNodeName(Data_From_SerialPort);
-                    preventMoreNodeNames = false;
-                }
-                if(Data_From_SerialPort.contains("AddSensor"))
-                {
-                    nodeAddState = 2; //add sensors
-                    preventMoreNodeNames = true;
-                }
-            } else if(nodeAddState == 2 && !Data_From_SerialPort.contains("AddSensor"))               //Adds sensors to node
-            {
-                //Adds sensors to map with same node name
-                Data_From_SerialPort.remove("\r").remove("\n");
-                if(typeKnown == 0 && !Data_From_SerialPort.contains("AddSensor"))
-                {
-                    sensorType = Data_From_SerialPort;
-                    typeKnown = 1;
-                    Data_From_SerialPort = "";
-                } else if(typeKnown == 1)
-                {
-                    sensorName = Data_From_SerialPort;
-                    typeKnown = 2;
-                    node.addSensor(sensorType, sensorName);
-                }
-                dataLabel->setText(node.getSensors(sensorType));
-
-                //After adding all sensors
-                if(Data_From_SerialPort.contains("AddActuator"))
-                {
-                    nodeAddState = 3;
-                    typeKnown = 0;
-                }
-            } else if(nodeAddState == 3 && !Data_From_SerialPort.contains("AddActuator"))               //Adds actuators to node
-            {
-                //Adds actuators to map with same node name
-                Data_From_SerialPort.remove("\r").remove("\n");
-                if(typeKnown == 0 && !Data_From_SerialPort.contains("AddActuator"))
-                {
-                    actuatorType = Data_From_SerialPort;
-                    typeKnown = 1;
-                    Data_From_SerialPort = "";
-                } else if(typeKnown == 1)
-                {
-                    actuatorName = Data_From_SerialPort;
-                    typeKnown = 2;
-                    node.addActuator(actuatorType, actuatorName);
-                }
-                dataLabel->setText(node.getActuators(sensorType));
-
-                //After adding all actuators go back to 0 so another node can be added
-                if(typeKnown == 2)
-                {
-                    nodeAddState = 0;
-                    typeKnown = 0;
-                }
-            }
+            addNodeAndActuators();
 
             Data_From_SerialPort = "";
         }
     }
 }
 
+void MainWindow::addNodeAndActuators()
+{
+    if(Data_From_SerialPort.contains("AddNode") && nodeAddState == 0) //Start the process of adding a new node
+    {
+        nodeAddState = 1; //add node
+    }  else if(nodeAddState == 1)        //Adds node name
+    {
+        //Adds node name to class
+        Data_From_SerialPort.remove("\r").remove("\n");
+
+        if(preventMoreNodeNames)
+        {
+            node.addNodeInstance(Data_From_SerialPort);
+            nodeName = Data_From_SerialPort;
+            preventMoreNodeNames = false;
+        }
+        if(Data_From_SerialPort.contains("AddSensor"))
+        {
+            nodeAddState = 2; //add sensors
+            preventMoreNodeNames = true;
+        }
+    } else if(nodeAddState == 2 && !Data_From_SerialPort.contains("AddSensor"))               //Adds sensors to node
+    {
+        //Adds sensors to map with same node name
+        Data_From_SerialPort.remove("\r").remove("\n");
+        if(typeKnown == 0 && !Data_From_SerialPort.contains("AddSensor"))
+        {
+            sensorType = Data_From_SerialPort;
+            typeKnown = 1;
+            Data_From_SerialPort = "";
+        } else if(typeKnown == 1)
+        {
+            sensorName = Data_From_SerialPort;
+            typeKnown = 2;
+            node.addSensor(nodeName, sensorType, sensorName);
+        }
+        dataLabel->setText(node.getSensors(nodeName, sensorType));
+
+        //After adding all sensors
+        if(Data_From_SerialPort.contains("AddActuator"))
+        {
+            nodeAddState = 3;
+            typeKnown = 0;
+        }
+    } else if(nodeAddState == 3 && !Data_From_SerialPort.contains("AddActuator"))               //Adds actuators to node
+    {
+        //Adds actuators to map with same node name
+        Data_From_SerialPort.remove("\r").remove("\n");
+        if(typeKnown == 0 && !Data_From_SerialPort.contains("AddActuator"))
+        {
+            actuatorType = Data_From_SerialPort;
+            typeKnown = 1;
+            Data_From_SerialPort = "";
+        } else if(typeKnown == 1)
+        {
+            actuatorName = Data_From_SerialPort;
+            typeKnown = 2;
+            node.addActuator(nodeName, actuatorType, actuatorName);
+        }
+        dataLabel->setText(node.getActuators(nodeName, sensorType));
+
+        //After adding all actuators go back to 0 so another node can be added
+        if(typeKnown == 2)
+        {
+            QStringList nodeNames = node.getAllNodeNames();
+            qDebug() << "Contents of QStringList:";
+            for (const QString& element : nodeNames)
+            {
+                qDebug() << element;
+            }
+            nodeAddState = 0;
+            typeKnown = 0;
+        }
+    }
+}
+
+//closes the comport connection on program shutdown or reconnect
 void MainWindow::closeConnection()
 {
     if(comport->isOpen())

@@ -12,23 +12,24 @@ public:
     Node();
     ~Node();
 
-    void setNodeName(QString nodeName);
-    void addSensor(QString sensorType, QString sensorName);
-    void addActuator(QString actuatorType, QString actuatorName);
+    void addNodeInstance(QString nodeName);
+    void addSensor(QString nodeName, QString sensorType, QString sensorName);
+    void addActuator(QString nodeName, QString actuatorType, QString actuatorName);
 
-    QString getNodeName();
-    QString getSensors(QString sensorType);
-    QString getActuators(QString actuatorType);
+    QStringList getAllNodeNames() const;
+    QString getSensors(QString nodeName, QString sensorType);
+    QString getActuators(QString nodeName, QString actuatorType);
 
-private:
-    QString name;
-
-    struct nodeComponents
+    struct NodeComponents
     {
         QMultiHash<QString, QString> sensorHash;
         QMultiHash<QString, QString> actuatorHash;
-    } components;
-    //zet ze in een struct en zoek het dan uit
+    };
+
+private:
+
+    //QMap with node name and node components
+    QMap<QString, NodeComponents> nodeInstances;
 };
 
 #endif // NODE_H

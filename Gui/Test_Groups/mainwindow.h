@@ -11,6 +11,8 @@
 #include <QListWidget>
 #include <QThread>
 
+#include <node.h>
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -33,6 +35,7 @@ private slots:
 
     void on_pushButton_Refresh_clicked();
 
+    void addNodeAndActuators();
     void closeConnection();
 
 private:
@@ -57,7 +60,10 @@ private:
     QLabel* comLabel;
     QPushButton* reconnectComport;
 
+
+    Node node;
     int nodeAddState;
+    QString nodeName;
     QString sensorType;
     QString sensorName;
     QString actuatorType;
