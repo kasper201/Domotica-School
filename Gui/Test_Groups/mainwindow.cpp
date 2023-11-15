@@ -9,24 +9,17 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    comportList = ui->listWidget_Comport;   //list of available comports
-    connectComport = ui->pushButton_Connect;//Connect to the selected comport
-    refreshComport = ui->pushButton_Refresh;//Refreshes the comport list
+    comportList = ui->listWidget_Comport;           //list of available comports
+    connectComport = ui->pushButton_Connect;        //Connect to the selected comport
+    refreshComport = ui->pushButton_Refresh;        //Refreshes the comport list
 
-    dataLabel = ui->label_Data_Recieved;    //label that shows uart string
-    sendButton = ui->pushButton_Send;       //Button that sends the data to uart
-    dataOutput = ui->lineEdit_Serial_Data;  //Line with the data to send over uart
-    comLabel = ui->label_Comport;           //Label that shows the current comport
-    reconnectComport = ui->pushButton_Reconnect;//goes back so you can choose the comport again
-
-    nodeAddState = 0;
-    typeKnown = 0;
-    preventMoreNodeNames = true;
+    comLabel = ui->label_Comport;                   //Label that shows the current comport
+    reconnectComport = ui->pushButton_Reconnect;    //goes back so you can choose the comport again
+    nodeList = ui->listWidget_Nodes;                //List Widget with all nodes inside
+    sensorList = ui->listWidget_Sensors;            //List Widget with all sensors of selected node
+    actuatorList = ui->listWidget_Actuators;        //List Widget with all actuators of selected node
 
     setupComportList();
-
-    dataLabel->setText("");
-
 }
 
 MainWindow::~MainWindow()
@@ -53,11 +46,11 @@ void MainWindow::setupComportList()
     refreshComport->show();
 
     //hide for cuurently not needed elements
-    dataLabel->hide();
-    sendButton->hide();
-    dataOutput->hide();
     comLabel->hide();
     reconnectComport->hide();
+    nodeList->hide();
+    sensorList->hide();
+    actuatorList->hide();
 }
 
 //Refreshes the listWidget with comports
@@ -93,24 +86,9 @@ void MainWindow::on_pushButton_Connect_clicked()
     connectComport->hide();
     refreshComport->hide();
 
-    dataLabel->show();
-    sendButton->show();
-    dataOutput->show();
     comLabel->show();
     reconnectComport->show();
-}
-
-
-//Sends data to the comport
-void MainWindow::on_pushButton_Send_clicked()
-{
-    if(comport->isOpen())
-    {
-        //char(10) = \n
-        //char(13) = \r
-        comport->write(dataOutput->text().toLatin1() + char(10) );
-        comport->flush();
-    }
+    nodeList->show();
 }
 
 //Goes back to the connect options
@@ -118,6 +96,7 @@ void MainWindow::on_pushButton_Reconnect_clicked()
 {
     closeConnection();
     comportList->clear();
+    nodeList->clear();
     setupComportList();
 }
 
@@ -145,87 +124,75 @@ void MainWindow::readData()
             //dataLabel->setText(Data_From_SerialPort);
             Is_Data_Recieved = false;
 
-            addNodeAndActuators();
+            addNodes();
 
             Data_From_SerialPort = "";
         }
     }
 }
 
-void MainWindow::addNodeAndActuators()
+void MainWindow::addNodes()
 {
-    if(Data_From_SerialPort.contains("AddNode") && nodeAddState == 0) //Start the process of adding a new node
+    if(Data_From_SerialPort.contains("AddNode")) //Start the process of adding a new node
     {
-        nodeAddState = 1; //add node
-    }  else if(nodeAddState == 1)        //Adds node name
-    {
-        //Adds node name to class
+        //Removes parts of the string that are irrelevant
         Data_From_SerialPort.remove("\r").remove("\n");
+        Data_From_SerialPort = removedTillWhitespace(Data_From_SerialPort);
 
-        if(preventMoreNodeNames)
+        //Adds a nodename
+        nodeName = removedFromWhitespace(Data_From_SerialPort);
+        node.addNodeInstance(nodeName);
+        nodeList->addItem(nodeName);
+        Data_From_SerialPort = removedTillWhitespace(Data_From_SerialPort);
+
+        //Adds all sensors
+        while(Data_From_SerialPort.contains("AddSensor"))
         {
-            node.addNodeInstance(Data_From_SerialPort);
-            nodeName = Data_From_SerialPort;
-            preventMoreNodeNames = false;
-        }
-        if(Data_From_SerialPort.contains("AddSensor"))
-        {
-            nodeAddState = 2; //add sensors
-            preventMoreNodeNames = true;
-        }
-    } else if(nodeAddState == 2 && !Data_From_SerialPort.contains("AddSensor"))               //Adds sensors to node
-    {
-        //Adds sensors to map with same node name
-        Data_From_SerialPort.remove("\r").remove("\n");
-        if(typeKnown == 0 && !Data_From_SerialPort.contains("AddSensor"))
-        {
-            sensorType = Data_From_SerialPort;
-            typeKnown = 1;
-            Data_From_SerialPort = "";
-        } else if(typeKnown == 1)
-        {
-            sensorName = Data_From_SerialPort;
-            typeKnown = 2;
+            Data_From_SerialPort = removedTillWhitespace(Data_From_SerialPort);
+            QString sensorType = removedFromWhitespace(Data_From_SerialPort);
+            Data_From_SerialPort = removedTillWhitespace(Data_From_SerialPort);
+            QString sensorName = removedFromWhitespace(Data_From_SerialPort);
+            Data_From_SerialPort = removedTillWhitespace(Data_From_SerialPort);
             node.addSensor(nodeName, sensorType, sensorName);
         }
-        dataLabel->setText(node.getSensors(nodeName, sensorType));
 
-        //After adding all sensors
-        if(Data_From_SerialPort.contains("AddActuator"))
+        //Adds all actuators
+        while(Data_From_SerialPort.contains("AddActuator"))
         {
-            nodeAddState = 3;
-            typeKnown = 0;
-        }
-    } else if(nodeAddState == 3 && !Data_From_SerialPort.contains("AddActuator"))               //Adds actuators to node
-    {
-        //Adds actuators to map with same node name
-        Data_From_SerialPort.remove("\r").remove("\n");
-        if(typeKnown == 0 && !Data_From_SerialPort.contains("AddActuator"))
-        {
-            actuatorType = Data_From_SerialPort;
-            typeKnown = 1;
-            Data_From_SerialPort = "";
-        } else if(typeKnown == 1)
-        {
-            actuatorName = Data_From_SerialPort;
-            typeKnown = 2;
+            Data_From_SerialPort = removedTillWhitespace(Data_From_SerialPort);
+            QString actuatorType = removedFromWhitespace(Data_From_SerialPort);
+            Data_From_SerialPort = removedTillWhitespace(Data_From_SerialPort);
+            QString actuatorName = removedFromWhitespace(Data_From_SerialPort);
+            Data_From_SerialPort = removedTillWhitespace(Data_From_SerialPort);
             node.addActuator(nodeName, actuatorType, actuatorName);
         }
-        dataLabel->setText(node.getActuators(nodeName, sensorType));
-
-        //After adding all actuators go back to 0 so another node can be added
-        if(typeKnown == 2)
-        {
-            QStringList nodeNames = node.getAllNodeNames();
-            qDebug() << "Contents of QStringList:";
-            for (const QString& element : nodeNames)
-            {
-                qDebug() << element;
-            }
-            nodeAddState = 0;
-            typeKnown = 0;
-        }
     }
+}
+
+QString MainWindow::removedTillWhitespace(QString string)
+{
+    int firstWhitespaceIndex; //where the first whitespace of a string is located
+    firstWhitespaceIndex = string.indexOf(' ');
+
+    // Check if a whitespace was found
+    if (firstWhitespaceIndex != -1) {
+        // Remove the substring from the beginning of the string up to the first whitespace
+        string.remove(0, firstWhitespaceIndex + 1);
+    }
+    return string;
+}
+
+QString MainWindow::removedFromWhitespace(QString string)
+{
+    int firstWhitespaceIndex; //where the first whitespace of a string is located
+    firstWhitespaceIndex = string.indexOf(' ');
+
+    // Check if a whitespace was found
+    if (firstWhitespaceIndex != -1) {
+        // Remove the substring from the beginning of the string up to the first whitespace
+        string.remove(firstWhitespaceIndex, string.length());
+    }
+    return string;
 }
 
 //closes the comport connection on program shutdown or reconnect
@@ -239,3 +206,28 @@ void MainWindow::closeConnection()
         comport->close();
     }
 }
+
+void MainWindow::on_listWidget_Nodes_itemClicked(QListWidgetItem *item)
+{
+    //Clears List for this click
+    sensorList->clear();
+    actuatorList->clear();
+
+    //fills sensorList
+    QStringList nodeSensors = node.getAllSensorNames(item->text());
+    for (const QString& element : nodeSensors)
+    {
+        sensorList->addItem(element);
+    }
+
+    //fills actuatorList
+    QStringList nodeActuators = node.getAllActuatorNames(item->text());
+    for (const QString& element : nodeActuators)
+    {
+        actuatorList->addItem(element);
+    }
+
+    sensorList->show();
+    actuatorList->show();
+}
+

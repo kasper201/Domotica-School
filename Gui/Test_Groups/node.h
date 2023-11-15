@@ -17,6 +17,8 @@ public:
     void addActuator(QString nodeName, QString actuatorType, QString actuatorName);
 
     QStringList getAllNodeNames() const;
+    QStringList getAllSensorNames(QString nodeName) const;
+    QStringList getAllActuatorNames(QString nodeName) const;
     QString getSensors(QString nodeName, QString sensorType);
     QString getActuators(QString nodeName, QString actuatorType);
 

@@ -14,20 +14,14 @@ Node::~Node()
 void Node::addNodeInstance(QString nodeName)
 {
     NodeComponents newNode;
-    qDebug() << nodeName;
     nodeInstances.insert(nodeName, newNode);
-    qDebug() << nodeInstances.count(); //returns 1
 }
 
 //stores sensor
 void Node::addSensor(QString nodeName, QString sensorType, QString sensorName)
 {
-    qDebug() << nodeName;
-    qDebug() << nodeInstances.count(); //returns 0 while it is called after addNodeInstance
     if (nodeInstances.contains(nodeName))
     {
-        qDebug() << sensorType << " and " << sensorName;
-        qDebug() << nodeName;
         nodeInstances[nodeName].sensorHash.insert(sensorType, sensorName);
     }
 }
@@ -37,7 +31,6 @@ void Node::addActuator(QString nodeName, QString actuatorType, QString actuatorN
 {
     if (nodeInstances.contains(nodeName))
     {
-        qDebug() << actuatorType << " and " << actuatorName;
         nodeInstances[nodeName].actuatorHash.insert(actuatorType, actuatorName);
     }
 }
@@ -54,6 +47,18 @@ QStringList Node::getAllNodeNames() const
     }
 
     return allNodeNames;
+}
+
+//gets all sensors from one node
+QStringList Node::getAllSensorNames(QString nodeName) const
+{
+    return nodeInstances[nodeName].sensorHash.values();
+}
+
+//gets all actuators from one node
+QStringList Node::getAllActuatorNames(QString nodeName) const
+{
+    return nodeInstances[nodeName].actuatorHash.values();
 }
 
 //gets sensors

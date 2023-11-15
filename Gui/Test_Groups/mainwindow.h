@@ -29,14 +29,17 @@ private slots:
     void setupComportList();
     void on_pushButton_Connect_clicked();
 
-    void on_pushButton_Send_clicked();
     void on_pushButton_Reconnect_clicked();
     void readData();
 
     void on_pushButton_Refresh_clicked();
 
-    void addNodeAndActuators();
+    void addNodes();
+    QString removedTillWhitespace(QString string);
+    QString removedFromWhitespace(QString string);
     void closeConnection();
+
+    void on_listWidget_Nodes_itemClicked(QListWidgetItem *item);
 
 private:
     Ui::MainWindow *ui;
@@ -54,22 +57,15 @@ private:
     QPushButton* refreshComport;
 
     //send data over uart
-    QLabel* dataLabel;
-    QPushButton* sendButton;
-    QLineEdit* dataOutput;
     QLabel* comLabel;
     QPushButton* reconnectComport;
+    QListWidget* nodeList;
+    QListWidget* sensorList;
+    QListWidget* actuatorList;
 
 
     Node node;
-    int nodeAddState;
     QString nodeName;
-    QString sensorType;
-    QString sensorName;
-    QString actuatorType;
-    QString actuatorName;
-    int typeKnown;
-    bool preventMoreNodeNames;
 
     //Important String for comunication
     QString connected = "connected";            //Lets the node know that it is connected to the application
