@@ -20,14 +20,14 @@ void Node::setNodeName(QString nodeName)
 void Node::addSensor(QString sensorType, QString sensorName)
 {
     qDebug() << sensorType << " en " << sensorName;
-    sensorHash.insert(sensorType, sensorName);
+    components.sensorHash.insert(sensorType, sensorName);
 }
 
 //stores actuator
 void Node::addActuator(QString actuatorType, QString actuatorName)
 {
     qDebug() << actuatorType << " en " << actuatorName;
-    sensorHash.insert(actuatorType, actuatorName);
+    components.actuatorHash.insert(actuatorType, actuatorName);
 }
 
 //gets node name
@@ -39,11 +39,11 @@ QString Node::getNodeName()
 //gets sensors
 QString Node::getSensors(QString sensorType)
 {
-    return sensorHash.value(sensorType);
+    return components.sensorHash.value(sensorType);
 }
 
 //gets actuators
 QString Node::getActuators(QString actuatorType)
 {
-    return sensorHash.value(actuatorType);
+    return components.actuatorHash.value(actuatorType);
 }

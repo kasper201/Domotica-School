@@ -84,6 +84,8 @@ void MainWindow::on_pushButton_Connect_clicked()
     comLabel->setText("Comport: " + comportDescription);
 
     //Writes connected to dongle
+    QString wakeUp = "WakeupArduino";
+    comport->write(wakeUp.toLatin1() + char(10) );
     comport->write(connected.toLatin1() + char(10) );
 
     //update ui

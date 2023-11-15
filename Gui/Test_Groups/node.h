@@ -22,8 +22,12 @@ public:
 
 private:
     QString name;
-    QMultiHash<QString, QString> sensorHash;
-    QMultiHash<QString, QString> actuatorHash;
+
+    struct nodeComponents
+    {
+        QMultiHash<QString, QString> sensorHash;
+        QMultiHash<QString, QString> actuatorHash;
+    } components;
     //zet ze in een struct en zoek het dan uit
 };
 
