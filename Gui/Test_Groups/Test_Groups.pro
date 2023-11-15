@@ -13,11 +13,13 @@ SOURCES += \
     ledtoggle.cpp \
     main.cpp \
     mainwindow.cpp \
+    node.cpp \
     portsetup.cpp
 
 HEADERS += \
     ledtoggle.h \
     mainwindow.h \
+    node.h \
     portsetup.h
 
 FORMS += \

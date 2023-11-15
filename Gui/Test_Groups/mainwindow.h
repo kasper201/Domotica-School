@@ -9,6 +9,7 @@
 #include <QString>
 #include <QLabel>
 #include <QListWidget>
+#include <QThread>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -32,6 +33,8 @@ private slots:
 
     void on_pushButton_Refresh_clicked();
 
+    void closeConnection();
+
 private:
     Ui::MainWindow *ui;
     QSerialPort* comport;
@@ -54,11 +57,17 @@ private:
     QLabel* comLabel;
     QPushButton* reconnectComport;
 
-    //Led on or off
-    bool yellow;
-    bool blue;
-    bool red;
-    bool green;
+    int nodeAddState;
+    QString sensorType;
+    QString sensorName;
+    QString actuatorType;
+    QString actuatorName;
+    int typeKnown;
+    bool preventMoreNodeNames;
+
+    //Important String for comunication
+    QString connected = "connected";            //Lets the node know that it is connected to the application
+    QString disconnected = "disconnected";      //Lets the node know that the application is disconnected
 
 };
 #endif // MAINWINDOW_H

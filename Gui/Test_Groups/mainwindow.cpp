@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "portsetup.h"
-#include "ledtoggle.h"
+#include "node.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -19,10 +19,9 @@ MainWindow::MainWindow(QWidget *parent)
     comLabel = ui->label_Comport;           //Label that shows the current comport
     reconnectComport = ui->pushButton_Reconnect;//goes back so you can choose the comport again
 
-    yellow = false;
-    blue = false;
-    red = false;
-    green = false;
+    nodeAddState = 0;
+    typeKnown = 0;
+    preventMoreNodeNames = true;
 
     setupComportList();
 
@@ -32,7 +31,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    comport->close();
+    closeConnection();
     delete ui;
 }
 
@@ -72,7 +71,7 @@ void MainWindow::on_pushButton_Refresh_clicked()
 void MainWindow::on_pushButton_Connect_clicked()
 {
     QString comString = comportList->currentItem()->text();
-    QString firstSixCharacters = comString.left(6);
+    QString firstSixCharacters = comString.left(4);
     QString comPortName =firstSixCharacters.replace(" ", "");
 
     //connects to the right comport and puts all the setting right
@@ -83,6 +82,9 @@ void MainWindow::on_pushButton_Connect_clicked()
     //Puts the right Com into comLabel
     QString comportDescription = comportList->currentItem()->text();
     comLabel->setText("Comport: " + comportDescription);
+
+    //Writes connected to dongle
+    comport->write(connected.toLatin1() + char(10) );
 
     //update ui
     comportList->hide();
@@ -112,7 +114,7 @@ void MainWindow::on_pushButton_Send_clicked()
 //Goes back to the connect options
 void MainWindow::on_pushButton_Reconnect_clicked()
 {
-    comport->close();
+    closeConnection();
     comportList->clear();
     setupComportList();
 }
@@ -138,30 +140,89 @@ void MainWindow::readData()
         if(Is_Data_Recieved == true)
         {
             qDebug() << "Data from serial port: " << Data_From_SerialPort;
-            dataLabel->setText(Data_From_SerialPort);
+            //dataLabel->setText(Data_From_SerialPort);
             Is_Data_Recieved = false;
-            if(Data_From_SerialPort.contains("YELLOW"))
+
+            //*
+            Node node;
+            if(Data_From_SerialPort.contains("AddNode") && nodeAddState == 0) //Start the process of adding a new node
             {
-                LedToggle ledToggle;
-                comport->write(ledToggle.sendLedToggle("Yellow", !yellow).toLatin1() + char(10) );
-                yellow = !yellow;
-            } else if (Data_From_SerialPort.contains("BLUE"))
+                nodeAddState = 1; //add node
+            }  else if(nodeAddState == 1)        //Adds node name
             {
-                LedToggle ledToggle;
-                comport->write(ledToggle.sendLedToggle("Blue", !blue).toLatin1() + char(10) );
-                blue = !blue;
-            } else if (Data_From_SerialPort.contains("RED"))
+                //Adds node name to class
+                Data_From_SerialPort.remove("\r").remove("\n");
+
+                if(preventMoreNodeNames)
+                {
+                    node.setNodeName(Data_From_SerialPort);
+                    preventMoreNodeNames = false;
+                }
+                if(Data_From_SerialPort.contains("AddSensor"))
+                {
+                    nodeAddState = 2; //add sensors
+                    preventMoreNodeNames = true;
+                }
+            } else if(nodeAddState == 2 && !Data_From_SerialPort.contains("AddSensor"))               //Adds sensors to node
             {
-                LedToggle ledToggle;
-                comport->write(ledToggle.sendLedToggle("Red", !red).toLatin1() + char(10) );
-                red = !red;
-            } else if (Data_From_SerialPort.contains("GREEN"))
+                //Adds sensors to map with same node name
+                Data_From_SerialPort.remove("\r").remove("\n");
+                if(typeKnown == 0 && !Data_From_SerialPort.contains("AddSensor"))
+                {
+                    sensorType = Data_From_SerialPort;
+                    typeKnown = 1;
+                    Data_From_SerialPort = "";
+                } else if(typeKnown == 1)
+                {
+                    sensorName = Data_From_SerialPort;
+                    typeKnown = 2;
+                    node.addSensor(sensorType, sensorName);
+                }
+                dataLabel->setText(node.getSensors(sensorType));
+
+                //After adding all sensors
+                if(Data_From_SerialPort.contains("AddActuator"))
+                {
+                    nodeAddState = 3;
+                    typeKnown = 0;
+                }
+            } else if(nodeAddState == 3 && !Data_From_SerialPort.contains("AddActuator"))               //Adds actuators to node
             {
-                LedToggle ledToggle;
-                comport->write(ledToggle.sendLedToggle("Green", !green).toLatin1() + char(10) );
-                green = !green;
+                //Adds actuators to map with same node name
+                Data_From_SerialPort.remove("\r").remove("\n");
+                if(typeKnown == 0 && !Data_From_SerialPort.contains("AddActuator"))
+                {
+                    actuatorType = Data_From_SerialPort;
+                    typeKnown = 1;
+                    Data_From_SerialPort = "";
+                } else if(typeKnown == 1)
+                {
+                    actuatorName = Data_From_SerialPort;
+                    typeKnown = 2;
+                    node.addActuator(actuatorType, actuatorName);
+                }
+                dataLabel->setText(node.getActuators(sensorType));
+
+                //After adding all actuators go back to 0 so another node can be added
+                if(typeKnown == 2)
+                {
+                    nodeAddState = 0;
+                    typeKnown = 0;
+                }
             }
+
             Data_From_SerialPort = "";
         }
+    }
+}
+
+void MainWindow::closeConnection()
+{
+    if(comport->isOpen())
+    {
+        comport->write(disconnected.toLatin1() + char(10) );
+        qDebug() << "Closed comport connection: " << disconnected;
+        //QThread::msleep(100); Does not do much but could help with getting disconnected accros
+        comport->close();
     }
 }
