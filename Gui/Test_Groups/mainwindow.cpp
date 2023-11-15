@@ -19,15 +19,6 @@ MainWindow::MainWindow(QWidget *parent)
     comLabel = ui->label_Comport;           //Label that shows the current comport
     reconnectComport = ui->pushButton_Reconnect;//goes back so you can choose the comport again
 
-    yellowOn = ui->pushButton_Yellow_On;
-    yellowOff = ui->pushButton_Yellow_Off;
-    blueOn = ui->pushButton_Blue_On;
-    blueOff = ui->pushButton_Blue_Off;
-    redOn = ui->pushButton_Red_On;
-    redOff = ui->pushButton_Red_Off;
-    greenOn = ui->pushButton_Green_On;
-    greenOff = ui->pushButton_Green_Off;
-
     yellow = false;
     blue = false;
     red = false;
@@ -68,15 +59,6 @@ void MainWindow::setupComportList()
     dataOutput->hide();
     comLabel->hide();
     reconnectComport->hide();
-
-    yellowOn->hide();
-    yellowOff->hide();
-    blueOn->hide();
-    blueOff->hide();
-    redOn->hide();
-    redOff->hide();
-    greenOn->hide();
-    greenOff->hide();
 }
 
 //Refreshes the listWidget with comports
@@ -112,15 +94,6 @@ void MainWindow::on_pushButton_Connect_clicked()
     dataOutput->show();
     comLabel->show();
     reconnectComport->show();
-
-    yellowOn->show();
-    yellowOff->show();
-    blueOn->show();
-    blueOff->show();
-    redOn->show();
-    redOff->show();
-    greenOn->show();
-    greenOff->show();
 }
 
 
@@ -169,7 +142,6 @@ void MainWindow::readData()
             Is_Data_Recieved = false;
             if(Data_From_SerialPort.contains("YELLOW"))
             {
-                qDebug() << "check";
                 LedToggle ledToggle;
                 comport->write(ledToggle.sendLedToggle("Yellow", !yellow).toLatin1() + char(10) );
                 yellow = !yellow;
@@ -192,60 +164,4 @@ void MainWindow::readData()
             Data_From_SerialPort = "";
         }
     }
-}
-
-//Turns yellow led on
-void MainWindow::on_pushButton_Yellow_On_clicked()
-{
-    LedToggle ledToggle;
-    comport->write(ledToggle.sendLedToggle("Yellow", true).toLatin1() + char(10) );
-}
-
-//Turns yellow led off
-void MainWindow::on_pushButton_Yellow_Off_clicked()
-{
-    LedToggle ledToggle;
-    comport->write(ledToggle.sendLedToggle("Yellow", false).toLatin1() + char(10) );
-}
-
-//Turns blue led on
-void MainWindow::on_pushButton_Blue_On_clicked()
-{
-    LedToggle ledToggle;
-    comport->write(ledToggle.sendLedToggle("Blue", true).toLatin1() + char(10) );
-}
-
-//Turns blue led off
-void MainWindow::on_pushButton_Blue_Off_clicked()
-{
-    LedToggle ledToggle;
-    comport->write(ledToggle.sendLedToggle("Blue", false).toLatin1() + char(10) );
-}
-
-//Turns red led on
-void MainWindow::on_pushButton_Red_On_clicked()
-{
-    LedToggle ledToggle;
-    comport->write(ledToggle.sendLedToggle("Red", true).toLatin1() + char(10) );
-}
-
-//Turns red led off
-void MainWindow::on_pushButton_Red_Off_clicked()
-{
-    LedToggle ledToggle;
-    comport->write(ledToggle.sendLedToggle("Red", false).toLatin1() + char(10) );
-}
-
-//Turns green led on
-void MainWindow::on_pushButton_Green_On_clicked()
-{
-    LedToggle ledToggle;
-    comport->write(ledToggle.sendLedToggle("Green", true).toLatin1() + char(10) );
-}
-
-//Turns green led off
-void MainWindow::on_pushButton_Green_Off_clicked()
-{
-    LedToggle ledToggle;
-    comport->write(ledToggle.sendLedToggle("Green", false).toLatin1() + char(10) );
 }

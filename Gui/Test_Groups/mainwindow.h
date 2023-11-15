@@ -32,15 +32,6 @@ private slots:
 
     void on_pushButton_Refresh_clicked();
 
-    void on_pushButton_Yellow_On_clicked();
-    void on_pushButton_Yellow_Off_clicked();
-    void on_pushButton_Blue_On_clicked();
-    void on_pushButton_Blue_Off_clicked();
-    void on_pushButton_Red_On_clicked();
-    void on_pushButton_Red_Off_clicked();
-    void on_pushButton_Green_On_clicked();
-    void on_pushButton_Green_Off_clicked();
-
 private:
     Ui::MainWindow *ui;
     QSerialPort* comport;
@@ -62,16 +53,6 @@ private:
     QLineEdit* dataOutput;
     QLabel* comLabel;
     QPushButton* reconnectComport;
-
-    //Led toggle buttons
-    QPushButton* yellowOn;
-    QPushButton* yellowOff;
-    QPushButton* blueOn;
-    QPushButton* blueOff;
-    QPushButton* redOn;
-    QPushButton* redOff;
-    QPushButton* greenOn;
-    QPushButton* greenOff;
 
     //Led on or off
     bool yellow;
