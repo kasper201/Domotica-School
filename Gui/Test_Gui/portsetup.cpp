@@ -23,6 +23,5 @@ PortSetup::PortSetup(const QString &comPortName)
 
 PortSetup::~PortSetup()
 {
-    COMPORT->close();
-    delete COMPORT;
+    //COMPORT is closed in ~MainWindow
 }
