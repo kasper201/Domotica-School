@@ -11,8 +11,9 @@
 #include <QListWidget>
 #include <QThread>
 
-#include <node.h>
+#include "node.h"
 #include "stringmodifiers.h"
+#include "groups.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -40,12 +41,15 @@ private slots:
     void on_listWidget_Nodes_itemClicked(QListWidgetItem *item);
     void addTitles(bool nodeNotNeeded);
 
+    void on_pushButton_Add_Group_clicked();
+
 private:
     Ui::MainWindow *ui;
 
     //Class defines
     Node node;
     StringModifiers stringM;
+    Groups groups;
 
     //Sending and recieving data
     QSerialPort* comport;
@@ -67,6 +71,11 @@ private:
     QListWidget* nodeList;
     QListWidget* sensorList;
     QListWidget* actuatorList;
+
+    //shows group
+    QListWidget* groupList;
+    QLineEdit* addGroupLine;
+    QPushButton* addGroupButton;
 
     //adding nodes
     QString nodeName;

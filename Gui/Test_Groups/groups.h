@@ -11,6 +11,7 @@ class Groups
 public:
     Groups();
     ~Groups();
+    void addGroupInstance(QString groupName);
 
     struct groupParts {
         QMultiHash<QString, QString> sensorsInGroup;

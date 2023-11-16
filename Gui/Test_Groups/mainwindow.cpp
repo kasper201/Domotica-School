@@ -21,9 +21,14 @@ MainWindow::MainWindow(QWidget *parent)
     sensorList = ui->listWidget_Sensors;            //List Widget with all sensors of selected node
     actuatorList = ui->listWidget_Actuators;        //List Widget with all actuators of selected node
 
+    groupList = ui->listWidget_Groups;              //List Widget with all groups
+    addGroupLine = ui->lineEdit_Add_Groups;         //Line with group name
+    addGroupButton = ui->pushButton_Add_Group;      //Button to add group name
+
     setupComportList();
     addTitles(false);
     tabs->tabBar()->setTabEnabled(1, false);
+    tabs->tabBar()->setTabEnabled(2, false);
 }
 
 MainWindow::~MainWindow()
@@ -75,6 +80,7 @@ void MainWindow::on_pushButton_Connect_clicked()
         comLabel->setText("Comport: " + comportDescription);
 
         tabs->tabBar()->setTabEnabled(1, true);
+        tabs->tabBar()->setTabEnabled(2, true);
         tabs->setCurrentIndex(1);
 
         //Writes connected to dongle
@@ -89,9 +95,11 @@ void MainWindow::on_pushButton_Connect_clicked()
         closeConnection();
         comportList->clear();
         nodeList->clear();
+        addTitles(false);
         setupComportList();
 
         tabs->tabBar()->setTabEnabled(1, false);
+        tabs->tabBar()->setTabEnabled(2, false);
         tabs->setCurrentIndex(0);
 
         comLabel->setText("Not connected");
@@ -231,3 +239,11 @@ void MainWindow::addTitles(bool nodeNotNeeded)
     headerItem->setFont(QFont("Arial", 12, QFont::Bold));
     actuatorList->addItem(headerItem);
 }
+
+void MainWindow::on_pushButton_Add_Group_clicked()
+{
+    groups.addGroupInstance(addGroupLine->text());
+    groupList->addItem(addGroupLine->text());
+    addGroupLine->clear();
+}
+
