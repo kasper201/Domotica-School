@@ -14,18 +14,18 @@ public:
 
     void addNodeInstance(QString nodeName);
     void addSensor(QString nodeName, QString sensorType, QString sensorName);
-    void addActuator(QString nodeName, QString actuatorType, QString actuatorName);
+    void addActuator(QString nodeName, QString actuatorType, QString actuatorName, QString actuatorStatus);
 
     QStringList getAllNodeNames() const;
     QStringList getAllSensorNames(QString nodeName) const;
     QStringList getAllActuatorNames(QString nodeName) const;
-    QString getSensors(QString nodeName, QString sensorType);
-    QString getActuators(QString nodeName, QString actuatorType);
+    bool getActuatorStatus(QString nodeName, QString actuatorName);
 
     struct NodeComponents
     {
         QMultiHash<QString, QString> sensorHash;
         QMultiHash<QString, QString> actuatorHash;
+        QMultiHash<QString, bool> actuatorState;
     };
 
 private:

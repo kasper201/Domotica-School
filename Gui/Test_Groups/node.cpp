@@ -27,11 +27,22 @@ void Node::addSensor(QString nodeName, QString sensorType, QString sensorName)
 }
 
 //stores actuator
-void Node::addActuator(QString nodeName, QString actuatorType, QString actuatorName)
+void Node::addActuator(QString nodeName, QString actuatorType, QString actuatorName, QString actuatorStatus)
 {
     if (nodeInstances.contains(nodeName))
     {
         nodeInstances[nodeName].actuatorHash.insert(actuatorType, actuatorName);
+        if(actuatorStatus == "true")                                                    //enters true as status
+        {
+            nodeInstances[nodeName].actuatorState.insert(actuatorName, true);
+        } else if (actuatorStatus == "false")                                           //enters false as status
+        {
+            nodeInstances[nodeName].actuatorState.insert(actuatorName, false);
+        } else                                                                          //error handeling
+        {
+            qDebug() << "Not an accepted state : " << actuatorStatus;
+        }
+
     }
 }
 
@@ -61,14 +72,7 @@ QStringList Node::getAllActuatorNames(QString nodeName) const
     return nodeInstances[nodeName].actuatorHash.values();
 }
 
-//gets sensors
-QString Node::getSensors(QString nodeName, QString sensorType)
+bool Node::getActuatorStatus(QString nodeName, QString actuatorName)
 {
-    return nodeInstances[nodeName].sensorHash.value(sensorType);
-}
-
-//gets actuators
-QString Node::getActuators(QString nodeName, QString actuatorType)
-{
-    return nodeInstances[nodeName].actuatorHash.value(actuatorType);
+    return nodeInstances[nodeName].actuatorState.value(actuatorName);
 }

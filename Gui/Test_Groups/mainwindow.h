@@ -12,6 +12,7 @@
 #include <QThread>
 
 #include <node.h>
+#include "stringmodifiers.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -29,29 +30,33 @@ private slots:
     void setupComportList();
     void on_pushButton_Connect_clicked();
 
-    void on_pushButton_Reconnect_clicked();
     void readData();
 
     void on_pushButton_Refresh_clicked();
 
     void addNodes();
-    QString removedTillWhitespace(QString string);
-    QString removedFromWhitespace(QString string);
     void closeConnection();
 
     void on_listWidget_Nodes_itemClicked(QListWidgetItem *item);
+    void addTitles(bool nodeNotNeeded);
 
 private:
     Ui::MainWindow *ui;
+
+    //Class defines
+    Node node;
+    StringModifiers stringM;
+
+    //Sending and recieving data
     QSerialPort* comport;
     QString Data_From_SerialPort;
     bool Is_Data_Recieved = false;
 
     //Items in ui
-    QLabel* label_Data_Recieved = new QLabel;
+    QTabWidget* tabs;
 
-    //Replacing ui->...
     //connect to comport
+    bool isComportConnected = false;
     QListWidget* comportList;
     QPushButton* connectComport;
     QPushButton* refreshComport;
@@ -63,8 +68,7 @@ private:
     QListWidget* sensorList;
     QListWidget* actuatorList;
 
-
-    Node node;
+    //adding nodes
     QString nodeName;
 
     //Important String for comunication

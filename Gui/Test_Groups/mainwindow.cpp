@@ -8,18 +8,22 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    resize(600, 600);
+
+    tabs = ui->tabWidget;                           //tab widget so everything can be selected
 
     comportList = ui->listWidget_Comport;           //list of available comports
     connectComport = ui->pushButton_Connect;        //Connect to the selected comport
     refreshComport = ui->pushButton_Refresh;        //Refreshes the comport list
 
     comLabel = ui->label_Comport;                   //Label that shows the current comport
-    reconnectComport = ui->pushButton_Reconnect;    //goes back so you can choose the comport again
     nodeList = ui->listWidget_Nodes;                //List Widget with all nodes inside
     sensorList = ui->listWidget_Sensors;            //List Widget with all sensors of selected node
     actuatorList = ui->listWidget_Actuators;        //List Widget with all actuators of selected node
 
     setupComportList();
+    addTitles(false);
+    tabs->tabBar()->setTabEnabled(1, false);
 }
 
 MainWindow::~MainWindow()
@@ -40,15 +44,7 @@ void MainWindow::setupComportList()
         comportList->addItem(portCombined);
     }
 
-    //Shows current elements
-    comportList->show();
-    connectComport->show();
-    refreshComport->show();
-
     //hide for cuurently not needed elements
-    comLabel->hide();
-    reconnectComport->hide();
-    nodeList->hide();
     sensorList->hide();
     actuatorList->hide();
 }
@@ -63,41 +59,52 @@ void MainWindow::on_pushButton_Refresh_clicked()
 //Connect to the comport
 void MainWindow::on_pushButton_Connect_clicked()
 {
-    QString comString = comportList->currentItem()->text();
-    QString firstSixCharacters = comString.left(4);
-    QString comPortName =firstSixCharacters.replace(" ", "");
+    if(isComportConnected == false && !comportList->selectedItems().isEmpty())
+    {
+        QString comString = comportList->currentItem()->text();
+        QString firstSixCharacters = comString.left(4);
+        QString comPortName =firstSixCharacters.replace(" ", "");
 
-    //connects to the right comport and puts all the setting right
-    PortSetup portSetup(comPortName);
-    comport = portSetup.COMPORT;
-    connect(comport, SIGNAL(readyRead()), this, SLOT(readData()));
+        //connects to the right comport and puts all the setting right
+        PortSetup portSetup(comPortName);
+        comport = portSetup.COMPORT;
+        connect(comport, SIGNAL(readyRead()), this, SLOT(readData()));
 
-    //Puts the right Com into comLabel
-    QString comportDescription = comportList->currentItem()->text();
-    comLabel->setText("Comport: " + comportDescription);
+        //Puts the right Com into comLabel
+        QString comportDescription = comportList->currentItem()->text();
+        comLabel->setText("Comport: " + comportDescription);
 
-    //Writes connected to dongle
-    QString wakeUp = "WakeupArduino";
-    comport->write(wakeUp.toLatin1() + char(10) );
-    comport->write(connected.toLatin1() + char(10) );
+        tabs->tabBar()->setTabEnabled(1, true);
+        tabs->setCurrentIndex(1);
 
-    //update ui
-    comportList->hide();
-    connectComport->hide();
-    refreshComport->hide();
+        //Writes connected to dongle
+        QString wakeUp = "WakeupArduino";
+        comport->write(wakeUp.toLatin1() + char(10) );
+        comport->write(connected.toLatin1() + char(10) );
 
-    comLabel->show();
-    reconnectComport->show();
-    nodeList->show();
-}
+        connectComport->setText("Disconnect");
+        isComportConnected = true;
+    } else if(isComportConnected == true)
+    {
+        closeConnection();
+        comportList->clear();
+        nodeList->clear();
+        setupComportList();
 
-//Goes back to the connect options
-void MainWindow::on_pushButton_Reconnect_clicked()
-{
-    closeConnection();
-    comportList->clear();
-    nodeList->clear();
-    setupComportList();
+        tabs->tabBar()->setTabEnabled(1, false);
+        tabs->setCurrentIndex(0);
+
+        comLabel->setText("Not connected");
+        connectComport->setText("Connect");
+        isComportConnected = false;
+    } else if (isComportConnected == false && comportList->selectedItems().isEmpty())
+    {
+        comLabel->setText("A comport should be selected first");
+        qDebug() << "No comport was selected";
+    }else
+    {
+        qDebug() << "Failed with connection";
+    }
 }
 
 //Reads data from the comport
@@ -137,62 +144,38 @@ void MainWindow::addNodes()
     {
         //Removes parts of the string that are irrelevant
         Data_From_SerialPort.remove("\r").remove("\n");
-        Data_From_SerialPort = removedTillWhitespace(Data_From_SerialPort);
+        Data_From_SerialPort = stringM.removedTillWhitespace(Data_From_SerialPort);
 
         //Adds a nodename
-        nodeName = removedFromWhitespace(Data_From_SerialPort);
+        nodeName = stringM.removedFromWhitespace(Data_From_SerialPort);
         node.addNodeInstance(nodeName);
         nodeList->addItem(nodeName);
-        Data_From_SerialPort = removedTillWhitespace(Data_From_SerialPort);
+        Data_From_SerialPort = stringM.removedTillWhitespace(Data_From_SerialPort);
 
         //Adds all sensors
         while(Data_From_SerialPort.contains("AddSensor"))
         {
-            Data_From_SerialPort = removedTillWhitespace(Data_From_SerialPort);
-            QString sensorType = removedFromWhitespace(Data_From_SerialPort);
-            Data_From_SerialPort = removedTillWhitespace(Data_From_SerialPort);
-            QString sensorName = removedFromWhitespace(Data_From_SerialPort);
-            Data_From_SerialPort = removedTillWhitespace(Data_From_SerialPort);
+            Data_From_SerialPort = stringM.removedTillWhitespace(Data_From_SerialPort);
+            QString sensorType = stringM.removedFromWhitespace(Data_From_SerialPort);
+            Data_From_SerialPort = stringM.removedTillWhitespace(Data_From_SerialPort);
+            QString sensorName = stringM.removedFromWhitespace(Data_From_SerialPort);
+            Data_From_SerialPort = stringM.removedTillWhitespace(Data_From_SerialPort);
             node.addSensor(nodeName, sensorType, sensorName);
         }
 
         //Adds all actuators
         while(Data_From_SerialPort.contains("AddActuator"))
         {
-            Data_From_SerialPort = removedTillWhitespace(Data_From_SerialPort);
-            QString actuatorType = removedFromWhitespace(Data_From_SerialPort);
-            Data_From_SerialPort = removedTillWhitespace(Data_From_SerialPort);
-            QString actuatorName = removedFromWhitespace(Data_From_SerialPort);
-            Data_From_SerialPort = removedTillWhitespace(Data_From_SerialPort);
-            node.addActuator(nodeName, actuatorType, actuatorName);
+            Data_From_SerialPort = stringM.removedTillWhitespace(Data_From_SerialPort);
+            QString actuatorType = stringM.removedFromWhitespace(Data_From_SerialPort);
+            Data_From_SerialPort = stringM.removedTillWhitespace(Data_From_SerialPort);
+            QString actuatorName = stringM.removedFromWhitespace(Data_From_SerialPort);
+            Data_From_SerialPort = stringM.removedTillWhitespace(Data_From_SerialPort);
+            QString actuatorStatus = stringM.removedFromWhitespace(Data_From_SerialPort);
+            Data_From_SerialPort = stringM.removedTillWhitespace(Data_From_SerialPort);
+            node.addActuator(nodeName, actuatorType, actuatorName, actuatorStatus);
         }
     }
-}
-
-QString MainWindow::removedTillWhitespace(QString string)
-{
-    int firstWhitespaceIndex; //where the first whitespace of a string is located
-    firstWhitespaceIndex = string.indexOf(' ');
-
-    // Check if a whitespace was found
-    if (firstWhitespaceIndex != -1) {
-        // Remove the substring from the beginning of the string up to the first whitespace
-        string.remove(0, firstWhitespaceIndex + 1);
-    }
-    return string;
-}
-
-QString MainWindow::removedFromWhitespace(QString string)
-{
-    int firstWhitespaceIndex; //where the first whitespace of a string is located
-    firstWhitespaceIndex = string.indexOf(' ');
-
-    // Check if a whitespace was found
-    if (firstWhitespaceIndex != -1) {
-        // Remove the substring from the beginning of the string up to the first whitespace
-        string.remove(firstWhitespaceIndex, string.length());
-    }
-    return string;
 }
 
 //closes the comport connection on program shutdown or reconnect
@@ -213,6 +196,7 @@ void MainWindow::on_listWidget_Nodes_itemClicked(QListWidgetItem *item)
     sensorList->clear();
     actuatorList->clear();
 
+    addTitles(true);
     //fills sensorList
     QStringList nodeSensors = node.getAllSensorNames(item->text());
     for (const QString& element : nodeSensors)
@@ -224,10 +208,26 @@ void MainWindow::on_listWidget_Nodes_itemClicked(QListWidgetItem *item)
     QStringList nodeActuators = node.getAllActuatorNames(item->text());
     for (const QString& element : nodeActuators)
     {
-        actuatorList->addItem(element);
+        QString actuatorStatus = QString::fromUtf8(node.getActuatorStatus(item->text(), element) ? "true" : "false");
+        actuatorList->addItem(element + "\t" + actuatorStatus);
     }
 
     sensorList->show();
     actuatorList->show();
 }
 
+void MainWindow::addTitles(bool nodeNotNeeded)
+{
+    QListWidgetItem *headerItem = new QListWidgetItem("Nodes");
+    headerItem->setFont(QFont("Arial", 12, QFont::Bold));
+    if(nodeNotNeeded == false)
+    {
+        nodeList->addItem(headerItem);
+    }
+    headerItem = new QListWidgetItem("Sensor");
+    headerItem->setFont(QFont("Arial", 12, QFont::Bold));
+    sensorList->addItem(headerItem);
+    headerItem = new QListWidgetItem("Actuator\tStatus");
+    headerItem->setFont(QFont("Arial", 12, QFont::Bold));
+    actuatorList->addItem(headerItem);
+}

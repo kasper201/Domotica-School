@@ -10,17 +10,19 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    ledtoggle.cpp \
+    groups.cpp \
     main.cpp \
     mainwindow.cpp \
     node.cpp \
-    portsetup.cpp
+    portsetup.cpp \
+    stringmodifiers.cpp
 
 HEADERS += \
-    ledtoggle.h \
+    groups.h \
     mainwindow.h \
     node.h \
-    portsetup.h
+    portsetup.h \
+    stringmodifiers.h
 
 FORMS += \
     mainwindow.ui
