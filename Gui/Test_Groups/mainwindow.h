@@ -44,6 +44,9 @@ private slots:
 
     void on_pushButton_Add_Group_clicked();
     void on_pushButton_Delete_Group_clicked();
+    void on_pushButton_Add_Actuator_Group_clicked();
+
+    void updateGroupLists();
 
 private:
     Ui::MainWindow *ui;
@@ -74,11 +77,13 @@ private:
     QListWidget* actuatorList;
     QListWidget* groupLinkList;
     QPushButton* sensorAddButton;
+    QPushButton* actuatorAddButton;
 
     //shows group
     QListWidget* groupList;
     QLineEdit* addGroupLine;
     QPushButton* addGroupButton;
+    QLabel* groupLabel;
 
     //Important String for comunication
     QString connected = "connected";            //Lets the node know that it is connected to the application

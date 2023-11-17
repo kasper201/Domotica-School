@@ -63,13 +63,33 @@ QStringList Node::getAllNodeNames() const
 //gets all sensors from one node
 QStringList Node::getAllSensorNames(QString nodeName) const
 {
-    return nodeInstances[nodeName].sensorHash.values();
+    QStringList sensorInfo;
+    for (const QString& sensorType : nodeInstances[nodeName].sensorHash.uniqueKeys())
+    {
+        for (const QString& sensorName : nodeInstances[nodeName].sensorHash.values(sensorType))
+        {
+            QString actuatorString = sensorName + '\t' + sensorType;
+            sensorInfo.append(actuatorString);
+        }
+    }
+
+    return sensorInfo;
 }
 
 //gets all actuators from one node
 QStringList Node::getAllActuatorNames(QString nodeName) const
 {
-    return nodeInstances[nodeName].actuatorHash.values();
+    QStringList actuatorInfo;
+    for (const QString& actuatorType : nodeInstances[nodeName].actuatorHash.uniqueKeys())
+    {
+        for (const QString& actuatorName : nodeInstances[nodeName].actuatorHash.values(actuatorType))
+        {
+            QString actuatorString = actuatorName + '\t' + actuatorType;
+            actuatorInfo.append(actuatorString);
+        }
+    }
+
+    return actuatorInfo;
 }
 
 bool Node::getActuatorStatus(QString nodeName, QString actuatorName)

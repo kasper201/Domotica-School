@@ -27,7 +27,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -163,13 +163,13 @@
          <widget class="QFrame" name="frame_2">
           <property name="minimumSize">
            <size>
-            <width>615</width>
+            <width>572</width>
             <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>615</width>
+            <width>572</width>
             <height>16777215</height>
            </size>
           </property>
@@ -199,40 +199,87 @@
              </property>
             </widget>
            </item>
-           <item alignment="Qt::AlignLeft">
-            <widget class="QListWidget" name="listWidget_Sensors">
+           <item>
+            <widget class="QTabWidget" name="tabWidget_2">
              <property name="minimumSize">
               <size>
-               <width>140</width>
+               <width>240</width>
                <height>0</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>140</width>
+               <width>240</width>
                <height>16777215</height>
               </size>
              </property>
-            </widget>
-           </item>
-           <item alignment="Qt::AlignLeft">
-            <widget class="QListWidget" name="listWidget_Actuators">
-             <property name="minimumSize">
-              <size>
-               <width>140</width>
-               <height>0</height>
-              </size>
+             <property name="currentIndex">
+              <number>0</number>
              </property>
-             <property name="maximumSize">
-              <size>
-               <width>140</width>
-               <height>16777215</height>
-              </size>
-             </property>
+             <widget class="QWidget" name="tab_4">
+              <attribute name="title">
+               <string>Sensors</string>
+              </attribute>
+              <layout class="QVBoxLayout" name="verticalLayout_9">
+               <item alignment="Qt::AlignHCenter">
+                <widget class="QListWidget" name="listWidget_Sensors">
+                 <property name="minimumSize">
+                  <size>
+                   <width>220</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>220</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pushButton_Add_Sensor_Group">
+                 <property name="text">
+                  <string>Add Sensor</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="tab_5">
+              <attribute name="title">
+               <string>Actuators</string>
+              </attribute>
+              <layout class="QVBoxLayout" name="verticalLayout_6">
+               <item>
+                <widget class="QListWidget" name="listWidget_Actuators">
+                 <property name="minimumSize">
+                  <size>
+                   <width>220</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>220</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pushButton_Add_Actuator_Group">
+                 <property name="text">
+                  <string>Add Actuator</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
             </widget>
            </item>
            <item>
-            <widget class="QFrame" name="frame_8">
+            <widget class="QFrame" name="frame_10">
              <property name="minimumSize">
               <size>
                <width>160</width>
@@ -251,7 +298,7 @@
              <property name="frameShadow">
               <enum>QFrame::Raised</enum>
              </property>
-             <layout class="QVBoxLayout" name="verticalLayout_6">
+             <layout class="QVBoxLayout" name="verticalLayout_8">
               <item>
                <widget class="QListWidget" name="listWidget_Link_Groups">
                 <property name="minimumSize">
@@ -265,13 +312,6 @@
                   <width>140</width>
                   <height>16777215</height>
                  </size>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="pushButton_Add_Sensor_Group">
-                <property name="text">
-                 <string>Add</string>
                 </property>
                </widget>
               </item>
@@ -291,7 +331,7 @@
         <string>Groups Overview</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_4">
-        <item>
+        <item alignment="Qt::AlignHCenter">
          <widget class="QFrame" name="frame_3">
           <property name="frameShape">
            <enum>QFrame::StyledPanel</enum>
@@ -355,70 +395,114 @@
              <property name="frameShadow">
               <enum>QFrame::Raised</enum>
              </property>
-             <widget class="QFrame" name="frame_Add_Group">
-              <property name="geometry">
-               <rect>
-                <x>10</x>
-                <y>10</y>
-                <width>271</width>
-                <height>61</height>
-               </rect>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>271</width>
-                <height>61</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>271</width>
-                <height>61</height>
-               </size>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
-              <widget class="QLineEdit" name="lineEdit_Add_Groups">
-               <property name="geometry">
-                <rect>
-                 <x>10</x>
-                 <y>30</y>
-                 <width>161</width>
-                 <height>21</height>
-                </rect>
-               </property>
-              </widget>
-              <widget class="QPushButton" name="pushButton_Add_Group">
-               <property name="geometry">
-                <rect>
-                 <x>180</x>
-                 <y>30</y>
-                 <width>80</width>
-                 <height>24</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>Add Group</string>
-               </property>
-              </widget>
-              <widget class="QLabel" name="label">
-               <property name="geometry">
-                <rect>
-                 <x>10</x>
-                 <y>10</y>
-                 <width>251</width>
-                 <height>16</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>Add a new Group</string>
-               </property>
-              </widget>
-             </widget>
+             <layout class="QVBoxLayout" name="verticalLayout_10">
+              <item>
+               <widget class="QFrame" name="frame_Add_Group">
+                <property name="minimumSize">
+                 <size>
+                  <width>271</width>
+                  <height>61</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>271</width>
+                  <height>61</height>
+                 </size>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <widget class="QLineEdit" name="lineEdit_Add_Groups">
+                 <property name="geometry">
+                  <rect>
+                   <x>10</x>
+                   <y>30</y>
+                   <width>161</width>
+                   <height>21</height>
+                  </rect>
+                 </property>
+                </widget>
+                <widget class="QPushButton" name="pushButton_Add_Group">
+                 <property name="geometry">
+                  <rect>
+                   <x>180</x>
+                   <y>30</y>
+                   <width>80</width>
+                   <height>24</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string>Add Group</string>
+                 </property>
+                </widget>
+                <widget class="QLabel" name="label">
+                 <property name="geometry">
+                  <rect>
+                   <x>10</x>
+                   <y>10</y>
+                   <width>251</width>
+                   <height>16</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string>Add a new Group</string>
+                 </property>
+                </widget>
+               </widget>
+              </item>
+              <item>
+               <widget class="QFrame" name="frame_8">
+                <property name="minimumSize">
+                 <size>
+                  <width>271</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>271</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_7">
+                 <item>
+                  <widget class="QLabel" name="label_Current_Group">
+                   <property name="text">
+                    <string>Select a group</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QTabWidget" name="tabWidget_3">
+                   <property name="currentIndex">
+                    <number>1</number>
+                   </property>
+                   <widget class="QWidget" name="tab_6">
+                    <attribute name="title">
+                     <string>Sensors</string>
+                    </attribute>
+                   </widget>
+                   <widget class="QWidget" name="tab_7">
+                    <attribute name="title">
+                     <string>Actuators</string>
+                    </attribute>
+                   </widget>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
             </widget>
            </item>
           </layout>
