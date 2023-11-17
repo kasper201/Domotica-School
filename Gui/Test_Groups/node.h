@@ -19,13 +19,14 @@ public:
     QStringList getAllNodeNames() const;
     QStringList getAllSensorNames(QString nodeName) const;
     QStringList getAllActuatorNames(QString nodeName) const;
-    bool getActuatorStatus(QString nodeName, QString actuatorName);
+    QString getActuatorStatus(QString nodeName, QString actuatorName);
+    void updateActuatorStatus(QString nodeName, QString actuatorName, QString actuatorStatus);
 
     struct NodeComponents
     {
         QMultiHash<QString, QString> sensorHash;
         QMultiHash<QString, QString> actuatorHash;
-        QMultiHash<QString, bool> actuatorState;
+        QMultiHash<QString, QString> actuatorState;
     };
 
 private:

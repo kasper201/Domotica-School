@@ -14,6 +14,7 @@
 #include "node.h"
 #include "stringmodifiers.h"
 #include "groups.h"
+#include "portsetup.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -38,7 +39,7 @@ private slots:
     void addNodes();
     void closeConnection();
 
-    void on_listWidget_Nodes_itemClicked(QListWidgetItem *item);
+    void on_listWidget_Nodes_itemClicked();
     void on_pushButton_Add_Sensor_Group_clicked();
     void on_pushButton_Add_Actuator_Group_clicked();
     void addTitles(bool nodeNotNeeded);
@@ -49,6 +50,7 @@ private slots:
     void on_pushButton_Delete_Sensor_clicked();
     void on_pushButton_Delete_Actuator_clicked();
 
+    void updateNodeLists();
     void updateGroupLists();
     void updateCurrentGroupOverview();
 
@@ -61,6 +63,7 @@ private:
     Node node;
     StringModifiers stringM;
     Groups groups;
+    PortSetup portSetup;
 
     //Sending and recieving data
     QSerialPort* comport;

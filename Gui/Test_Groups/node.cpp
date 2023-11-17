@@ -32,16 +32,7 @@ void Node::addActuator(QString nodeName, QString actuatorType, QString actuatorN
     if (nodeInstances.contains(nodeName))
     {
         nodeInstances[nodeName].actuatorHash.insert(actuatorType, actuatorName);
-        if(actuatorStatus == "true")                                                    //enters true as status
-        {
-            nodeInstances[nodeName].actuatorState.insert(actuatorName, true);
-        } else if (actuatorStatus == "false")                                           //enters false as status
-        {
-            nodeInstances[nodeName].actuatorState.insert(actuatorName, false);
-        } else                                                                          //error handeling
-        {
-            qDebug() << "Not an accepted state : " << actuatorStatus;
-        }
+        nodeInstances[nodeName].actuatorState.insert(actuatorName, actuatorStatus);
 
     }
 }
@@ -92,7 +83,14 @@ QStringList Node::getAllActuatorNames(QString nodeName) const
     return actuatorInfo;
 }
 
-bool Node::getActuatorStatus(QString nodeName, QString actuatorName)
+//gets the status of the actuator
+QString Node::getActuatorStatus(QString nodeName, QString actuatorName)
 {
     return nodeInstances[nodeName].actuatorState.value(actuatorName);
+}
+
+//updates the status of the actuator
+void Node::updateActuatorStatus(QString nodeName, QString actuatorName, QString actuatorStatus)
+{
+    nodeInstances[nodeName].actuatorState.insert(actuatorName, actuatorStatus);
 }

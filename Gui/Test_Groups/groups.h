@@ -25,6 +25,8 @@ public:
     void deleteSensor(QString groupName, QString sensorName);       //Deletes a sensor
     void deleteActuator(QString groupName, QString actuatorName);   //Deletes a actuator
 
+    QStringList checkGroups(QString sensorName, QString nodeName);  //checks if a sensor has been matched with a group
+
     struct groupParts {
         QMultiHash<QString, QPair<QString, QString>> sensorsInGroup;    //Sensor name, Node name, Sensor type
         QMultiHash<QString, QPair<QString, QString>> actuatorsInGroup;  //Actuator name, Node name, Actuator type

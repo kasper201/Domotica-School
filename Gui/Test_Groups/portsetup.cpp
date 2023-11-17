@@ -1,6 +1,16 @@
 #include "portsetup.h"
 
-PortSetup::PortSetup(const QString &comPortName)
+PortSetup::PortSetup()
+{
+
+}
+
+PortSetup::~PortSetup()
+{
+    //COMPORT is closed in ~MainWindow
+}
+
+void PortSetup::setupComport(const QString &comPortName)
 {
     Current_Comport = comPortName;
     COMPORT = new QSerialPort();
@@ -21,7 +31,9 @@ PortSetup::PortSetup(const QString &comPortName)
     }
 }
 
-PortSetup::~PortSetup()
+//send string to comport
+void PortSetup::WriteToComport(QString sendString)
 {
-    //COMPORT is closed in ~MainWindow
+    qDebug() << sendString;
+    COMPORT->write(sendString.toLatin1() + char(10) );
 }

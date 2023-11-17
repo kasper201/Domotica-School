@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "portsetup.h"
-#include "node.h"
+#include "sensor.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -82,7 +81,7 @@ void MainWindow::on_pushButton_Connect_clicked()
         QString comPortName =firstSixCharacters.replace(" ", "");
 
         //connects to the right comport and puts all the setting right
-        PortSetup portSetup(comPortName);
+        portSetup.setupComport(comPortName);
         comport = portSetup.COMPORT;
         connect(comport, SIGNAL(readyRead()), this, SLOT(readData()));
 
@@ -148,10 +147,18 @@ void MainWindow::readData()
         if(Is_Data_Recieved == true)
         {
             qDebug() << "Data from serial port: " << Data_From_SerialPort;
-            //dataLabel->setText(Data_From_SerialPort);
+            Data_From_SerialPort.remove("\r").remove("\n");
             Is_Data_Recieved = false;
 
             addNodes();
+
+            Sensor sensorInput;
+            sensorInput.sensorTrigger(groups, node, portSetup, Data_From_SerialPort);
+            if(Data_From_SerialPort.contains("UpdateAppActuator"))
+            {
+                sensorInput.actuatorUpdate(node, Data_From_SerialPort);
+                updateNodeLists();
+            }
 
             Data_From_SerialPort = "";
         }
@@ -161,10 +168,9 @@ void MainWindow::readData()
 //Adds new nodes
 void MainWindow::addNodes()
 {
-    if(Data_From_SerialPort.contains("AddNode")) //Start the process of adding a new node
+    while(Data_From_SerialPort.contains("AddNode")) //Start the process of adding a new node
     {
         //Removes parts of the string that are irrelevant
-        Data_From_SerialPort.remove("\r").remove("\n");
         Data_From_SerialPort = stringM.removedTillWhitespace(Data_From_SerialPort);
 
         //Adds a nodename
@@ -196,6 +202,8 @@ void MainWindow::addNodes()
             Data_From_SerialPort = stringM.removedTillWhitespace(Data_From_SerialPort);
             node.addActuator(nodeName, actuatorType, actuatorName, actuatorStatus);
         }
+
+        Data_From_SerialPort = "";
     }
 }
 
@@ -211,28 +219,9 @@ void MainWindow::closeConnection()
 }
 
 //Shows all relevant information next to the node+
-void MainWindow::on_listWidget_Nodes_itemClicked(QListWidgetItem *item)
+void MainWindow::on_listWidget_Nodes_itemClicked()
 {
-    //Clears List for this click
-    sensorList->clear();
-    actuatorList->clear();
-
-    addTitles(true);
-    //fills sensorList
-    QStringList nodeSensors = node.getAllSensorNames(item->text());
-    for (const QString& element : nodeSensors)
-    {
-        sensorList->addItem(element);
-    }
-
-    //fills actuatorList
-    QStringList nodeActuators = node.getAllActuatorNames(item->text());
-    for (const QString& element : nodeActuators)
-    {
-        QString actuatorStatus = QString::fromUtf8(node.getActuatorStatus(item->text(), element) ? "true" : "false");
-        actuatorList->addItem(element + "\t" + actuatorStatus);
-    }
-
+    updateNodeLists();
     updateGroupLists();
 }
 
@@ -265,7 +254,6 @@ void MainWindow::on_pushButton_Add_Actuator_Group_clicked()
         QString actuatorType = actuatorList->currentItem()->text().split('\t').value(1);
 
         groups.addActuator(groupName, nodeName, actuatorType, actuatorName);
-        //updateCurrentGroupOverview();
     } else
     {
         qDebug() << "A group should be selected first";
@@ -349,6 +337,32 @@ void MainWindow::on_pushButton_Delete_Actuator_clicked()
     }
 }
 
+//updates node sensor and node actuator lists
+void MainWindow::updateNodeLists()
+{
+
+    //Clears List for this function
+    sensorList->clear();
+    actuatorList->clear();
+
+    addTitles(true);
+    //fills sensorList
+    QStringList nodeSensors = node.getAllSensorNames(nodeList->currentItem()->text());
+    for (const QString& element : nodeSensors)
+    {
+        sensorList->addItem(element);
+    }
+
+    //fills actuatorList
+    QStringList nodeActuators = node.getAllActuatorNames(nodeList->currentItem()->text());
+    for (const QString& element : nodeActuators)
+    {
+        QString actuatorName = element.split('\t').value(0);
+        QString actuatorStatus = node.getActuatorStatus(nodeList->currentItem()->text(), actuatorName);
+        actuatorList->addItem(element + "\t" + actuatorStatus);
+    }
+}
+
 //Updates all lists that show groups when needed
 void MainWindow::updateGroupLists()
 {
@@ -392,18 +406,27 @@ void MainWindow::updateCurrentGroupOverview()
     sensorListGroup->clear();
     actuatorListGroup->clear();
 
-    QString groupName = groupList->currentItem()->text();
-
-    QStringList sensorsInGroup = groups.getSensors(groupName);
-    foreach (const QString &sensorInformation, sensorsInGroup)   //Adds all groups to groupLinkList
+    if(!groupList->selectedItems().isEmpty())
     {
-        sensorListGroup->addItem(sensorInformation);
-    }
+        QString groupName = groupList->currentItem()->text();
 
-    QStringList actuatorsInGroup = groups.getActuators(groupName);
-    foreach (const QString &actuatorInformation, actuatorsInGroup)   //Adds all groups to groupLinkList
-    {
-        actuatorListGroup->addItem(actuatorInformation);
+        QStringList sensorsInGroup = groups.getSensors(groupName);
+        if(!sensorsInGroup.isEmpty())
+        {
+            foreach (const QString &sensorInformation, sensorsInGroup)   //Adds all groups to groupLinkList
+            {
+                sensorListGroup->addItem(sensorInformation);
+            }
+        }
+
+        QStringList actuatorsInGroup = groups.getActuators(groupName);
+        if(!actuatorsInGroup.isEmpty())
+        {
+            foreach (const QString &actuatorInformation, actuatorsInGroup)   //Adds all groups to groupLinkList
+            {
+                actuatorListGroup->addItem(actuatorInformation);
+            }
+        }
     }
 }
 
@@ -416,5 +439,6 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
     } else if(index == 2)
     {
         ui->tabWidget_3->setCurrentIndex(0);
+        updateCurrentGroupOverview();
     }
 }

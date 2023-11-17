@@ -136,3 +136,14 @@ void Groups::deleteActuator(QString groupName, QString actuatorName)
 {
     groupMap[groupName].actuatorsInGroup.remove(actuatorName);
 }
+
+//checks if the sensor is linked to any groups
+QStringList Groups::checkGroups(QString sensorName, QString nodeName)
+{
+    sensorInfo = qMakePair(sensorName, nodeName);
+    QStringList groupList;
+    foreach (const QString& group, sensorGroupLink.values(sensorInfo)) {
+        groupList.append(group);
+    }
+    return groupList;
+}
