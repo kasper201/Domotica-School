@@ -39,11 +39,11 @@ private slots:
     void closeConnection();
 
     void on_listWidget_Nodes_itemClicked(QListWidgetItem *item);
+    void on_pushButton_Add_Sensor_Group_clicked();
     void addTitles(bool nodeNotNeeded);
 
     void on_pushButton_Add_Group_clicked();
-
-    void on_pushButton_clicked();
+    void on_pushButton_Delete_Group_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -69,18 +69,16 @@ private:
 
     //send data over uart
     QLabel* comLabel;
-    QPushButton* reconnectComport;
     QListWidget* nodeList;
     QListWidget* sensorList;
     QListWidget* actuatorList;
+    QListWidget* groupLinkList;
+    QPushButton* sensorAddButton;
 
     //shows group
     QListWidget* groupList;
     QLineEdit* addGroupLine;
     QPushButton* addGroupButton;
-
-    //adding nodes
-    QString nodeName;
 
     //Important String for comunication
     QString connected = "connected";            //Lets the node know that it is connected to the application

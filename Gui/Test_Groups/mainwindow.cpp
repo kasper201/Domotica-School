@@ -20,6 +20,8 @@ MainWindow::MainWindow(QWidget *parent)
     nodeList = ui->listWidget_Nodes;                //List Widget with all nodes inside
     sensorList = ui->listWidget_Sensors;            //List Widget with all sensors of selected node
     actuatorList = ui->listWidget_Actuators;        //List Widget with all actuators of selected node
+    groupLinkList = ui->listWidget_Link_Groups;     //List Widget with all groups
+    sensorAddButton = ui->pushButton_Add_Sensor_Group; //Adds sensor to a group
 
     groupList = ui->listWidget_Groups;              //List Widget with all groups
     addGroupLine = ui->lineEdit_Add_Groups;         //Line with group name
@@ -52,6 +54,8 @@ void MainWindow::setupComportList()
     //hide for cuurently not needed elements
     sensorList->hide();
     actuatorList->hide();
+    groupLinkList->hide();
+    sensorAddButton->hide();
 }
 
 //Refreshes the listWidget with comports
@@ -155,7 +159,7 @@ void MainWindow::addNodes()
         Data_From_SerialPort = stringM.removedTillWhitespace(Data_From_SerialPort);
 
         //Adds a nodename
-        nodeName = stringM.removedFromWhitespace(Data_From_SerialPort);
+        QString nodeName = stringM.removedFromWhitespace(Data_From_SerialPort);
         node.addNodeInstance(nodeName);
         nodeList->addItem(nodeName);
         Data_From_SerialPort = stringM.removedTillWhitespace(Data_From_SerialPort);
@@ -197,11 +201,13 @@ void MainWindow::closeConnection()
     }
 }
 
+//Shows all relevant information next to the node+
 void MainWindow::on_listWidget_Nodes_itemClicked(QListWidgetItem *item)
 {
     //Clears List for this click
     sensorList->clear();
     actuatorList->clear();
+    groupLinkList->clear();
 
     addTitles(true);
     //fills sensorList
@@ -219,10 +225,20 @@ void MainWindow::on_listWidget_Nodes_itemClicked(QListWidgetItem *item)
         actuatorList->addItem(element + "\t" + actuatorStatus);
     }
 
+    QStringList allGroups = groups.getGroups();
+    foreach (const QString &groupName, allGroups) {
+        groupLinkList->addItem(groupName);
+    }
     sensorList->show();
     actuatorList->show();
+    if(groupLinkList->count() > 1)
+    {
+        groupLinkList->show();
+        sensorAddButton->show();
+    }
 }
 
+//adds titles to all listWidgets on node page
 void MainWindow::addTitles(bool nodeNotNeeded)
 {
     QListWidgetItem *headerItem = new QListWidgetItem("Nodes");
@@ -237,6 +253,9 @@ void MainWindow::addTitles(bool nodeNotNeeded)
     headerItem = new QListWidgetItem("Actuator\tStatus");
     headerItem->setFont(QFont("Arial", 12, QFont::Bold));
     actuatorList->addItem(headerItem);
+    headerItem = new QListWidgetItem("Groups");
+    headerItem->setFont(QFont("Arial", 12, QFont::Bold));
+    groupLinkList->addItem(headerItem);
 }
 
 void MainWindow::on_pushButton_Add_Group_clicked()
@@ -247,9 +266,20 @@ void MainWindow::on_pushButton_Add_Group_clicked()
 }
 
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::on_pushButton_Delete_Group_clicked()
 {
     groups.deleteGroupInstance(groupList->currentItem()->text());
     groupList->takeItem(groupList->currentRow());
+}
+
+
+//Adds a sensor to a group
+void MainWindow::on_pushButton_Add_Sensor_Group_clicked()
+{
+    QString groupName = groupLinkList->currentItem()->text();
+    QString nodeName = nodeList->currentItem()->text();
+    QString sensorName = sensorList->currentItem()->text();
+
+    groups.addSensor(groupName, nodeName, "Button", sensorName);
 }
 
