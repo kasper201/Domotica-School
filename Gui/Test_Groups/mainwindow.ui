@@ -27,7 +27,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -163,13 +163,13 @@
          <widget class="QFrame" name="frame_2">
           <property name="minimumSize">
            <size>
-            <width>465</width>
+            <width>615</width>
             <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>465</width>
+            <width>615</width>
             <height>16777215</height>
            </size>
           </property>
@@ -231,6 +231,22 @@
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="QListWidget" name="listWidget">
+             <property name="minimumSize">
+              <size>
+               <width>140</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>140</width>
+               <height>16777215</height>
+              </size>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </item>
@@ -254,19 +270,50 @@
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <item>
-            <widget class="QListWidget" name="listWidget_Groups">
+            <widget class="QFrame" name="frame_7">
              <property name="minimumSize">
               <size>
-               <width>140</width>
+               <width>160</width>
                <height>0</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>140</width>
+               <width>160</width>
                <height>16777215</height>
               </size>
              </property>
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_5">
+              <item>
+               <widget class="QListWidget" name="listWidget_Groups">
+                <property name="minimumSize">
+                 <size>
+                  <width>140</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>140</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pushButton">
+                <property name="text">
+                 <string>Delete Group</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </widget>
            </item>
            <item>

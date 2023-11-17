@@ -43,6 +43,8 @@ private slots:
 
     void on_pushButton_Add_Group_clicked();
 
+    void on_pushButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 

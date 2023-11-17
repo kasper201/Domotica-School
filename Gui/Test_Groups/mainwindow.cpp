@@ -193,7 +193,6 @@ void MainWindow::closeConnection()
     {
         comport->write(disconnected.toLatin1() + char(10) );
         qDebug() << "Closed comport connection: " << disconnected;
-        //QThread::msleep(100); Does not do much but could help with getting disconnected accros
         comport->close();
     }
 }
@@ -245,5 +244,12 @@ void MainWindow::on_pushButton_Add_Group_clicked()
     groups.addGroupInstance(addGroupLine->text());
     groupList->addItem(addGroupLine->text());
     addGroupLine->clear();
+}
+
+
+void MainWindow::on_pushButton_clicked()
+{
+    groups.deleteGroupInstance(groupList->currentItem()->text());
+    groupList->takeItem(groupList->currentRow());
 }
 
