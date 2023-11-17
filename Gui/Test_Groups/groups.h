@@ -14,11 +14,16 @@ public:
     Groups();
     ~Groups();
     void addGroupInstance(QString groupName);                                                           //Adds a new group
-    void deleteGroupInstance(QString groupName);                                                        //Deletes a group
     void addSensor(QString groupName, QString nodeName, QString sensorType, QString sensorName);        //Adds a sensor to a group
     void addActuator(QString groupName, QString nodeName, QString actuatorType, QString actuatorName);  //Adds a actuator to a group
 
-    QStringList getGroups();
+    QStringList getGroups();                                        //Returns all group names
+    QStringList getSensors(QString groupName);                      //Returns all sensors of a group
+    QStringList getActuators(QString groupName);                    //Returns all actuators of a group
+
+    void deleteGroupInstance(QString groupName);                    //Deletes a group
+    void deleteSensor(QString groupName, QString sensorName);       //Deletes a sensor
+    void deleteActuator(QString groupName, QString actuatorName);   //Deletes a actuator
 
     struct groupParts {
         QMultiHash<QString, QPair<QString, QString>> sensorsInGroup;    //Sensor name, Node name, Sensor type

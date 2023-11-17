@@ -214,11 +214,14 @@
               </size>
              </property>
              <property name="currentIndex">
-              <number>0</number>
+              <number>1</number>
              </property>
              <widget class="QWidget" name="tab_4">
               <attribute name="title">
                <string>Sensors</string>
+              </attribute>
+              <attribute name="toolTip">
+               <string>Shows Sensors of currently selected node</string>
               </attribute>
               <layout class="QVBoxLayout" name="verticalLayout_9">
                <item alignment="Qt::AlignHCenter">
@@ -249,6 +252,9 @@
              <widget class="QWidget" name="tab_5">
               <attribute name="title">
                <string>Actuators</string>
+              </attribute>
+              <attribute name="toolTip">
+               <string>Shows Actuators of currently selected node</string>
               </attribute>
               <layout class="QVBoxLayout" name="verticalLayout_6">
                <item>
@@ -425,6 +431,9 @@
                    <height>21</height>
                   </rect>
                  </property>
+                 <property name="placeholderText">
+                  <string>Add name of a new group</string>
+                 </property>
                 </widget>
                 <widget class="QPushButton" name="pushButton_Add_Group">
                  <property name="geometry">
@@ -485,17 +494,47 @@
                  <item>
                   <widget class="QTabWidget" name="tabWidget_3">
                    <property name="currentIndex">
-                    <number>1</number>
+                    <number>0</number>
                    </property>
                    <widget class="QWidget" name="tab_6">
                     <attribute name="title">
                      <string>Sensors</string>
                     </attribute>
+                    <attribute name="toolTip">
+                     <string>Shows Sensors from currently selected group</string>
+                    </attribute>
+                    <layout class="QVBoxLayout" name="verticalLayout_12">
+                     <item>
+                      <widget class="QListWidget" name="listWidget_Selected_Group_Sensors"/>
+                     </item>
+                     <item>
+                      <widget class="QPushButton" name="pushButton_Delete_Sensor">
+                       <property name="text">
+                        <string>Delete Sensor from the group</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
                    </widget>
                    <widget class="QWidget" name="tab_7">
                     <attribute name="title">
                      <string>Actuators</string>
                     </attribute>
+                    <attribute name="toolTip">
+                     <string>Shows Actuators from currently selected group</string>
+                    </attribute>
+                    <layout class="QVBoxLayout" name="verticalLayout_11">
+                     <item>
+                      <widget class="QListWidget" name="listWidget_Selected_Group_Actuators"/>
+                     </item>
+                     <item>
+                      <widget class="QPushButton" name="pushButton_Delete_Actuator">
+                       <property name="text">
+                        <string>Delete Actuator from the group</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
                    </widget>
                   </widget>
                  </item>

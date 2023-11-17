@@ -68,8 +68,8 @@ QStringList Node::getAllSensorNames(QString nodeName) const
     {
         for (const QString& sensorName : nodeInstances[nodeName].sensorHash.values(sensorType))
         {
-            QString actuatorString = sensorName + '\t' + sensorType;
-            sensorInfo.append(actuatorString);
+            QString sensorString = sensorName + '\t' + sensorType;
+            sensorInfo.append(sensorString);
         }
     }
 

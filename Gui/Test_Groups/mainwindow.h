@@ -40,13 +40,19 @@ private slots:
 
     void on_listWidget_Nodes_itemClicked(QListWidgetItem *item);
     void on_pushButton_Add_Sensor_Group_clicked();
+    void on_pushButton_Add_Actuator_Group_clicked();
     void addTitles(bool nodeNotNeeded);
 
     void on_pushButton_Add_Group_clicked();
     void on_pushButton_Delete_Group_clicked();
-    void on_pushButton_Add_Actuator_Group_clicked();
+    void on_listWidget_Groups_itemClicked(QListWidgetItem *item);
+    void on_pushButton_Delete_Sensor_clicked();
+    void on_pushButton_Delete_Actuator_clicked();
 
     void updateGroupLists();
+    void updateCurrentGroupOverview();
+
+    void on_tabWidget_tabBarClicked(int index);
 
 private:
     Ui::MainWindow *ui;
@@ -84,6 +90,10 @@ private:
     QLineEdit* addGroupLine;
     QPushButton* addGroupButton;
     QLabel* groupLabel;
+    QListWidget* sensorListGroup;
+    QListWidget* actuatorListGroup;
+    QPushButton* deleteSensor;
+    QPushButton* deleteActuator;
 
     //Important String for comunication
     QString connected = "connected";            //Lets the node know that it is connected to the application

@@ -15,6 +15,7 @@ SOURCES += \
     mainwindow.cpp \
     node.cpp \
     portsetup.cpp \
+    sensor.cpp \
     stringmodifiers.cpp
 
 HEADERS += \
@@ -22,6 +23,7 @@ HEADERS += \
     mainwindow.h \
     node.h \
     portsetup.h \
+    sensor.h \
     stringmodifiers.h
 
 FORMS += \

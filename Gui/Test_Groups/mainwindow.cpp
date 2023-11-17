@@ -31,6 +31,10 @@ MainWindow::MainWindow(QWidget *parent)
     addGroupLine = ui->lineEdit_Add_Groups;         //Line with group name
     addGroupButton = ui->pushButton_Add_Group;      //Button to add group name
     groupLabel = ui->label_Current_Group;           //Shows currently selected group
+    sensorListGroup = ui->listWidget_Selected_Group_Sensors;    //Shows all sensors from current group
+    actuatorListGroup = ui->listWidget_Selected_Group_Actuators;//Shows all actuators from current group
+    deleteSensor = ui->pushButton_Delete_Sensor;    //Deletes selected sensor from selected group
+    deleteActuator = ui->pushButton_Delete_Actuator;//Deletes selected actuator from selected group
 
     setupComportList();
     addTitles(false);
@@ -89,6 +93,7 @@ void MainWindow::on_pushButton_Connect_clicked()
         tabs->tabBar()->setTabEnabled(1, true);
         tabs->tabBar()->setTabEnabled(2, true);
         tabs->setCurrentIndex(1);
+        ui->tabWidget_2->setCurrentIndex(0);
 
         //Writes connected to dongle
         QString wakeUp = "WakeupArduino";
@@ -231,6 +236,43 @@ void MainWindow::on_listWidget_Nodes_itemClicked(QListWidgetItem *item)
     updateGroupLists();
 }
 
+//Adds a sensor to a group
+void MainWindow::on_pushButton_Add_Sensor_Group_clicked()
+{
+    if(!groupLinkList->selectedItems().isEmpty())
+    {
+        QString groupName = groupLinkList->currentItem()->text();
+        QString nodeName = nodeList->currentItem()->text();
+        QString sensorName = sensorList->currentItem()->text().split('\t').value(0);
+        QString sensorType = sensorList->currentItem()->text().split('\t').value(1);
+
+        groups.addSensor(groupName, nodeName, sensorType, sensorName);
+        //updateCurrentGroupOverview();
+    } else
+    {
+        qDebug() << "A group should be selected first";
+    }
+}
+
+//Adds a actuator to a group
+void MainWindow::on_pushButton_Add_Actuator_Group_clicked()
+{
+    if(!groupLinkList->selectedItems().isEmpty())
+    {
+        QString groupName = groupLinkList->currentItem()->text();
+        QString nodeName = nodeList->currentItem()->text();
+        QString actuatorName = actuatorList->currentItem()->text().split('\t').value(0);
+        QString actuatorType = actuatorList->currentItem()->text().split('\t').value(1);
+
+        groups.addActuator(groupName, nodeName, actuatorType, actuatorName);
+        //updateCurrentGroupOverview();
+    } else
+    {
+        qDebug() << "A group should be selected first";
+    }
+}
+
+
 //adds titles to all listWidgets on node page
 void MainWindow::addTitles(bool nodeNotNeeded)
 {
@@ -259,41 +301,51 @@ void MainWindow::on_pushButton_Add_Group_clicked()
 //Deletes selected group
 void MainWindow::on_pushButton_Delete_Group_clicked()
 {
-    groups.deleteGroupInstance(groupList->currentItem()->text());
-    groupList->takeItem(groupList->currentRow());
-}
-
-//Adds a sensor to a group
-void MainWindow::on_pushButton_Add_Sensor_Group_clicked()
-{
-    if(!groupLinkList->selectedItems().isEmpty())
+    if(!groupList->selectedItems().isEmpty())
     {
-        QString groupName = groupLinkList->currentItem()->text();
-        QString nodeName = nodeList->currentItem()->text();
-        QString sensorName = sensorList->currentItem()->text().split('\t').value(0);
-        QString sensorType = sensorList->currentItem()->text().split('\t').value(1);
-
-        groups.addSensor(groupName, nodeName, sensorType, sensorName);
+        groups.deleteGroupInstance(groupList->currentItem()->text());
+        groupList->takeItem(groupList->currentRow());
+        groupLabel->setText("Group has been deleted select another group");
     } else
     {
-        qDebug() << "A group should be selected first";
+        qDebug() << "No group was selected";
     }
 }
 
-//Adds a actuator to a group
-void MainWindow::on_pushButton_Add_Actuator_Group_clicked()
+//Shows the information of selected group
+void MainWindow::on_listWidget_Groups_itemClicked(QListWidgetItem *item)
 {
-    if(!groupLinkList->selectedItems().isEmpty())
-    {
-        QString groupName = groupLinkList->currentItem()->text();
-        QString nodeName = nodeList->currentItem()->text();
-        QString actuatorName = actuatorList->currentItem()->text().split('\t').value(0);
-        QString actuatorType = actuatorList->currentItem()->text().split('\t').value(1);
+    groupLabel->setText("Group: " + item->text());
+    updateCurrentGroupOverview();
+}
 
-        groups.addActuator(groupName, nodeName, actuatorType, actuatorName);
-    } else
+//Deletes a sensor from a group
+void MainWindow::on_pushButton_Delete_Sensor_clicked()
+{
+    if(!sensorListGroup->selectedItems().isEmpty() && !groupList->selectedItems().isEmpty())
     {
-        qDebug() << "A group should be selected first";
+        QString sensorName = sensorListGroup->currentItem()->text().split('\t').value(0);
+        QString groupName = groupList->currentItem()->text();
+
+        groups.deleteSensor(groupName, sensorName);
+        sensorListGroup->takeItem(sensorListGroup->currentRow());
+    } else if(sensorListGroup->selectedItems().isEmpty()) {
+        qDebug() << "select a sensor";
+    }
+}
+
+//Deletes a actuator from a group
+void MainWindow::on_pushButton_Delete_Actuator_clicked()
+{
+    if(!actuatorListGroup->selectedItems().isEmpty() && !groupList->selectedItems().isEmpty())
+    {
+        QString actuatorName = actuatorListGroup->currentItem()->text().split('\t').value(0);
+        QString groupName = groupList->currentItem()->text();
+
+        groups.deleteActuator(groupName, actuatorName);
+        actuatorListGroup->takeItem(actuatorListGroup->currentRow());
+    } else if(actuatorListGroup->selectedItems().isEmpty()) {
+        qDebug() << "select an actuator";
     }
 }
 
@@ -331,5 +383,38 @@ void MainWindow::updateGroupLists()
         groupLinkList->hide();
         sensorAddButton->hide();
         actuatorAddButton->hide();
+    }
+}
+
+//Updates overview of sensors and actuators of current group
+void MainWindow::updateCurrentGroupOverview()
+{
+    sensorListGroup->clear();
+    actuatorListGroup->clear();
+
+    QString groupName = groupList->currentItem()->text();
+
+    QStringList sensorsInGroup = groups.getSensors(groupName);
+    foreach (const QString &sensorInformation, sensorsInGroup)   //Adds all groups to groupLinkList
+    {
+        sensorListGroup->addItem(sensorInformation);
+    }
+
+    QStringList actuatorsInGroup = groups.getActuators(groupName);
+    foreach (const QString &actuatorInformation, actuatorsInGroup)   //Adds all groups to groupLinkList
+    {
+        actuatorListGroup->addItem(actuatorInformation);
+    }
+}
+
+//Sets some of the tab widgets right for when the it is viewed
+void MainWindow::on_tabWidget_tabBarClicked(int index)
+{
+    if(index == 1)
+    {
+        ui->tabWidget_2->setCurrentIndex(0);
+    } else if(index == 2)
+    {
+        ui->tabWidget_3->setCurrentIndex(0);
     }
 }
