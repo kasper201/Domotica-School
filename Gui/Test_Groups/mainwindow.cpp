@@ -433,6 +433,14 @@ void MainWindow::updateCurrentGroupOverview()
     sensorListGroup->clear();
     actuatorListGroup->clear();
 
+    QListWidgetItem* headerItem = new QListWidgetItem("Sensor\tNode\tType");
+    headerItem->setFont(QFont("Arial", 12, QFont::Bold));
+    sensorListGroup->addItem(headerItem);
+
+    headerItem = new QListWidgetItem("Actuator\tNode\tType");
+    headerItem->setFont(QFont("Arial", 12, QFont::Bold));
+    actuatorListGroup->addItem(headerItem);
+
     if(!groupList->selectedItems().isEmpty())
     {
         QString groupName = groupList->currentItem()->text();
