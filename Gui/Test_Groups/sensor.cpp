@@ -11,27 +11,27 @@ Sensor::~Sensor()
 }
 
 //Triggers when a sensor sends a signal
-void Sensor::sensorTrigger(Groups& groups, Node& node, PortSetup& comport, QString data)
+QStringList Sensor::sensorTrigger(Groups& groups, QString data)
 {
-    while(data.contains("TriggerSensor")) //checks if there is sensor trigger
+    QStringList groupsTriggered;
+    QString sensorName;
+    QString nodeName;
+    while(data.contains("TriggerSensor")) //checks if there is sensor trigger and finds the belonging groups
     {
         data = stringM.removedTillWhitespace(data);
-        QString nodeName = stringM.removedFromWhitespace(data);
+        nodeName = stringM.removedFromWhitespace(data);
         data = stringM.removedTillWhitespace(data);
-        QString sensorName = stringM.removedFromWhitespace(data);
+        sensorName = stringM.removedFromWhitespace(data);
         data = stringM.removedTillWhitespace(data);
 
-        QStringList groupsTriggered = groups.checkGroups(sensorName, nodeName);
-        for (const QString& groupName : groupsTriggered)
-        {
-            groupTriggered(groups, node, comport, groupName);
-        }
     }
+    return groups.checkGroups(sensorName, nodeName); //Shows which groups are triggered
 }
 
-void Sensor::groupTriggered(Groups& groups, Node& node, PortSetup& comport, QString groupName)
+QStringList Sensor::groupTriggered(Groups& groups, Node& node, QString groupName)
 {
     QStringList actuatorsTriggered = groups.getActuators(groupName);
+    AllUpdates.clear();
     for (const QString& groupName : actuatorsTriggered)
     {
         QString actuatorName = groupName.split('\t').value(0);
@@ -46,9 +46,10 @@ void Sensor::groupTriggered(Groups& groups, Node& node, PortSetup& comport, QStr
             actuatorStatusInverted = "false";
         }
         QString updateActuator = "UpdateActuator " + actuatorNode + " " + actuatorName + " " + actuatorStatusInverted;
-        comport.WriteToComport(updateActuator);
-
+        AllUpdates.append(updateActuator);
+        qDebug() << "Update for actuator: " << actuatorName;
     }
+    return AllUpdates;
 }
 
 void Sensor::actuatorUpdate(Node& node, QString data)
@@ -63,5 +64,6 @@ void Sensor::actuatorUpdate(Node& node, QString data)
         QString actuatorStatus = stringM.removedFromWhitespace(data);
         data = stringM.removedTillWhitespace(data);
         node.updateActuatorStatus(nodeName, actuatorName, actuatorStatus);
+        qDebug() << "updated actuator status: " << actuatorStatus;
     }
 }

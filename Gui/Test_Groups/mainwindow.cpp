@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "sensor.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -152,15 +151,43 @@ void MainWindow::readData()
 
             addNodes();
 
-            Sensor sensorInput;
-            sensorInput.sensorTrigger(groups, node, portSetup, Data_From_SerialPort);
+
+            if(Data_From_SerialPort.contains("TriggerSensor"))
+            {
+                groupsTriggered = sensorInput.sensorTrigger(groups, Data_From_SerialPort);
+            }
+
             if(Data_From_SerialPort.contains("UpdateAppActuator"))
             {
                 sensorInput.actuatorUpdate(node, Data_From_SerialPort);
                 updateNodeLists();
+                actuatorsTriggered.removeOne(actuatorUpdate);
+                actuatorUpdateLock = false;
             }
 
             Data_From_SerialPort = "";
+        }
+        //Allows a group update because there are no actuators of the last group left
+        if(actuatorsTriggered.isEmpty())
+        {
+            groupUpdateLock = false;
+        }
+
+        //Goes to the next group after the first one is updated
+        if(!groupsTriggered.isEmpty() && groupUpdateLock == false)
+        {
+            QString groupName = groupsTriggered.first();
+            actuatorsTriggered = sensorInput.groupTriggered(groups, node, groupName);
+            qDebug() << groupName;
+            groupsTriggered.removeOne(groupName);
+            groupUpdateLock = true;
+        }
+
+        if(!actuatorsTriggered.isEmpty() && actuatorUpdateLock == false)
+        {
+            actuatorUpdate = actuatorsTriggered.first();
+            portSetup.WriteToComport(actuatorUpdate);
+            actuatorUpdateLock = true;
         }
     }
 }

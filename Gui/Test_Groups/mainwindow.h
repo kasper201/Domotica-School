@@ -15,6 +15,7 @@
 #include "stringmodifiers.h"
 #include "groups.h"
 #include "portsetup.h"
+#include "sensor.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -27,6 +28,9 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+
+    void updateNodeLists();
 
 private slots:
     void setupComportList();
@@ -50,7 +54,6 @@ private slots:
     void on_pushButton_Delete_Sensor_clicked();
     void on_pushButton_Delete_Actuator_clicked();
 
-    void updateNodeLists();
     void updateGroupLists();
     void updateCurrentGroupOverview();
 
@@ -64,11 +67,17 @@ private:
     StringModifiers stringM;
     Groups groups;
     PortSetup portSetup;
+    Sensor sensorInput;
 
     //Sending and recieving data
     QSerialPort* comport;
     QString Data_From_SerialPort;
     bool Is_Data_Recieved = false;
+    bool actuatorUpdateLock = false;
+    bool groupUpdateLock = false;
+    QStringList groupsTriggered;
+    QStringList actuatorsTriggered;
+    QString actuatorUpdate;
 
     //Items in ui
     QTabWidget* tabs;
