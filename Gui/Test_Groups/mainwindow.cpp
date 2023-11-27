@@ -163,7 +163,8 @@ void MainWindow::readData()
             Data_From_SerialPort.remove("\r").remove("\n");
             Is_Data_Recieved = false;
 
-            Data_From_SerialPort = function.addNodes(Data_From_SerialPort, node, stringM, nodeList);
+            Data_From_SerialPort = function.addNodes(Data_From_SerialPort, node, nodeList);
+            Data_From_SerialPort = function.addGroups(Data_From_SerialPort, groups, groupList);
 
 
             if(Data_From_SerialPort.contains("TriggerSensor"))
@@ -330,19 +331,22 @@ void MainWindow::updateNodeLists()
 
     function.addTitles(true, nodeList, sensorList, actuatorList);
     //fills sensorList
-    QStringList nodeSensors = node.getAllSensorNames(nodeList->currentItem()->text());
-    for (const QString& element : nodeSensors)
+    if(!nodeList->selectedItems().isEmpty())
     {
-        sensorList->addItem(element);
-    }
+        QStringList nodeSensors = node.getAllSensorNames(nodeList->currentItem()->text());
+        for (const QString& element : nodeSensors)
+        {
+            sensorList->addItem(element);
+        }
 
-    //fills actuatorList
-    QStringList nodeActuators = node.getAllActuatorNames(nodeList->currentItem()->text());
-    for (const QString& element : nodeActuators)
-    {
-        QString actuatorName = element.split('\t').value(0);
-        QString actuatorStatus = node.getActuatorStatus(nodeList->currentItem()->text(), actuatorName);
-        actuatorList->addItem(element + "\t" + actuatorStatus);
+        //fills actuatorList
+        QStringList nodeActuators = node.getAllActuatorNames(nodeList->currentItem()->text());
+        for (const QString& element : nodeActuators)
+        {
+            QString actuatorName = element.split('\t').value(0);
+            QString actuatorStatus = node.getActuatorStatus(nodeList->currentItem()->text(), actuatorName);
+            actuatorList->addItem(element + "\t" + actuatorStatus);
+        }
     }
 }
 

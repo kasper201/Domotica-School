@@ -11,14 +11,14 @@ MovedFunctions::~MovedFunctions()
 }
 
 //Adds new nodes
-QString MovedFunctions::addNodes(QString input, Node& node, StringModifiers& stringM, QListWidget* nodeList)
+QString MovedFunctions::addNodes(QString input, Node& node, QListWidget* nodeList)
 {
-    while(input.contains("AddNode")) //Start the process of adding a new node
+    if(input.contains("AddNode")) //Start the process of adding a new node
     {
         //Removes parts of the string that are irrelevant
         input = stringM.removedTillWhitespace(input);
 
-        //Adds a nodename
+        //Adds a node
         QString nodeName = stringM.removedFromWhitespace(input);
         node.addNodeInstance(nodeName);
         nodeList->addItem(nodeName);
@@ -51,6 +51,49 @@ QString MovedFunctions::addNodes(QString input, Node& node, StringModifiers& str
         input = "";
     }
 
+    return input;
+}
+
+//Adds new group
+QString MovedFunctions::addGroups(QString input, Groups& groups, QListWidget* groupList)
+{
+    if(input.contains("AddGroup"))
+    {
+        input = stringM.removedTillWhitespace(input);
+
+        //Adds a group
+        QString groupName = stringM.removedFromWhitespace(input);
+        groups.addGroupInstance(groupName);
+        groupList->addItem(groupName);
+        input = stringM.removedTillWhitespace(input);
+
+        while(input.contains("AddSensor"))
+        {
+            input = stringM.removedTillWhitespace(input);
+            QString nodeName = stringM.removedFromWhitespace(input);
+            input = stringM.removedTillWhitespace(input);
+            QString sensorType = stringM.removedFromWhitespace(input);
+            input = stringM.removedTillWhitespace(input);
+            QString sensorName = stringM.removedFromWhitespace(input);
+            input = stringM.removedTillWhitespace(input);
+            groups.addSensor(groupName, nodeName, sensorType, sensorName);
+        }
+
+        while(input.contains("AddActuator"))
+        {
+            input = stringM.removedTillWhitespace(input);
+            QString nodeName = stringM.removedFromWhitespace(input);
+            input = stringM.removedTillWhitespace(input);
+            QString actuatorType = stringM.removedFromWhitespace(input);
+            qDebug() << actuatorType;
+            input = stringM.removedTillWhitespace(input);
+            QString actuatorName = stringM.removedFromWhitespace(input);
+            input = stringM.removedTillWhitespace(input);
+            groups.addActuator(groupName, nodeName, actuatorType, actuatorName);
+        }
+
+        input = "";
+    }
     return input;
 }
 
