@@ -17,7 +17,7 @@ public:
     QString addNodes(QString input, Node& node, QListWidget* nodeList);
     QString addGroups(QString input, Groups& groups, QListWidget* groupList);
     void updateCurrentGroupOverview(QListWidget* sensorListGroup, QListWidget* actuatorListGroup, QListWidget* groupList, Groups& groups);
-    void addTitles(bool nodeNotNeeded, QListWidget* nodeList, QListWidget* sensorList, QListWidget* actuatorList);
+    void addTitles(bool nodeNotNeeded, QListWidget* nodeList, QListWidget* sensorList, QListWidget* actuatorList, Node& node);
     void updateGroupLists(QListWidget* groupList, QListWidget* groupLinkList, QPushButton* sensorAddButton, QPushButton* actuatorAddButton, Groups& groups, QListWidget* nodeList);
 
 private:

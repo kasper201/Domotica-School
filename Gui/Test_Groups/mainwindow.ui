@@ -27,7 +27,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -158,8 +158,8 @@
        <attribute name="toolTip">
         <string>Groups Overview</string>
        </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_4">
-        <item alignment="Qt::AlignHCenter">
+       <layout class="QVBoxLayout" name="verticalLayout_13">
+        <item>
          <widget class="QFrame" name="frame_3">
           <property name="frameShape">
            <enum>QFrame::StyledPanel</enum>
@@ -434,7 +434,7 @@
               </size>
              </property>
              <property name="currentIndex">
-              <number>1</number>
+              <number>0</number>
              </property>
              <widget class="QWidget" name="tab_4">
               <attribute name="title">
@@ -463,7 +463,7 @@
                <item>
                 <widget class="QPushButton" name="pushButton_Add_Sensor_Group">
                  <property name="text">
-                  <string>Add Sensor</string>
+                  <string>Add Sensor To Group</string>
                  </property>
                 </widget>
                </item>
@@ -496,7 +496,7 @@
                <item>
                 <widget class="QPushButton" name="pushButton_Add_Actuator_Group">
                  <property name="text">
-                  <string>Add Actuator</string>
+                  <string>Add Actuator To Group</string>
                  </property>
                 </widget>
                </item>
@@ -549,6 +549,39 @@
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="tab_8">
+       <attribute name="title">
+        <string>Control</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_14">
+        <item>
+         <widget class="QPushButton" name="appButton">
+          <property name="text">
+           <string>Application Button</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+    <item>
+     <widget class="QFrame" name="frame_9">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <item alignment="Qt::AlignHCenter">
+        <widget class="QLabel" name="userFeedbackLabel">
+         <property name="text">
+          <string>Feedback to the user</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </item>
    </layout>

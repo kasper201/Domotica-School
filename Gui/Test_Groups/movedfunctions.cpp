@@ -137,14 +137,22 @@ void MovedFunctions::updateCurrentGroupOverview(QListWidget* sensorListGroup, QL
 
 
 //adds titles to all listWidgets on node page
-void MovedFunctions::addTitles(bool nodeNotNeeded, QListWidget* nodeList, QListWidget* sensorList, QListWidget* actuatorList)
+void MovedFunctions::addTitles(bool nodeNotNeeded, QListWidget* nodeList, QListWidget* sensorList, QListWidget* actuatorList, Node& node)
 {
     QListWidgetItem *headerItem = new QListWidgetItem("Nodes");
     headerItem->setFont(QFont("Arial", 12, QFont::Bold));
     if(nodeNotNeeded == false)
     {
+        nodeList->clear();
         nodeList->addItem(headerItem);
+        QStringList allNodeNames = node.getAllNodeNames();
+        foreach (const QString &nodeName, allNodeNames)   //Adds all groups to groupLinkList
+        {
+            nodeList->addItem(nodeName);
+        }
     }
+    sensorList->clear();
+    actuatorList->clear();
     headerItem = new QListWidgetItem("Sensor\tType");
     headerItem->setFont(QFont("Arial", 12, QFont::Bold));
     sensorList->addItem(headerItem);

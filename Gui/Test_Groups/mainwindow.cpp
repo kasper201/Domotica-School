@@ -23,6 +23,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tab_2->setAutoFillBackground(true);
     ui->tab_3->setPalette(tabPalette);
     ui->tab_3->setAutoFillBackground(true);
+    ui->tab_8->setPalette(tabPalette);
+    ui->tab_8->setAutoFillBackground(true);
 
     //Comport tab
     comportList = ui->listWidget_Comport;           //list of available comports
@@ -48,10 +50,14 @@ MainWindow::MainWindow(QWidget *parent)
     deleteSensor = ui->pushButton_Delete_Sensor;    //Deletes selected sensor from selected group
     deleteActuator = ui->pushButton_Delete_Actuator;//Deletes selected actuator from selected group
 
+    //Adds application node
+    function.addNodes("AddNode Application AddSensor Button App_Button", node, nodeList);
+
     setupComportList();
-    function.addTitles(false, nodeList, sensorList, actuatorList);
+    function.addTitles(false, nodeList, sensorList, actuatorList, node);
     tabs->tabBar()->setTabEnabled(1, false);
     tabs->tabBar()->setTabEnabled(2, false);
+    tabs->tabBar()->setTabEnabled(3, false);
 }
 
 MainWindow::~MainWindow()
@@ -104,6 +110,7 @@ void MainWindow::on_pushButton_Connect_clicked()
 
         tabs->tabBar()->setTabEnabled(1, true);
         tabs->tabBar()->setTabEnabled(2, true);
+        tabs->tabBar()->setTabEnabled(3, true);
         tabs->setCurrentIndex(1);
         ui->tabWidget_3->setCurrentIndex(0);
 
@@ -119,11 +126,12 @@ void MainWindow::on_pushButton_Connect_clicked()
         closeConnection();
         comportList->clear();
         nodeList->clear();
-        function.addTitles(false, nodeList, sensorList, actuatorList);
+        function.addTitles(false, nodeList, sensorList, actuatorList, node);
         setupComportList();
 
         tabs->tabBar()->setTabEnabled(1, false);
         tabs->tabBar()->setTabEnabled(2, false);
+        tabs->tabBar()->setTabEnabled(3, false);
         tabs->setCurrentIndex(0);
 
         comLabel->setText("Not connected");
@@ -186,6 +194,12 @@ void MainWindow::readData()
         if(actuatorsTriggered.isEmpty())
         {
             groupUpdateLock = false;
+        }
+
+
+        foreach (const QString &groupName, groupsTriggered)   //Adds all groups to groupLinkList
+        {
+            qDebug() << groupName;
         }
 
         //Goes to the next group after the first one is updated
@@ -329,7 +343,7 @@ void MainWindow::updateNodeLists()
     sensorList->clear();
     actuatorList->clear();
 
-    function.addTitles(true, nodeList, sensorList, actuatorList);
+    function.addTitles(true, nodeList, sensorList, actuatorList, node);
     //fills sensorList
     if(!nodeList->selectedItems().isEmpty())
     {
@@ -360,5 +374,14 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
     } else if(index == 2)
     {
         ui->tabWidget_2->setCurrentIndex(0);
+        function.addTitles(false, nodeList, sensorList, actuatorList, node);
     }
 }
+
+//Triggers when the application button is clicked
+void MainWindow::on_appButton_clicked()
+{
+    groupsTriggered = sensorInput.sensorTrigger(groups, "TriggerSensor Application App_Button");
+    readData();
+}
+
