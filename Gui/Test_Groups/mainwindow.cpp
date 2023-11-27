@@ -10,7 +10,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     tabs = ui->tabWidget;                           //tab widget so everything can be selected
 
-    /*
     QPalette palette = this->palette();
     palette.setColor(QPalette::Window, Qt::darkCyan);
     this->setPalette(palette);
@@ -24,7 +23,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tab_2->setAutoFillBackground(true);
     ui->tab_3->setPalette(tabPalette);
     ui->tab_3->setAutoFillBackground(true);
-    */
 
     //Comport tab
     comportList = ui->listWidget_Comport;           //list of available comports
@@ -107,7 +105,7 @@ void MainWindow::on_pushButton_Connect_clicked()
         tabs->tabBar()->setTabEnabled(1, true);
         tabs->tabBar()->setTabEnabled(2, true);
         tabs->setCurrentIndex(1);
-        ui->tabWidget_2->setCurrentIndex(0);
+        ui->tabWidget_3->setCurrentIndex(0);
 
         //Writes connected to dongle
         QString wakeUp = "WakeupArduino";
@@ -202,6 +200,7 @@ void MainWindow::readData()
         if(!actuatorsTriggered.isEmpty() && actuatorUpdateLock == false)
         {
             actuatorUpdate = actuatorsTriggered.first();
+            qDebug() << actuatorUpdate;
             portSetup.WriteToComport(actuatorUpdate);
             actuatorUpdateLock = true;
         }
@@ -352,10 +351,10 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
 {
     if(index == 1)
     {
-        ui->tabWidget_2->setCurrentIndex(0);
-    } else if(index == 2)
-    {
         ui->tabWidget_3->setCurrentIndex(0);
         function.updateCurrentGroupOverview(sensorListGroup, actuatorListGroup, groupList, groups);
+    } else if(index == 2)
+    {
+        ui->tabWidget_2->setCurrentIndex(0);
     }
 }
