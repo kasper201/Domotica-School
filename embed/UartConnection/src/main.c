@@ -12,6 +12,8 @@
 #include <zephyr/sys/printk.h>
 #include <inttypes.h>
 
+#include "uart.h"
+
 #define SLEEP_TIME_MS	1
 
 /*
@@ -82,6 +84,8 @@ int main(void)
 			printk("Set up LED at %s pin %d\n", led.port->name, led.pin);
 		}
 	}
+
+	int uartSetup();
 
 	printk("Press the button\n");
 	if (led.port) {
