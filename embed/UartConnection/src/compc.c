@@ -17,11 +17,18 @@ void readPc(void)
     if (strstr(Message, "connected"))
     {
         printk("Connection is established\n");
-        printk("AddNode STM32 AddSensor Button STM_Button AddActuator LED STM_LED false")
+        k_msleep(5);
+        printk("AddNode STM32 AddSensor Button STM_Button AddActuator LED STM_LED false\n");
     }
 
     if (strstr(Message, "AddGroup"))
     {
         printk("Group will be added\n");
     }
+    
+    for(int i = 0; i < MESSAGE_SIZE; i++)
+    {
+        Message[i] = ' ';
+    }
+    k_msgq_cleanup(&uart_msgq);
 }
