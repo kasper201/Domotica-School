@@ -12,9 +12,8 @@
 #include <zephyr/sys/printk.h>
 #include <inttypes.h>
 
-#include <string.h>
-
 #include "uart.h"
+#include "compc.h"
 
 #define SLEEP_TIME_MS	100
 
@@ -94,25 +93,16 @@ int main(void)
 		while (1) {
 			/* If we have an LED, match its state to the button's. */
 			int val = gpio_pin_get_dt(&button);
-			
-			char Message[128];
-			k_msgq_get(&uart_msgq, &Message, K_NO_WAIT);
-			k_msgq_cleanup(&uart_msgq);
 
 			if(val >= 1) {
 				printk("Button pushed\n");
-				strcpy(Message, "connected");
-				k_msleep(500);
 			}
 
 			if (val >= 0) {
 				gpio_pin_set_dt(&led, val);
 			}
 
-			if (strstr(Message, "c"))
-			{
-				printk("%s\n", Message);
-			}
+			readPc(); //Reads uart output from the pc
 
 			k_msleep(SLEEP_TIME_MS);
 		}

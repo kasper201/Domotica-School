@@ -89,15 +89,3 @@ int uartSetup()
 	uart_irq_rx_enable(uart_dev);
 	return 0;
 }
-
-//Send data over uart
-void print_uart(char *buf)
-{
-	int msg_len = strlen(buf);
-
-	for (int i = 0; i < msg_len; i++)
-	{
-		uart_poll_out(uart_dev, buf[i]);
-	}	
-	memset(rx_buf, 0, sizeof(rx_buf));
-}
