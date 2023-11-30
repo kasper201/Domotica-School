@@ -12,6 +12,8 @@
 #include <zephyr/sys/printk.h>
 #include <inttypes.h>
 
+#include <string.h>
+
 #include "uart.h"
 
 #define SLEEP_TIME_MS	1
@@ -85,7 +87,7 @@ int main(void)
 		}
 	}
 
-	int uartSetup();
+	uartSetup();
 
 	printk("Press the button\n");
 	if (led.port) {
@@ -96,6 +98,14 @@ int main(void)
 			if (val >= 0) {
 				gpio_pin_set_dt(&led, val);
 			}
+			char Message[128];
+			k_msgq_get(&uart_msgq, &Message, K_NO_WAIT);
+			char *found = strstr(Message, "\0");
+			if (found != NULL)
+			{
+				print_uart(found);
+			}
+
 			k_msleep(SLEEP_TIME_MS);
 		}
 	}
