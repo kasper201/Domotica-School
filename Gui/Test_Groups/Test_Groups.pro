@@ -13,6 +13,7 @@ SOURCES += \
     groups.cpp \
     main.cpp \
     mainwindow.cpp \
+    movedfunctions.cpp \
     node.cpp \
     portsetup.cpp \
     sensor.cpp \
@@ -21,6 +22,7 @@ SOURCES += \
 HEADERS += \
     groups.h \
     mainwindow.h \
+    movedfunctions.h \
     node.h \
     portsetup.h \
     sensor.h \
