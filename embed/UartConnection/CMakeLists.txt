@@ -2,6 +2,8 @@
 
 cmake_minimum_required(VERSION 3.20.0)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
-project(button)
+set(DTS_OVERLAY_FILE ${CMAKE_SOURCE_DIR}/board/nucleo_f091rc.overlay)
+project(UartConnection)
 
-target_sources(app PRIVATE src/main.c)
+FILE(GLOB app_sources src/*.c)
+target_sources(app PRIVATE ${app_sources})
