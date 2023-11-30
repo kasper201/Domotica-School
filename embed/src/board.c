@@ -2,15 +2,13 @@
 #include <zephyr/drivers/gpio.h>
 
 #include "board.h"
-/* Locate led0 as alias or label by that name */
-#if DT_NODE_EXISTS(DT_ALIAS(led0))
-#define LED0 DT_ALIAS(led0)
-#elif DT_NODE_EXISTS(DT_NODELABEL(led0))
-#define LED0 DT_NODELABEL(led0)
-#else
-#define LED0 DT_INVALID_NODE
-#endif
 
+
+#if DT_NODE_EXISTS(DT_ALIAS(led0))
+static const struct device *const led0 = GPIO_DT_SPEC_GET(DT_ALIAS(led0));
+
+
+// gathered define and inits from zephyr sample/bluetooth/mesh They might have been altered and are not like the original anymore.
 /* Locate button0 as alias or label by sw0 or button0 */
 #if DT_NODE_EXISTS(DT_ALIAS(sw0))
 #define BUTTON0 DT_ALIAS(sw0)
@@ -47,6 +45,7 @@ static void button_cb(const struct device *port, struct gpio_callback *cb,
 }
 #endif /* BUTTON0 */
 
+/* not my code!!!!! Originally from zephyr sample
 static int button_init(struct k_work *button_pressed)
 {
 #if DT_NODE_EXISTS(BUTTON0)
@@ -75,11 +74,17 @@ static int button_init(struct k_work *button_pressed)
 #endif
 
 	return 0;
+}*/
+
+void ledInit() // most can be removed after testing
+{
+    gpio_pin_configure_dt(&led0, GPIO_OUTPUT);
+    gpio_pin_set_dt(led0, 1);
+    k_msleep(500);
+    gpio_pin_set_dt(led0, 0);
 }
 
-void board_led_set(bool val)
+void ledSet(bool value)
 {
-#if DT_NODE_EXISTS(LED0)
-	gpio_pin_set(led_dev, LED0_PIN, val);
-#endif
+    gpio_pin_set_dt(led0, value);
 }
