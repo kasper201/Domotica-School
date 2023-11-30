@@ -10,12 +10,15 @@
 #include <QLabel>
 #include <QListWidget>
 #include <QThread>
+#include <QApplication>
+#include <QPalette>
 
 #include "node.h"
 #include "stringmodifiers.h"
 #include "groups.h"
 #include "portsetup.h"
 #include "sensor.h"
+#include "movedfunctions.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -40,13 +43,11 @@ private slots:
 
     void on_pushButton_Refresh_clicked();
 
-    void addNodes();
     void closeConnection();
 
     void on_listWidget_Nodes_itemClicked();
     void on_pushButton_Add_Sensor_Group_clicked();
     void on_pushButton_Add_Actuator_Group_clicked();
-    void addTitles(bool nodeNotNeeded);
 
     void on_pushButton_Add_Group_clicked();
     void on_pushButton_Delete_Group_clicked();
@@ -54,10 +55,9 @@ private slots:
     void on_pushButton_Delete_Sensor_clicked();
     void on_pushButton_Delete_Actuator_clicked();
 
-    void updateGroupLists();
-    void updateCurrentGroupOverview();
-
     void on_tabWidget_tabBarClicked(int index);
+
+    void on_appButton_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -68,6 +68,7 @@ private:
     Groups groups;
     PortSetup portSetup;
     Sensor sensorInput;
+    MovedFunctions function;
 
     //Sending and recieving data
     QSerialPort* comport;

@@ -10,6 +10,22 @@ MainWindow::MainWindow(QWidget *parent)
 
     tabs = ui->tabWidget;                           //tab widget so everything can be selected
 
+    QPalette palette = this->palette();
+    palette.setColor(QPalette::Window, Qt::darkCyan);
+    this->setPalette(palette);
+    this->setAutoFillBackground(true);
+
+    QPalette tabPalette = ui->tab->palette();
+    tabPalette.setColor(QPalette::Window, Qt::lightGray);
+    ui->tab->setPalette(tabPalette);
+    ui->tab->setAutoFillBackground(true);
+    ui->tab_2->setPalette(tabPalette);
+    ui->tab_2->setAutoFillBackground(true);
+    ui->tab_3->setPalette(tabPalette);
+    ui->tab_3->setAutoFillBackground(true);
+    ui->tab_8->setPalette(tabPalette);
+    ui->tab_8->setAutoFillBackground(true);
+
     //Comport tab
     comportList = ui->listWidget_Comport;           //list of available comports
     connectComport = ui->pushButton_Connect;        //Connect to the selected comport
@@ -34,10 +50,14 @@ MainWindow::MainWindow(QWidget *parent)
     deleteSensor = ui->pushButton_Delete_Sensor;    //Deletes selected sensor from selected group
     deleteActuator = ui->pushButton_Delete_Actuator;//Deletes selected actuator from selected group
 
+    //Adds application node
+    function.addNodes("AddNode Application AddSensor Button App_Button", node, nodeList);
+
     setupComportList();
-    addTitles(false);
+    function.addTitles(false, nodeList, sensorList, actuatorList, node);
     tabs->tabBar()->setTabEnabled(1, false);
     tabs->tabBar()->setTabEnabled(2, false);
+    tabs->tabBar()->setTabEnabled(3, false);
 }
 
 MainWindow::~MainWindow()
@@ -60,7 +80,7 @@ void MainWindow::setupComportList()
 
     //hide for cuurently not needed elements
     groupLinkList->hide();
-    updateGroupLists();
+    function.updateGroupLists(groupList, groupLinkList, sensorAddButton, actuatorAddButton, groups, nodeList);
 }
 
 //Refreshes the listWidget with comports
@@ -90,8 +110,9 @@ void MainWindow::on_pushButton_Connect_clicked()
 
         tabs->tabBar()->setTabEnabled(1, true);
         tabs->tabBar()->setTabEnabled(2, true);
+        tabs->tabBar()->setTabEnabled(3, true);
         tabs->setCurrentIndex(1);
-        ui->tabWidget_2->setCurrentIndex(0);
+        ui->tabWidget_3->setCurrentIndex(0);
 
         //Writes connected to dongle
         QString wakeUp = "WakeupArduino";
@@ -105,11 +126,12 @@ void MainWindow::on_pushButton_Connect_clicked()
         closeConnection();
         comportList->clear();
         nodeList->clear();
-        addTitles(false);
+        function.addTitles(false, nodeList, sensorList, actuatorList, node);
         setupComportList();
 
         tabs->tabBar()->setTabEnabled(1, false);
         tabs->tabBar()->setTabEnabled(2, false);
+        tabs->tabBar()->setTabEnabled(3, false);
         tabs->setCurrentIndex(0);
 
         comLabel->setText("Not connected");
@@ -149,7 +171,8 @@ void MainWindow::readData()
             Data_From_SerialPort.remove("\r").remove("\n");
             Is_Data_Recieved = false;
 
-            addNodes();
+            Data_From_SerialPort = function.addNodes(Data_From_SerialPort, node, nodeList);
+            Data_From_SerialPort = function.addGroups(Data_From_SerialPort, groups, groupList);
 
 
             if(Data_From_SerialPort.contains("TriggerSensor"))
@@ -173,6 +196,12 @@ void MainWindow::readData()
             groupUpdateLock = false;
         }
 
+
+        foreach (const QString &groupName, groupsTriggered)   //Adds all groups to groupLinkList
+        {
+            qDebug() << groupName;
+        }
+
         //Goes to the next group after the first one is updated
         if(!groupsTriggered.isEmpty() && groupUpdateLock == false)
         {
@@ -186,51 +215,10 @@ void MainWindow::readData()
         if(!actuatorsTriggered.isEmpty() && actuatorUpdateLock == false)
         {
             actuatorUpdate = actuatorsTriggered.first();
+            qDebug() << actuatorUpdate;
             portSetup.WriteToComport(actuatorUpdate);
             actuatorUpdateLock = true;
         }
-    }
-}
-
-//Adds new nodes
-void MainWindow::addNodes()
-{
-    while(Data_From_SerialPort.contains("AddNode")) //Start the process of adding a new node
-    {
-        //Removes parts of the string that are irrelevant
-        Data_From_SerialPort = stringM.removedTillWhitespace(Data_From_SerialPort);
-
-        //Adds a nodename
-        QString nodeName = stringM.removedFromWhitespace(Data_From_SerialPort);
-        node.addNodeInstance(nodeName);
-        nodeList->addItem(nodeName);
-        Data_From_SerialPort = stringM.removedTillWhitespace(Data_From_SerialPort);
-
-        //Adds all sensors
-        while(Data_From_SerialPort.contains("AddSensor"))
-        {
-            Data_From_SerialPort = stringM.removedTillWhitespace(Data_From_SerialPort);
-            QString sensorType = stringM.removedFromWhitespace(Data_From_SerialPort);
-            Data_From_SerialPort = stringM.removedTillWhitespace(Data_From_SerialPort);
-            QString sensorName = stringM.removedFromWhitespace(Data_From_SerialPort);
-            Data_From_SerialPort = stringM.removedTillWhitespace(Data_From_SerialPort);
-            node.addSensor(nodeName, sensorType, sensorName);
-        }
-
-        //Adds all actuators
-        while(Data_From_SerialPort.contains("AddActuator"))
-        {
-            Data_From_SerialPort = stringM.removedTillWhitespace(Data_From_SerialPort);
-            QString actuatorType = stringM.removedFromWhitespace(Data_From_SerialPort);
-            Data_From_SerialPort = stringM.removedTillWhitespace(Data_From_SerialPort);
-            QString actuatorName = stringM.removedFromWhitespace(Data_From_SerialPort);
-            Data_From_SerialPort = stringM.removedTillWhitespace(Data_From_SerialPort);
-            QString actuatorStatus = stringM.removedFromWhitespace(Data_From_SerialPort);
-            Data_From_SerialPort = stringM.removedTillWhitespace(Data_From_SerialPort);
-            node.addActuator(nodeName, actuatorType, actuatorName, actuatorStatus);
-        }
-
-        Data_From_SerialPort = "";
     }
 }
 
@@ -249,7 +237,7 @@ void MainWindow::closeConnection()
 void MainWindow::on_listWidget_Nodes_itemClicked()
 {
     updateNodeLists();
-    updateGroupLists();
+    function.updateGroupLists(groupList, groupLinkList, sensorAddButton, actuatorAddButton, groups, nodeList);
 }
 
 //Adds a sensor to a group
@@ -287,29 +275,11 @@ void MainWindow::on_pushButton_Add_Actuator_Group_clicked()
     }
 }
 
-
-//adds titles to all listWidgets on node page
-void MainWindow::addTitles(bool nodeNotNeeded)
-{
-    QListWidgetItem *headerItem = new QListWidgetItem("Nodes");
-    headerItem->setFont(QFont("Arial", 12, QFont::Bold));
-    if(nodeNotNeeded == false)
-    {
-        nodeList->addItem(headerItem);
-    }
-    headerItem = new QListWidgetItem("Sensor\tType");
-    headerItem->setFont(QFont("Arial", 12, QFont::Bold));
-    sensorList->addItem(headerItem);
-    headerItem = new QListWidgetItem("Actuator\tType\tStatus");
-    headerItem->setFont(QFont("Arial", 12, QFont::Bold));
-    actuatorList->addItem(headerItem);
-}
-
 //Adds group with name in lineEdit
 void MainWindow::on_pushButton_Add_Group_clicked()
 {
     groups.addGroupInstance(addGroupLine->text());
-    updateGroupLists();
+    function.updateGroupLists(groupList, groupLinkList, sensorAddButton, actuatorAddButton, groups, nodeList);
     addGroupLine->clear();
 }
 
@@ -320,6 +290,7 @@ void MainWindow::on_pushButton_Delete_Group_clicked()
     {
         groups.deleteGroupInstance(groupList->currentItem()->text());
         groupList->takeItem(groupList->currentRow());
+        function.updateCurrentGroupOverview(sensorListGroup, actuatorListGroup, groupList, groups);
         groupLabel->setText("Group has been deleted select another group");
     } else
     {
@@ -331,7 +302,7 @@ void MainWindow::on_pushButton_Delete_Group_clicked()
 void MainWindow::on_listWidget_Groups_itemClicked(QListWidgetItem *item)
 {
     groupLabel->setText("Group: " + item->text());
-    updateCurrentGroupOverview();
+    function.updateCurrentGroupOverview(sensorListGroup, actuatorListGroup, groupList, groups);
 }
 
 //Deletes a sensor from a group
@@ -372,87 +343,23 @@ void MainWindow::updateNodeLists()
     sensorList->clear();
     actuatorList->clear();
 
-    addTitles(true);
+    function.addTitles(true, nodeList, sensorList, actuatorList, node);
     //fills sensorList
-    QStringList nodeSensors = node.getAllSensorNames(nodeList->currentItem()->text());
-    for (const QString& element : nodeSensors)
+    if(!nodeList->selectedItems().isEmpty())
     {
-        sensorList->addItem(element);
-    }
-
-    //fills actuatorList
-    QStringList nodeActuators = node.getAllActuatorNames(nodeList->currentItem()->text());
-    for (const QString& element : nodeActuators)
-    {
-        QString actuatorName = element.split('\t').value(0);
-        QString actuatorStatus = node.getActuatorStatus(nodeList->currentItem()->text(), actuatorName);
-        actuatorList->addItem(element + "\t" + actuatorStatus);
-    }
-}
-
-//Updates all lists that show groups when needed
-void MainWindow::updateGroupLists()
-{
-    groupList->clear();
-    groupLinkList->clear();
-    QStringList allGroups = groups.getGroups();
-
-    QListWidgetItem* headerItem = new QListWidgetItem("Groups");
-    headerItem->setFont(QFont("Arial", 12, QFont::Bold));
-    groupList->addItem(headerItem);
-    headerItem = new QListWidgetItem("Groups");
-    headerItem->setFont(QFont("Arial", 12, QFont::Bold));
-    groupLinkList->addItem(headerItem);
-
-    foreach (const QString &groupName, allGroups)   //Adds all groups to groupList
-    {
-        groupList->addItem(groupName);
-    }
-
-    foreach (const QString &groupName, allGroups)   //Adds all groups to groupLinkList
-    {
-        groupLinkList->addItem(groupName);
-    }
-
-    if(groupLinkList->count() > 1 && !nodeList->selectedItems().isEmpty())
-    {
-        groupLinkList->show();
-        sensorAddButton->show();
-        actuatorAddButton->show();
-    } else
-    {
-        groupLinkList->hide();
-        sensorAddButton->hide();
-        actuatorAddButton->hide();
-    }
-}
-
-//Updates overview of sensors and actuators of current group
-void MainWindow::updateCurrentGroupOverview()
-{
-    sensorListGroup->clear();
-    actuatorListGroup->clear();
-
-    if(!groupList->selectedItems().isEmpty())
-    {
-        QString groupName = groupList->currentItem()->text();
-
-        QStringList sensorsInGroup = groups.getSensors(groupName);
-        if(!sensorsInGroup.isEmpty())
+        QStringList nodeSensors = node.getAllSensorNames(nodeList->currentItem()->text());
+        for (const QString& element : nodeSensors)
         {
-            foreach (const QString &sensorInformation, sensorsInGroup)   //Adds all groups to groupLinkList
-            {
-                sensorListGroup->addItem(sensorInformation);
-            }
+            sensorList->addItem(element);
         }
 
-        QStringList actuatorsInGroup = groups.getActuators(groupName);
-        if(!actuatorsInGroup.isEmpty())
+        //fills actuatorList
+        QStringList nodeActuators = node.getAllActuatorNames(nodeList->currentItem()->text());
+        for (const QString& element : nodeActuators)
         {
-            foreach (const QString &actuatorInformation, actuatorsInGroup)   //Adds all groups to groupLinkList
-            {
-                actuatorListGroup->addItem(actuatorInformation);
-            }
+            QString actuatorName = element.split('\t').value(0);
+            QString actuatorStatus = node.getActuatorStatus(nodeList->currentItem()->text(), actuatorName);
+            actuatorList->addItem(element + "\t" + actuatorStatus);
         }
     }
 }
@@ -462,10 +369,19 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
 {
     if(index == 1)
     {
-        ui->tabWidget_2->setCurrentIndex(0);
+        ui->tabWidget_3->setCurrentIndex(0);
+        function.updateCurrentGroupOverview(sensorListGroup, actuatorListGroup, groupList, groups);
     } else if(index == 2)
     {
-        ui->tabWidget_3->setCurrentIndex(0);
-        updateCurrentGroupOverview();
+        ui->tabWidget_2->setCurrentIndex(0);
+        function.addTitles(false, nodeList, sensorList, actuatorList, node);
     }
 }
+
+//Triggers when the application button is clicked
+void MainWindow::on_appButton_clicked()
+{
+    groupsTriggered = sensorInput.sensorTrigger(groups, "TriggerSensor Application App_Button");
+    readData();
+}
+

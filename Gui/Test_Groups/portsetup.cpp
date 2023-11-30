@@ -34,6 +34,6 @@ void PortSetup::setupComport(const QString &comPortName)
 //send string to comport
 void PortSetup::WriteToComport(QString sendString)
 {
-    //qDebug() << sendString;
+    qDebug() << "Data send: " << sendString;
     COMPORT->write(sendString.toLatin1() + char(10) );
 }
