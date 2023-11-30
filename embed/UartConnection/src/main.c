@@ -94,19 +94,24 @@ int main(void)
 		while (1) {
 			/* If we have an LED, match its state to the button's. */
 			int val = gpio_pin_get_dt(&button);
+			
+			char Message[128];
+			k_msgq_get(&uart_msgq, &Message, K_NO_WAIT);
+			k_msgq_cleanup(&uart_msgq);
 
 			if(val >= 1) {
 				printk("Button pushed\n");
+				strcpy(Message, "connected");
+				k_msleep(500);
 			}
 
 			if (val >= 0) {
 				gpio_pin_set_dt(&led, val);
 			}
-			char Message[128];
-			k_msgq_get(&uart_msgq, &Message, K_NO_WAIT);
-			if (strlen(Message) != 0)
+
+			if (strstr(Message, "c"))
 			{
-				printk("%s", Message);
+				printk("%s\n", Message);
 			}
 
 			k_msleep(SLEEP_TIME_MS);
