@@ -104,11 +104,9 @@ int main(void)
 			}
 			char Message[128];
 			k_msgq_get(&uart_msgq, &Message, K_NO_WAIT);
-			char *found = strstr(Message, "c");//strstr(Message, "\0");
-			if (found != NULL)
+			if (strlen(Message) != 0)
 			{
 				printk("%s", Message);
-				//print_uart(found);
 			}
 
 			k_msleep(SLEEP_TIME_MS);
