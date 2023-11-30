@@ -15,7 +15,7 @@ void PortSetup::setupComport(const QString &comPortName)
     Current_Comport = comPortName;
     COMPORT = new QSerialPort();
     COMPORT->setPortName(Current_Comport);
-    COMPORT->setBaudRate(QSerialPort::BaudRate::Baud9600);
+    COMPORT->setBaudRate(QSerialPort::BaudRate::Baud115200);
     COMPORT->setParity(QSerialPort::Parity::NoParity);
     COMPORT->setDataBits(QSerialPort::DataBits::Data8);
     COMPORT->setStopBits(QSerialPort::StopBits::OneStop);

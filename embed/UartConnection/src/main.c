@@ -16,7 +16,7 @@
 
 #include "uart.h"
 
-#define SLEEP_TIME_MS	1
+#define SLEEP_TIME_MS	100
 
 /*
  * Get button configuration from the devicetree sw0 alias. This is mandatory.
@@ -95,15 +95,20 @@ int main(void)
 			/* If we have an LED, match its state to the button's. */
 			int val = gpio_pin_get_dt(&button);
 
+			if(val >= 1) {
+				printk("Button pushed\n");
+			}
+
 			if (val >= 0) {
 				gpio_pin_set_dt(&led, val);
 			}
 			char Message[128];
 			k_msgq_get(&uart_msgq, &Message, K_NO_WAIT);
-			char *found = strstr(Message, "\0");
+			char *found = strstr(Message, "c");//strstr(Message, "\0");
 			if (found != NULL)
 			{
-				print_uart(found);
+				printk("%s", Message);
+				//print_uart(found);
 			}
 
 			k_msleep(SLEEP_TIME_MS);
