@@ -8,18 +8,13 @@
 
 #include "board.h"
 
-// determine if either sw0 or button0 exists in the device tree
-#if DT_NODE_EXISTS(sw0)
-#define BUTTON0	DT_ALIAS(sw0)
-#elif DT_NODE_EXISTS(button0) 
-#define BUTTON0 DT_ALIAS(button0)
-#endif 
+#define btn DT_N_S_buttons_S_button_0_ORD
 
-#if DT_NODE_EXISTS(BUTTON0)
-static const struct gpio_dt_spec button = GPIO_DT_SPEC_GET_OR(BUTTON0, gpios,
-							      {0});
+static const struct gpio_dt_spec button = GPIO_DT_SPEC_GET_OR(btn, gpios,
+                                                              {0});
 static struct gpio_callback button_cb_data;
-#endif /*button0*/
+
+
 
 static struct gpio_dt_spec led = GPIO_DT_SPEC_GET_OR(DT_ALIAS(led0), gpios,
 						     {0});
@@ -39,9 +34,45 @@ void ledInit() // most can be removed after testing
     gpio_pin_set_dt(&led, 0);
 }
 
-void buttonInit()
+
+void button_pressed(const struct device *dev, struct gpio_callback *cb,
+                    uint32_t pins)
 {
-    
+    printk("Button pressed at %" PRIu32 "\n", k_cycle_get_32());
+    // Add any additional logic you need when the button is pressed
+    // For example, toggle the LED state
+    bool current_led_state = gpio_pin_get_dt(&led);
+    gpio_pin_set_dt(&led, !current_led_state);
+}
+
+void buttonInit(void)
+{
+    int ret;
+
+    // Note: Use 'button' directly, not the address (&button)
+    if (!gpio_is_ready_dt(&button)) {
+        printk("Error: button device %s is not ready\n", button.port->name);
+        return;
+    }
+
+    ret = gpio_pin_configure_dt(&button, GPIO_INPUT);
+    if (ret != 0) {
+        printk("Error %d: failed to configure %s pin %d\n",
+               ret, button.port->name, button.pin);
+        return;
+    }
+
+    ret = gpio_pin_interrupt_configure_dt(&button,
+                                          GPIO_INT_EDGE_TO_ACTIVE);
+    if (ret != 0) {
+        printk("Error %d: failed to configure interrupt on %s pin %d\n",
+               ret, button.port->name, button.pin);
+        return;
+    }
+
+    gpio_init_callback(&button_cb_data, button_pressed, BIT(button.pin));
+    gpio_add_callback(button.port, &button_cb_data);
+    printk("Set up button at %s pin %d\n", button.port->name, button.pin);
 }
 
 void init()
