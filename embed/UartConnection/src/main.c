@@ -12,12 +12,15 @@
 #include <zephyr/sys/printk.h>
 #include <inttypes.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "nodeData.h"
 #include "uart.h"
 #include "compc.h"
 
 #define SLEEP_TIME_MS	100
+
+bool ledState = false;
 
 /*
  * Get button configuration from the devicetree sw0 alias. This is mandatory.
@@ -97,10 +100,16 @@ int main(void)
 			int val = gpio_pin_get_dt(&button);
 
 			if(val >= 1) {
-				printk("Button pushed\n");
+				printk("TriggerSensor STM32 STM_Button\n");
+				if(ledState == false)
+				{
+					ledState = true;
+				} else {
+					ledState = false;
+				}
 			}
 
-			if (val >= 0) {
+			if (ledState == true) {
 				gpio_pin_set_dt(&led, val);
 			}
 			strcpy(nodes[0], "AddNode STM32 AddSensor Button STM_Button AddActuator LED STM_LED false\n");

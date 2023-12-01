@@ -9,5 +9,4 @@ char nodes[MAX_NODES_ALLOWED][MAX_NODE_INFO_STRING_LENGTH];
 void nodesToPc(char (*nodes)[MAX_NODE_INFO_STRING_LENGTH])
 {
     printk("%s", nodes[0]);
-    //printk("AddNode STM32 AddSensor Button STM_Button AddActuator LED STM_LED false\n");
 }
