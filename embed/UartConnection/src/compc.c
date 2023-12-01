@@ -33,13 +33,16 @@ void readPc(char (*nodes)[MAX_NODE_INFO_STRING_LENGTH], bool *ledState)
 
     if (strstr(Message, "UpdateActuator"))
     {
+        printk("check1\n");
         char *token = strtok(Message, " ");
         token = strtok(NULL, " ");
         if(strstr(token, "STM32"))
         {
+            printk("check2\n");
             token = strtok(NULL, " ");
             if(strstr(token, "STM_LED"))
             {
+                printk("check3\n");
                 token = strtok(NULL, " ");
                 if(strstr(token, "true"))
                 {
