@@ -109,7 +109,7 @@ int main(void)
 				} else {
 					ledState = false;
 				}
-			} else if (val == 0 &&  buttonPressed = true)
+			} else if (val == 0 &&  buttonPressed == true)
 			{
 				buttonPressed = false;
 			}
@@ -118,7 +118,7 @@ int main(void)
 				gpio_pin_set_dt(&led, val);
 			}
 			strcpy(nodes[0], "AddNode STM32 AddSensor Button STM_Button AddActuator LED STM_LED false\n");
-			readPc(nodes, ledState); //Reads uart output from the pc
+			readPc(nodes, &ledState); //Reads uart output from the pc
 
 			k_msleep(SLEEP_TIME_MS);
 		}

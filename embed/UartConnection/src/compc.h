@@ -4,6 +4,6 @@
 #include "nodeData.h"
 #include <stdbool.h>
 
-void readPc(char (*nodes)[MAX_NODE_INFO_STRING_LENGTH], bool* ledState); //bool ledState is temporary
+void readPc(char (*nodes)[MAX_NODE_INFO_STRING_LENGTH], bool *ledState); //bool ledState is temporary
 
 #endif //COMPC_H_
