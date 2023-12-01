@@ -12,7 +12,6 @@
 #include <zephyr/sys/printk.h>
 #include <inttypes.h>
 #include <string.h>
-#include <stdbool.h>
 
 #include "nodeData.h"
 #include "uart.h"
@@ -20,8 +19,6 @@
 
 #define SLEEP_TIME_MS	10
 
-bool ledState = false;
-bool buttonPressed = false;
 
 /*
  * Get button configuration from the devicetree sw0 alias. This is mandatory.
@@ -93,6 +90,8 @@ int main(void)
 	}
 
 	uartSetup();
+	int buttonPressed = 0;
+	int ledState = 0;
 
 	printk("Press the button\n");
 	if (led.port) {
@@ -100,21 +99,23 @@ int main(void)
 			/* If we have an LED, match its state to the button's. */
 			int val = gpio_pin_get_dt(&button);
 
-			if(val >= 1 && buttonPressed == false) {
+			if(val >= 1 && buttonPressed == 0) {
 				printk("TriggerSensor STM32 STM_Button\n");
-				buttonPressed = true;
-				if(ledState == false)
+				buttonPressed = 1;
+				if(ledState == 0)
 				{
-					ledState = true;
+					ledState = 1;
+					printk("UpdateAppActuator STM32 STM_LED true\n");
 				} else {
-					ledState = false;
+					ledState = 0;
+					printk("UpdateAppActuator STM32 STM_LED false\n");
 				}
-			} else if (val == 0 &&  buttonPressed == true)
+			} else if (val == 0 &&  buttonPressed == 1)
 			{
-				buttonPressed = false;
+				buttonPressed = 0;
 			}
 
-			if (ledState == true) {
+			if (ledState == 1) {
 				gpio_pin_set_dt(&led, val);
 			}
 			strcpy(nodes[0], "AddNode STM32 AddSensor Button STM_Button AddActuator LED STM_LED false\n");

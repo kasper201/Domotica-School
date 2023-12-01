@@ -6,8 +6,6 @@
 #define MAX_ACTUATOR_FOR_NODE 10        //Max actuators in one node
 #define MAX_NODE_INFO_STRING_LENGTH 200 //Max length of the string with all node info
 
-#include <stdbool.h>
-
 struct Sensor {
     char sensorName[32];
     char sensorType[32];
@@ -16,7 +14,7 @@ struct Sensor {
 struct Actuator {
     char actuatorName[32];
     char actuatorType[32];
-    bool actuatorState;
+    char actuatorState[5];
 };
 
 struct Node {
