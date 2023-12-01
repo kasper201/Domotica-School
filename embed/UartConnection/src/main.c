@@ -102,14 +102,6 @@ int main(void)
 			if(val >= 1 && buttonPressed == 0) {
 				printk("TriggerSensor STM32 STM_Button\n");
 				buttonPressed = 1;
-				if(ledState == 0)
-				{
-					ledState = 1;
-					printk("UpdateAppActuator STM32 STM_LED true\n");
-				} else {
-					ledState = 0;
-					printk("UpdateAppActuator STM32 STM_LED false\n");
-				}
 			} else if (val == 0 &&  buttonPressed == 1)
 			{
 				buttonPressed = 0;
