@@ -86,7 +86,8 @@ void init()
     bluetoothInit();
 }
 
-void ledSet(bool value)
+int ledSet(bool value)
 {
     gpio_pin_set_dt(&led, value);
+    return 0;
 }

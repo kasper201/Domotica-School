@@ -2,6 +2,6 @@
 #define BOARD_H_
 
 void init();
-void ledSet(bool value);
+int ledSet(bool value);
 
 #endif // BOARD_H_

@@ -1,5 +1,3 @@
-#include "bluetooth.h"
-
 #include <zephyr/sys/printk.h>
 #include <zephyr/settings/settings.h>
 #include <zephyr/devicetree.h>
@@ -10,6 +8,7 @@
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/mesh.h>
 
+#include "bluetooth.h"
 #include "board.h"
 
 // define opcodes
@@ -19,9 +18,15 @@
 #define OP_ONOFF_STATUS    BT_MESH_MODEL_OP_2(0x82, 0x04)
 
 static const struct bt_mesh_health_srv_cb health_cb = {
-	.attn_on = ledSet(true),
-	.attn_off = ledSet(false),
+    .attn_on = [](struct bt_mesh_model *model) { ledSet(true); },
+    .attn_off = [](struct bt_mesh_model *model) { ledSet(false); },
 };
+
+static struct bt_mesh_health_srv health_srv = {
+	.cb = &health_cb,
+};
+
+BT_MESH_HEALTH_PUB_DEFINE(health_pub, 0);
 
 static const char *const onoff_str[] = { "off", "on" };
 
@@ -32,6 +37,29 @@ static struct {
 	uint32_t transition_time;
 	struct k_work_delayable work;
 } onoff;
+
+/* Generic OnOff Client */
+
+static int gen_onoff_status(struct bt_mesh_model *model,
+			    struct bt_mesh_msg_ctx *ctx,
+			    struct net_buf_simple *buf)
+{
+	uint8_t present = net_buf_simple_pull_u8(buf);
+
+	if (buf->len) {
+		uint8_t target = net_buf_simple_pull_u8(buf);
+		int32_t remaining_time =
+			model_time_decode(net_buf_simple_pull_u8(buf));
+
+		printk("OnOff status: %s -> %s: (%d ms)\n", onoff_str[present],
+		       onoff_str[target], remaining_time);
+		return 0;
+	}
+
+	printk("OnOff status: %s\n", onoff_str[present]);
+
+	return 0;
+}
 
 static const struct bt_mesh_model_op gen_onoff_cli_op[] = {
 	{OP_ONOFF_STATUS, BT_MESH_LEN_MIN(1), gen_onoff_status},
@@ -78,6 +106,32 @@ static const struct bt_mesh_prov prov = {
 	.complete = prov_complete,
 	.reset = prov_reset,
 };
+
+/** Send an OnOff Set message from the Generic OnOff Client to all nodes. */
+static int gen_onoff_send(bool val)
+{
+	struct bt_mesh_msg_ctx ctx = {
+		.app_idx = models[3].keys[0], /* Use the bound key */
+		.addr = BT_MESH_ADDR_ALL_NODES,
+		.send_ttl = BT_MESH_TTL_DEFAULT,
+	};
+	static uint8_t tid;
+
+	if (ctx.app_idx == BT_MESH_KEY_UNUSED) {
+		printk("The Generic OnOff Client must be bound to a key before "
+		       "sending.\n");
+		return -ENOENT;
+	}
+
+	BT_MESH_MODEL_BUF_DEFINE(buf, OP_ONOFF_SET_UNACK, 2);
+	bt_mesh_model_msg_init(&buf, OP_ONOFF_SET_UNACK);
+	net_buf_simple_add_u8(&buf, val);
+	net_buf_simple_add_u8(&buf, tid++);
+
+	printk("Sending OnOff Set: %s\n", onoff_str[val]);
+
+	return bt_mesh_model_send(&models[3], &ctx, &buf, NULL, NULL);
+}
 
 static void buttonPressed2Sec()
 {
