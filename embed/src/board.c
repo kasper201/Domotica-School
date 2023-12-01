@@ -1,8 +1,7 @@
 /*
- * Button code borrowed from samples\basic\button
+ * Button code is highly based on samples\basic\button
  */
 
-//#include <zephyr/bluetooth/mesh.h>
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/gpio.h>
@@ -11,6 +10,7 @@
 #include <inttypes.h>
 
 #include "board.h"
+#include "bluetooth.h"
 
 #define SW0_NODE	DT_ALIAS(sw0)
 #if !DT_NODE_HAS_STATUS(SW0_NODE, okay)
@@ -82,6 +82,7 @@ void init()
 {
     ledInit();
     buttonInit();
+    bluetoothInit();
 }
 
 void ledSet(bool value)
