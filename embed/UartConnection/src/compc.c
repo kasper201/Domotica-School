@@ -11,7 +11,7 @@
 #define MESSAGE_SIZE 128 //Defines the maximum size for the incoming string
 
 //Reads input from the application and decides what to do with it
-void readPc(void)
+void readPc(char (*nodes)[MAX_NODE_INFO_STRING_LENGTH])
 {
     char Message[MESSAGE_SIZE];
     k_msgq_get(&uart_msgq, &Message, K_NO_WAIT);
@@ -21,7 +21,7 @@ void readPc(void)
     {
         printk("Connection is established\n");
         k_msleep(5);
-        nodesToPc();
+        nodesToPc(nodes);
     }
 
     if (strstr(Message, "AddGroup"))

@@ -11,7 +11,9 @@
 #include <zephyr/sys/util.h>
 #include <zephyr/sys/printk.h>
 #include <inttypes.h>
+#include <string.h>
 
+#include "nodeData.h"
 #include "uart.h"
 #include "compc.h"
 
@@ -101,8 +103,8 @@ int main(void)
 			if (val >= 0) {
 				gpio_pin_set_dt(&led, val);
 			}
-
-			readPc(); //Reads uart output from the pc
+			strcpy(nodes[0], "AddNode STM32 AddSensor Button STM_Button AddActuator LED STM_LED false\n");
+			readPc(nodes); //Reads uart output from the pc
 
 			k_msleep(SLEEP_TIME_MS);
 		}
