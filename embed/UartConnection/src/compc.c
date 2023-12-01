@@ -16,9 +16,6 @@
 void readPc(char (*nodes)[MAX_NODE_INFO_STRING_LENGTH], bool *ledState)
 {
     char Message[MESSAGE_SIZE];
-    char first[MESSAGE_SIZE];
-    char second[MESSAGE_SIZE];
-    char temp[MESSAGE_SIZE];
     k_msgq_get(&uart_msgq, &Message, K_NO_WAIT);
     k_msgq_cleanup(&uart_msgq);
 
@@ -36,27 +33,19 @@ void readPc(char (*nodes)[MAX_NODE_INFO_STRING_LENGTH], bool *ledState)
 
     if (strstr(Message, "UpdateActuator"))
     {
-        extractStrings(Message, first, second);
-        printk("Nieuwschierig %s %s \n", first, second);
-        strcpy(temp, second);
-        extractStrings(temp, first, second);
-        if(strstr(first, "STM32"))
+        if(strstr(Message, "STM32"))
         {
-            strcpy(temp, second);
-            extractStrings(temp, first, second);
-            if(strstr(first, "STM_LED"))
+            if(strstr(Message, "STM_LED"))
             {
-                strcpy(temp, second);
-                extractStrings(temp, first, second);
-                if(strstr(first, "true"))
+                if(strstr(Message, "true"))
                 {
                     *ledState = true;
-                    printk("UpdateAppActuator STM32 STM_LED true");
+                    printk("UpdateAppActuator STM32 STM_LED true\n");
                 }
-                if(strstr(first, "false"))
+                if(strstr(Message, "false"))
                 {
                     *ledState = false;
-                    printk("UpdateAppActuator STM32 STM_LED false");
+                    printk("UpdateAppActuator STM32 STM_LED false\n");
                 }
             }
         }
