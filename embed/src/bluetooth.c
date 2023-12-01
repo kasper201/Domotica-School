@@ -17,10 +17,19 @@
 #define OP_ONOFF_SET_UNACK BT_MESH_MODEL_OP_2(0x82, 0x03)
 #define OP_ONOFF_STATUS    BT_MESH_MODEL_OP_2(0x82, 0x04)
 
+static void attn_on_cb(struct bt_mesh_model *model) {
+    ledSet(true);
+}
+
+static void attn_off_cb(struct bt_mesh_model *model) {
+    ledSet(false);
+}
+
 static const struct bt_mesh_health_srv_cb health_cb = {
-    .attn_on = [](struct bt_mesh_model *model) { ledSet(true); },
-    .attn_off = [](struct bt_mesh_model *model) { ledSet(false); },
+    .attn_on = attn_on_cb,
+    .attn_off = attn_off_cb,
 };
+
 
 static struct bt_mesh_health_srv health_srv = {
 	.cb = &health_cb,
