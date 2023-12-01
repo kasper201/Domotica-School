@@ -51,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent)
     deleteActuator = ui->pushButton_Delete_Actuator;//Deletes selected actuator from selected group
 
     //Adds application node
-    function.addNodes("AddNode Application AddSensor Button App_Button", node, nodeList);
+    function.addNodes("AddNode Application AddSensor Button App_Button AddActuator LED App_LED false", node, nodeList);
 
     setupComportList();
     function.addTitles(false, nodeList, sensorList, actuatorList, node);
@@ -215,9 +215,25 @@ void MainWindow::readData()
         if(!actuatorsTriggered.isEmpty() && actuatorUpdateLock == false)
         {
             actuatorUpdate = actuatorsTriggered.first();
-            qDebug() << actuatorUpdate;
-            portSetup.WriteToComport(actuatorUpdate);
-            actuatorUpdateLock = true;
+            if(!actuatorUpdate.contains("App_LED"))
+            {
+                qDebug() << actuatorUpdate;
+                portSetup.WriteToComport(actuatorUpdate);
+                actuatorUpdateLock = true;
+            } else if (actuatorUpdate.contains("App_LED"))
+            {
+                QPalette palette = ui->widget_led->palette();
+                if(node.getActuatorStatus("Application", "App_LED") == "false")
+                {
+                    node.updateActuatorStatus("Application", "App_LED", "true");
+                    ui->widget_led->setStyleSheet("background-color: yellow;");
+                } else {
+                    node.updateActuatorStatus("Application", "App_LED", "false");
+                    ui->widget_led->setStyleSheet("background-color: black;");
+                }
+                actuatorsTriggered.removeOne(actuatorUpdate);
+                qDebug() << node.getActuatorStatus("Application", "App_LED");
+            }
         }
     }
 }
@@ -375,6 +391,14 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
     {
         ui->tabWidget_2->setCurrentIndex(0);
         function.addTitles(false, nodeList, sensorList, actuatorList, node);
+    } else if(index == 3)
+    {
+        if(node.getActuatorStatus("Application", "App_LED") == "true")
+        {
+            ui->widget_led->setStyleSheet("background-color: yellow;");
+        } else {
+            ui->widget_led->setStyleSheet("background-color: black;");
+        }
     }
 }
 
