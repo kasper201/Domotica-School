@@ -18,6 +18,7 @@ void readPc(char (*nodes)[MAX_NODE_INFO_STRING_LENGTH], bool *ledState)
     char Message[MESSAGE_SIZE];
     char first[MESSAGE_SIZE];
     char second[MESSAGE_SIZE];
+    char temp[MESSAGE_SIZE];
     k_msgq_get(&uart_msgq, &Message, K_NO_WAIT);
     k_msgq_cleanup(&uart_msgq);
 
@@ -37,22 +38,22 @@ void readPc(char (*nodes)[MAX_NODE_INFO_STRING_LENGTH], bool *ledState)
     {
         extractStrings(Message, first, second);
         printk("Nieuwschierig %s %s \n", first, second);
-        char *token = strtok(Message, " ");
-        token = strtok(NULL, " ");
-        if(strstr(token, "STM32"))
+        strcpy(temp, second);
+        extractStrings(temp, first, second);
+        if(strstr(first, "STM32"))
         {
-            token = strtok(NULL, " ");
-            printk("check2 %s\n", token);
-            if(strstr(token, "STM_LED"))
+            strcpy(temp, second);
+            extractStrings(temp, first, second);
+            if(strstr(first, "STM_LED"))
             {
-                printk("check3\n");
-                token = strtok(NULL, " ");
-                if(strstr(token, "true"))
+                strcpy(temp, second);
+                extractStrings(temp, first, second);
+                if(strstr(first, "true"))
                 {
                     *ledState = true;
                     printk("UpdateAppActuator STM32 STM_LED true");
                 }
-                if(strstr(token, "false"))
+                if(strstr(first, "false"))
                 {
                     *ledState = false;
                     printk("UpdateAppActuator STM32 STM_LED false");
@@ -78,13 +79,16 @@ void extractStrings(const char *input, char *first, char *second) {
         strncpy(first, token, strlen(token));
         first[strlen(token)] = '\0';
 
-        // Get the next token (if any)
-        token = strtok(NULL, delimiter);
-
-        if (token != NULL) {
-            // Copy the second part to the 'second' string
-            strncpy(second, token, strlen(token));
-            second[strlen(token)] = '\0';
+        // Find the position of the first space character
+        char *spacePosition = strstr(input, " ");
+        
+        if (spacePosition != NULL) {
+            // Copy the remaining part to the 'second' string
+            strncpy(second, spacePosition + 1, strlen(spacePosition + 1));
+            second[strlen(spacePosition + 1)] = '\0';
+        } else {
+            // No remaining part after the first word
+            second[0] = '\0';
         }
     }
 }
