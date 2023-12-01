@@ -116,7 +116,9 @@ int main(void)
 			}
 
 			if (ledState == 1) {
-				gpio_pin_set_dt(&led, val);
+				gpio_pin_set_dt(&led, 1);
+			} else {
+				gpio_pin_set_dt(&led, 0);
 			}
 			strcpy(nodes[0], "AddNode STM32 AddSensor Button STM_Button AddActuator LED STM_LED false\n");
 			readPc(nodes, &ledState); //Reads uart output from the pc
