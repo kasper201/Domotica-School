@@ -83,9 +83,11 @@ void extractStrings(const char *input, char *first, char *second) {
 
     currentCounter++;
 
+    int secondCounter = 0;
     while(currentCounter < MESSAGE_SIZE)
     {
-        second[currentCounter] = input[currentCounter];
+        second[secondCounter] = input[currentCounter];
         currentCounter++;
+        secondCounter++;
     }
 }
