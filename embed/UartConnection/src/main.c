@@ -14,6 +14,7 @@
 #include <string.h>
 
 #include "nodeData.h"
+#include "groupData.h"
 #include "uart.h"
 #include "compc.h"
 
@@ -113,7 +114,8 @@ int main(void)
 				gpio_pin_set_dt(&led, 0);
 			}
 			strcpy(nodes[0], "AddNode STM32 AddSensor Button STM_Button AddActuator LED STM_LED false\n");
-			readPc(nodes, &ledState); //Reads uart output from the pc
+			strcpy(groups[0], "AddGroup Test_Group AddSensor Application Button App_Button AddActuator STM32 LED STM_LED\n");
+			readPc(nodes, groups, &ledState); //Reads uart output from the pc
 
 			k_msleep(SLEEP_TIME_MS);
 		}

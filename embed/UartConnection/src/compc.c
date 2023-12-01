@@ -1,6 +1,7 @@
 #include "compc.h"
 #include "uart.h"
 #include "nodeData.h"
+#include "groupData.h"
 
 #include <string.h>
 #include <zephyr/kernel.h>
@@ -13,7 +14,7 @@
 #define MESSAGE_SIZE 200 //Defines the maximum size for the incoming string
 
 //Reads input from the application and decides what to do with it
-void readPc(char (*nodes)[MAX_NODE_INFO_STRING_LENGTH], int *ledState)
+void readPc(char (*nodes)[MAX_INFO_STRING_LENGTH], char (*groups)[MAX_INFO_STRING_LENGTH], int *ledState)
 {
     char Message[MESSAGE_SIZE];
     k_msgq_get(&uart_msgq, &Message, K_NO_WAIT);
@@ -22,8 +23,10 @@ void readPc(char (*nodes)[MAX_NODE_INFO_STRING_LENGTH], int *ledState)
     if (strstr(Message, "connected"))
     {
         printk("Connection is established\n");
-        k_msleep(5);
+        k_msleep(3);
         nodesToPc(nodes);
+        k_msleep(3);
+        groupsToPc(groups);
     }
 
     if (strstr(Message, "AddGroup"))
