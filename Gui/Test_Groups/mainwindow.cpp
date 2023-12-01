@@ -222,7 +222,6 @@ void MainWindow::readData()
                 actuatorUpdateLock = true;
             } else if (actuatorUpdate.contains("App_LED"))
             {
-                QPalette palette = ui->widget_led->palette();
                 if(node.getActuatorStatus("Application", "App_LED") == "false")
                 {
                     node.updateActuatorStatus("Application", "App_LED", "true");

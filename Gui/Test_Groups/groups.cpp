@@ -122,6 +122,14 @@ QStringList Groups::getActuators(QString groupName)
 void Groups::deleteGroupInstance(QString groupName)
 {
     groupMap.remove(groupName);
+    auto it = sensorGroupLink.begin();
+    while (it != sensorGroupLink.end()) {
+        if (it.value() == groupName) {
+            it = sensorGroupLink.erase(it);
+        } else {
+            ++it;
+        }
+    }
     qDebug() << "Group: " << groupName << " has been deleted";
 }
 
