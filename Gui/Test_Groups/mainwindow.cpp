@@ -220,7 +220,8 @@ void MainWindow::readData()
                 qDebug() << actuatorUpdate;
                 portSetup.WriteToComport(actuatorUpdate);
                 actuatorUpdateLock = true;
-            } else if (actuatorUpdate.contains("App_LED"))
+            }
+            if (actuatorUpdate.contains("App_LED"))
             {
                 if(node.getActuatorStatus("Application", "App_LED") == "false")
                 {
