@@ -35,7 +35,7 @@ void readPc(char (*nodes)[MAX_NODE_INFO_STRING_LENGTH], bool *ledState)
 
     if (strstr(Message, "UpdateActuator"))
     {
-        extracStrings(Message, *first, *second);
+        extractStrings(Message, first, second);
         printk("Nieuwschierig %s %s \n", first, second);
         char *token = strtok(Message, " ");
         token = strtok(NULL, " ");
@@ -70,7 +70,7 @@ void readPc(char (*nodes)[MAX_NODE_INFO_STRING_LENGTH], bool *ledState)
 
 //Gets word before first white space
 void extractStrings(const char *input, char *first, char *second) {
-    char *delimiter = ' ';
+    char *delimiter = " ";
     char *token = strtok((char *)input, delimiter);
 
     if (token != NULL) {
