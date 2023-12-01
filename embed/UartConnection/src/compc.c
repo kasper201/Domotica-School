@@ -1,5 +1,6 @@
 #include "compc.h"
 #include "uart.h"
+#include "nodeData.h"
 
 #include <string.h>
 #include <zephyr/kernel.h>
@@ -8,6 +9,7 @@
 
 #define MESSAGE_SIZE 128 //Defines the maximum size for the incoming string
 
+//Reads input from the application and decides what to do with it
 void readPc(void)
 {
     char Message[MESSAGE_SIZE];
@@ -18,7 +20,7 @@ void readPc(void)
     {
         printk("Connection is established\n");
         k_msleep(5);
-        printk("AddNode STM32 AddSensor Button STM_Button AddActuator LED STM_LED false\n");
+        nodesToPc();
     }
 
     if (strstr(Message, "AddGroup"))
