@@ -1,5 +1,7 @@
 #include "nodeData.h"
 
+#include <zephyr/sys/printk.h>
+
 //Sends all nodes currently connected to the pc
 void nodesToPc(void)
 {

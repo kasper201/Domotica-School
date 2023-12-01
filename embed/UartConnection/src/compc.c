@@ -6,6 +6,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/uart.h>
+#include <zephyr/sys/printk.h>
 
 #define MESSAGE_SIZE 128 //Defines the maximum size for the incoming string
 
