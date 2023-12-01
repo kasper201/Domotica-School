@@ -71,24 +71,21 @@ void readPc(char (*nodes)[MAX_NODE_INFO_STRING_LENGTH], bool *ledState)
 
 //Gets word before first white space
 void extractStrings(const char *input, char *first, char *second) {
-    char *delimiter = " ";
-    char *token = strtok((char *)input, delimiter);
+    char delimiter = ' ';
 
-    if (token != NULL) {
-        // Copy the first part to the 'first' string
-        strncpy(first, token, strlen(token));
-        first[strlen(token)] = '\0';
+    int currentCounter = 0;
 
-        // Find the position of the first space character
-        char *spacePosition = strstr(input, " ");
-        
-        if (spacePosition != NULL) {
-            // Copy the remaining part to the 'second' string
-            strncpy(second, spacePosition + 1, strlen(spacePosition + 1));
-            second[strlen(spacePosition + 1)] = '\0';
-        } else {
-            // No remaining part after the first word
-            second[0] = '\0';
-        }
+    while(input[currentCounter] != delimiter)
+    {
+        first[currentCounter] = input[currentCounter];
+        currentCounter++;
+    }
+
+    currentCounter++;
+
+    while(currentCounter < MESSAGE_SIZE)
+    {
+        second[currentCounter] = input[currentCounter];
+        currentCounter++;
     }
 }
