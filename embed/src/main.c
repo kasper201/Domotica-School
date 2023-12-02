@@ -12,4 +12,9 @@ void main(void)
     ledSet(true);
     k_msleep(500);
     ledSet(false);
+    int i = 1;
+    while(i-1)
+    {
+
+    }
 }
