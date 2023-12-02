@@ -16,10 +16,29 @@
 #define OP_ONOFF_SET_UNACK BT_MESH_MODEL_OP_2(0x82, 0x03)
 #define OP_ONOFF_STATUS    BT_MESH_MODEL_OP_2(0x82, 0x04)
 
+static int output_number(bt_mesh_output_action_t action, uint32_t number)
+{
+	printk("OOB Number: %u\n", number);
+
+	board_output_number(action, number);
+
+	return 0;
+}
+
+static void prov_complete(uint16_t net_idx, uint16_t addr)
+{
+	board_prov_complete();
+}
+
+static void prov_reset(void)
+{
+	bt_mesh_prov_enable(BT_MESH_PROV_ADV | BT_MESH_PROV_GATT);
+}
+
 static uint8_t dev_uuid[16];
 
-static const struct bt_mesh_prov prov = { // define universal unique ID 
-	.uuid = dev_uuid,
+static const struct bt_mesh_prov prov = { 
+	.uuid = dev_uuid,// define universal unique ID 
 	.output_size = 4,
 	.output_actions = BT_MESH_DISPLAY_NUMBER,
 	.output_number = output_number,
@@ -49,7 +68,11 @@ static const struct bt_mesh_comp comp = { // define node composition
 int bluetoothInit()
 {
     int err = -1;
-    err = bt_mesh_init(&prov, &comp)
+    err = bt_mesh_init(&prov, &comp);
+    if(err == -1)
+    {
+        printk("Bluetooth mesh init failed");
+    }
 
     return 0;
 }
