@@ -8,8 +8,8 @@
  *  @brief Nordic mesh light switch sample
  */
 #include <zephyr/bluetooth/bluetooth.h>
-#include <mesh/models.h>
-#include <mesh/dk_prov.h>
+#include <mesh/models.h> // deze
+#include <mesh/dk_prov.h> // deze
 #include <dk_buttons_and_leds.h>
 #include "modelHandler.h"
 

@@ -13,7 +13,7 @@
  */
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/mesh/proxy.h>
-#include <mesh/models.h>
+#include <mesh/models.h> // deze
 #include <dk_buttons_and_leds.h>
 #include "bluetooth.h"
 
