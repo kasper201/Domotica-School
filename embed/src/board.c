@@ -46,7 +46,6 @@ void button_pressed(const struct device *dev, struct gpio_callback *cb,
 {
 	printk("Button pressed at %" PRIu32 "\n", k_cycle_get_32());
     // event to happen when button is pressed
-    buttonPressed2Sec();
 }
 
 void buttonInit(void)
