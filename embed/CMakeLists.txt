@@ -9,7 +9,8 @@ include($ENV{ZEPHYR_BASE}/cmake/app/boilerplate.cmake NO_POLICY_SCOPE)
 project(embed)
 
 # Add the path to the directory containing the missing header file
-include_directories(C:/blth)
+include_directories(C:/blth
+                    nordicInclude)
 
 # Add your source files
 target_sources(app PRIVATE
