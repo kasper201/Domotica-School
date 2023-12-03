@@ -8,6 +8,9 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 include($ENV{ZEPHYR_BASE}/cmake/app/boilerplate.cmake NO_POLICY_SCOPE)
 project(embed)
 
+# Add the path to the directory containing the missing header file
+include_directories(C:/blth)
+
 # Add your source files
 target_sources(app PRIVATE
     src/main.c
