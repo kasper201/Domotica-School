@@ -1,78 +1,64 @@
-#include "bluetooth.h"
+/*
+ * Copyright (c) 2019 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
 
-#include <zephyr/sys/printk.h>
-#include <zephyr/settings/settings.h>
-#include <zephyr/devicetree.h>
-#include <zephyr/device.h>
-#include <zephyr/drivers/gpio.h>
-#include <zephyr/drivers/hwinfo.h>
-#include <zephyr/sys/byteorder.h>
+/** @file
+ *  @brief Nordic mesh light switch sample
+ */
 #include <zephyr/bluetooth/bluetooth.h>
-#include <zephyr/bluetooth/mesh.h>
+#include <bluetooth/mesh/models.h>
+#include <bluetooth/mesh/dk_prov.h>
+#include <dk_buttons_and_leds.h>
+#include "modelHandler.h"
 
-// define opcodes
-#define OP_ONOFF_GET       BT_MESH_MODEL_OP_2(0x82, 0x01)
-#define OP_ONOFF_SET       BT_MESH_MODEL_OP_2(0x82, 0x02)
-#define OP_ONOFF_SET_UNACK BT_MESH_MODEL_OP_2(0x82, 0x03)
-#define OP_ONOFF_STATUS    BT_MESH_MODEL_OP_2(0x82, 0x04)
-
-static int output_number(bt_mesh_output_action_t action, uint32_t number)
+static void bt_ready(int err)
 {
-	printk("OOB Number: %u\n", number);
+	if (err) {
+		printk("Bluetooth init failed (err %d)\n", err);
+		return;
+	}
 
-	board_output_number(action, number);
+	printk("Bluetooth initialized\n");
 
-	return 0;
-}
+	dk_leds_init();
+	dk_buttons_init(NULL);
 
-static void prov_complete(uint16_t net_idx, uint16_t addr)
-{
-	board_prov_complete();
-}
+	err = bt_mesh_init(bt_mesh_dk_prov_init(), model_handler_init());
+	if (err) {
+		printk("Initializing mesh failed (err %d)\n", err);
+		return;
+	}
 
-static void prov_reset(void)
-{
+	if (IS_ENABLED(CONFIG_BT_MESH_LOW_POWER)) {
+		bt_mesh_lpn_set(true);
+	}
+
+	if (IS_ENABLED(CONFIG_SETTINGS)) {
+		settings_load();
+	}
+
+	/* This will be a no-op if settings_load() loaded provisioning info */
 	bt_mesh_prov_enable(BT_MESH_PROV_ADV | BT_MESH_PROV_GATT);
-}
 
-static uint8_t dev_uuid[16];
-
-static const struct bt_mesh_prov prov = { 
-	.uuid = dev_uuid,// define universal unique ID 
-	.output_size = 4,
-	.output_actions = BT_MESH_DISPLAY_NUMBER,
-	.output_number = output_number,
-	.complete = prov_complete,
-	.reset = prov_reset,
-};
-
-static struct bt_mesh_model models[] = { // define model(s)
-	BT_MESH_MODEL_CFG_SRV,
-	BT_MESH_MODEL_HEALTH_SRV(&health_srv, &health_pub),
-	BT_MESH_MODEL(BT_MESH_MODEL_ID_GEN_ONOFF_SRV, gen_onoff_srv_op, NULL,
-		      NULL),
-	BT_MESH_MODEL(BT_MESH_MODEL_ID_GEN_ONOFF_CLI, gen_onoff_cli_op, NULL,
-		      NULL),
-};
-
-static struct bt_mesh_elem elements[] = { // define elements
-	BT_MESH_ELEM(0, models, BT_MESH_MODEL_NONE), // location, array of models, arrary of vendor models
-};
-
-static const struct bt_mesh_comp comp = { // define node composition
-    .cid = 0x0000,
-	.elem = elements,
-	.elem_count = ARRAY_SIZE(elements),
+	printk("Mesh initialized\n");
 }
 
 int bluetoothInit()
 {
-    int err = -1;
-    err = bt_mesh_init(&prov, &comp);
-    if(err == -1)
-    {
-        printk("Bluetooth mesh init failed");
-    }
+	int err;
 
-    return 0;
+	printk("Initializing...\n");
+
+	err = bt_enable(bt_ready);
+	if(err)
+	{
+		return 1;
+	}
+	while(1)
+	{
+
+	}
+	return 0;
 }
