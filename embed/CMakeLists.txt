@@ -10,7 +10,8 @@ project(embed)
 
 # Add the path to the directory containing the missing header file
 include_directories(C:/blth
-                    nordicInclude)
+                    src/nordicInclude
+)
 
 # Add your source files
 target_sources(app PRIVATE
@@ -21,12 +22,11 @@ target_sources(app PRIVATE
     # Add more source files as needed
 )
 
-# Specify additional include directories if necessary
-target_include_directories(app PRIVATE
-    include
-    # Add more include directories as needed
-)
-
 zephyr_include_directories(
     ${ZEPHYR_BASE}/subsys/gpio
 )
+
+target_link_libraries(app PRIVATE
+    zephyr
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/nordiclib
+    )
