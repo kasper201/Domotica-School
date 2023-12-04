@@ -8,20 +8,22 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 include($ENV{ZEPHYR_BASE}/cmake/app/boilerplate.cmake NO_POLICY_SCOPE)
 project(embed)
 
+# Add the path to the directory containing the missing header file
+include_directories(
+)
+
 # Add your source files
 target_sources(app PRIVATE
     src/main.c
-    #src/bluetooth.c
+    src/bluetooth.c
     src/board.c
     # Add more source files as needed
-)
-
-# Specify additional include directories if necessary
-target_include_directories(app PRIVATE
-    include
-    # Add more include directories as needed
 )
 
 zephyr_include_directories(
     ${ZEPHYR_BASE}/subsys/gpio
 )
+
+target_link_libraries(app PRIVATE
+    zephyr
+    )

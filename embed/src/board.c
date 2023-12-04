@@ -1,8 +1,7 @@
 /*
- * Button code borrowed from samples\basic\button
+ * Button code is highly based on samples\basic\button
  */
 
-//#include <zephyr/bluetooth/mesh.h>
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/gpio.h>
@@ -11,6 +10,7 @@
 #include <inttypes.h>
 
 #include "board.h"
+#include "bluetooth.h"
 
 #define SW0_NODE	DT_ALIAS(sw0)
 #if !DT_NODE_HAS_STATUS(SW0_NODE, okay)
@@ -40,11 +40,18 @@ void ledInit() // most can be removed after testing
     gpio_pin_set_dt(&led, 0);
 }
 
+int ledSet(bool value)
+{
+    gpio_pin_set_dt(&led, value);
+    return 0;	
+}
 
 void button_pressed(const struct device *dev, struct gpio_callback *cb,
 		    uint32_t pins)
 {
 	printk("Button pressed at %" PRIu32 "\n", k_cycle_get_32());
+    // event to happen when button is pressed
+	ledSet(true);
 }
 
 void buttonInit(void)
@@ -81,9 +88,13 @@ void init()
 {
     ledInit();
     buttonInit();
+    bluetoothInit();
 }
 
-void ledSet(bool value)
+void boardOutputNumber(bt_mesh_output_action_t action, uint32_t number)
 {
-    gpio_pin_set_dt(&led, value);
+}
+
+void boardProvComplete(void)
+{
 }
