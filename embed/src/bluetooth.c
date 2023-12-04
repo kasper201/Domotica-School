@@ -19,6 +19,7 @@
 #include <zephyr/bluetooth/mesh.h>
 
 #include "board.h"
+#include 
 
 #define OP_ONOFF_GET       BT_MESH_MODEL_OP_2(0x82, 0x01)
 #define OP_ONOFF_SET       BT_MESH_MODEL_OP_2(0x82, 0x02)

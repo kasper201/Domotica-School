@@ -3,7 +3,7 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/sys/printk.h>
-#include "bluetooth.h"
+//#include "bluetooth.h"
 #include "board.h"
 
 void main(void)

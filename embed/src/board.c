@@ -40,12 +40,18 @@ void ledInit() // most can be removed after testing
     gpio_pin_set_dt(&led, 0);
 }
 
+int ledSet(bool value)
+{
+    gpio_pin_set_dt(&led, value);
+    return 0;	
+}
 
 void button_pressed(const struct device *dev, struct gpio_callback *cb,
 		    uint32_t pins)
 {
 	printk("Button pressed at %" PRIu32 "\n", k_cycle_get_32());
     // event to happen when button is pressed
+	ledSet(true);
 }
 
 void buttonInit(void)
@@ -82,11 +88,5 @@ void init()
 {
     ledInit();
     buttonInit();
-    bluetoothInit();
-}
-
-int ledSet(bool value)
-{
-    gpio_pin_set_dt(&led, value);
-    return 0;
+    //bluetoothInit();
 }
