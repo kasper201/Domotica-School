@@ -3,7 +3,7 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/sys/printk.h>
-//#include "bluetooth.h"
+#include "bluetooth.h"
 #include "board.h"
 
 void main(void)
@@ -13,7 +13,7 @@ void main(void)
     k_msleep(500);
     ledSet(false);
     int i = 1;
-    while(i-1)
+    while(1)
     {
 
     }

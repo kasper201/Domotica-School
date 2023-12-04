@@ -28,12 +28,12 @@
 
 static void attention_on(struct bt_mesh_model *mod)
 {
-	board_led_set(true);
+	ledSet(true);
 }
 
 static void attention_off(struct bt_mesh_model *mod)
 {
-	board_led_set(false);
+	ledSet(false);
 }
 
 static const struct bt_mesh_health_srv_cb health_cb = {
@@ -274,14 +274,14 @@ static int output_number(bt_mesh_output_action_t action, uint32_t number)
 {
 	printk("OOB Number: %u\n", number);
 
-	board_output_number(action, number);
+	boardOutputNumber(action, number);
 
 	return 0;
 }
 
 static void prov_complete(uint16_t net_idx, uint16_t addr)
 {
-	board_prov_complete();
+	boardProvComplete();
 }
 
 static void prov_reset(void)
@@ -415,16 +415,6 @@ int bluetoothInit(void)
 		dev_uuid[0] = 0xdd;
 		dev_uuid[1] = 0xdd;
 	}
-
-	k_work_init(&button_work, button_pressed);
-
-	err = board_init(&button_work);
-	if (err) {
-		printk("Board init failed (err: %d)\n", err);
-		return 0;
-	}
-
-	k_work_init_delayable(&onoff.work, onoff_timeout);
 
 	/* Initialize the Bluetooth Subsystem */
 	err = bt_enable(bt_ready);
