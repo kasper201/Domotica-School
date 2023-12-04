@@ -88,5 +88,5 @@ void init()
 {
     ledInit();
     buttonInit();
-    //bluetoothInit();
+    bluetoothInit();
 }

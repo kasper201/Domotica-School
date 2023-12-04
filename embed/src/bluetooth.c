@@ -400,7 +400,7 @@ static void bt_ready(int err)
 	printk("Mesh initialized\n");
 }
 
-int main(void)
+int bluetoothInit(void)
 {
 	static struct k_work button_work;
 	int err = -1;
