@@ -2,8 +2,7 @@
 #define GROUPDATA_H_
 
 #include "nodeData.h"
-
-#define MAX_GROUPS_ALLOWED 10       //Max number of groups allowed to be active at the same time
+#include "main.h"
 
 extern char groups[MAX_GROUPS_ALLOWED][MAX_INFO_STRING_LENGTH];
 
