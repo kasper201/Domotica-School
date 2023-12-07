@@ -140,14 +140,14 @@ static void onoff_timeout(struct k_work *work)
 		 * progress, regardless of the target value, according to the
 		 * Bluetooth Mesh Model specification, section 3.1.1.
 		 */
-		board_led_set(true);
+		ledSet(true);
 
 		k_work_reschedule(&onoff.work, K_MSEC(onoff.transition_time));
 		onoff.transition_time = 0;
 		return;
 	}
 
-	board_led_set(onoff.val);
+	ledSet(onoff.val);
 }
 
 /* Generic OnOff Server message handlers */
@@ -326,7 +326,7 @@ static int gen_onoff_send(bool val)
 	return bt_mesh_model_send(&models[3], &ctx, &buf, NULL, NULL);
 }
 
-static void button_pressed(struct k_work *work)
+void genONOFFStart()
 {
 	if (bt_mesh_is_provisioned()) {
 		(void)gen_onoff_send(!onoff.val);
@@ -421,5 +421,6 @@ int bluetoothInit(void)
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
 	}
+	genONOFFStart();
 	return 0;
 }
