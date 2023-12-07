@@ -3,13 +3,13 @@
 ## Embedded client
 - Added functional Button interrupt
 - Added ledSet functionality
-- Started bluetooth
+- Added ability to connect with your phone with node
+
 
 ## User interface
 - *temp*
 
 ## Known bugs
-- There are currently no known bugs
+- Node dissapears once connected
 
 ## Other
-- Bluetooth is not yet functional
