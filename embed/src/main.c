@@ -11,7 +11,7 @@ void main(void)
     init();
     int i = 1;
     while(1)
-    {    
+    {
         ledSet(true);
         k_msleep(500);
         ledSet(false);

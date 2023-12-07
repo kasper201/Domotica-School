@@ -326,7 +326,7 @@ static int gen_onoff_send(bool val)
 	return bt_mesh_model_send(&models[3], &ctx, &buf, NULL, NULL);
 }
 
-void genONOFFStart()
+void selfProv()
 {
 	if (bt_mesh_is_provisioned()) {
 		(void)gen_onoff_send(!onoff.val);
@@ -421,6 +421,6 @@ int bluetoothInit(void)
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
 	}
-	genONOFFStart();
+	//selfProv(); // oops this is for selfprovisioning
 	return 0;
 }
