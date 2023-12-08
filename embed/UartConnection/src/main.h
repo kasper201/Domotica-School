@@ -45,6 +45,7 @@ struct Group {
     char groupName[MAX_NAME_LENGTH];
     struct GroupSensor sensors[MAX_SENSORS_IN_GROUP];
     struct GroupActuator actuators[MAX_ACTUATORS_IN_GROUP];
+    char groupFilled;
 };
 
 #endif //MAIN_H_

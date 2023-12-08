@@ -9,5 +9,6 @@ extern char groups[MAX_GROUPS_ALLOWED][MAX_INFO_STRING_LENGTH];
 //void groupsToPc(char (*groups)[MAX_INFO_STRING_LENGTH]);
 void groupsToPc(struct Group *group);
 void addGroup(struct Group *group, char* groupString);
+void createGroup(struct Group* group);
 
 #endif //GROUPDATA_H_
