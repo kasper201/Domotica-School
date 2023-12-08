@@ -33,12 +33,14 @@ struct GroupSensor {
     char nodeName[MAX_NAME_LENGTH];
     char sensorType[MAX_NAME_LENGTH];
     char sensorName[MAX_NAME_LENGTH];
+    char sensorFilled;
 };
 
 struct GroupActuator {
     char nodeName[MAX_NAME_LENGTH];
     char actuatorType[MAX_NAME_LENGTH];
     char actuatorName[MAX_NAME_LENGTH];
+    char actuatorFilled;
 };
 
 struct Group {

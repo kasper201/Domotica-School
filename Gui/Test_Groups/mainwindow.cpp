@@ -295,6 +295,8 @@ void MainWindow::on_pushButton_Add_Actuator_Group_clicked()
 void MainWindow::on_pushButton_Add_Group_clicked()
 {
     groups.addGroupInstance(addGroupLine->text());
+    QString CreateGroup = "CreateGroup " + addGroupLine->text();
+    portSetup.WriteToComport(CreateGroup);
     function.updateGroupLists(groupList, groupLinkList, sensorAddButton, actuatorAddButton, groups, nodeList);
     addGroupLine->clear();
 }

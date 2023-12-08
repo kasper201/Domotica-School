@@ -97,12 +97,27 @@ int main(void)
 	int buttonPressed = 0;
 	int ledState = 0;
 
+	//Reset if groups are filled
 	for(int i = 0; i < MAX_GROUPS_ALLOWED; i++)
 	{
 		group[i].groupFilled = '0';
-		for(int b = 0; b < MAX_NAME_LENGTH; b++)
+
+		//Reset name so we can check if a group already exists
+		for(int n = 0; n < MAX_NAME_LENGTH; n++)
 		{
-			group[i].groupName[b] = '0';
+			group[i].groupName[n] = '0';
+		}
+
+		//Reset sensor so we can check if a sensor has already been added
+		for(int s = 0; s < MAX_SENSORS_IN_GROUP; s++)
+		{
+			group[i].sensors[s].sensorFilled = '0';
+		}
+
+		//Reset actuator so we can check if a actuator has already been added
+		for(int s = 0; s < MAX_SENSORS_IN_GROUP; s++)
+		{
+			group[i].sensors[s].sensorFilled = '0';
 		}
 	}
 	strcpy(nodes[0], "AddNode STM32_______ AddSensor Button______ STM_Button__ AddActuator LED_________ STM_LED_____ false\n");

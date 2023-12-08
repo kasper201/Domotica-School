@@ -20,6 +20,7 @@ void readPc(struct Node* node, struct Group* group, int *ledState)
     k_msgq_get(&uart_msgq, &Message, K_NO_WAIT);
     k_msgq_cleanup(&uart_msgq);
 
+    //Send out already existing groups
     if (strstr(Message, "connected"))
     {
         printk("Connection is established\n");
@@ -34,11 +35,19 @@ void readPc(struct Node* node, struct Group* group, int *ledState)
         }
     }
 
-    if (strstr(Message, "AddGroup"))
+    //Create a group
+    if (strstr(Message, "CreateGroup"))
     {
-        printk("Group will be added\n");
+        createGroup(group, Message);
     }
 
+    //Update a group
+    if (strstr(Message, "UpdateGroup"))
+    {
+        updateGroup(group, Message);
+    }
+
+    //Change led status
     if (strstr(Message, "UpdateActuator"))
     {
         if(strstr(Message, "STM32_______"))
