@@ -180,6 +180,7 @@ void createGroup(struct Group *group, char *groupString)
                 strcpy(group[free].sensors[i].nodeName, EMPTY_MAX_NAME);
                 strcpy(group[free].sensors[i].sensorType, EMPTY_MAX_NAME);
                 strcpy(group[free].sensors[i].sensorName, EMPTY_MAX_NAME);
+                group[free].sensors[i].sensorFilled = '0';
             }
 
             // Fills all actuator data with empty info
@@ -188,6 +189,7 @@ void createGroup(struct Group *group, char *groupString)
                 strcpy(group[free].actuators[i].nodeName, EMPTY_MAX_NAME);
                 strcpy(group[free].actuators[i].actuatorType, EMPTY_MAX_NAME);
                 strcpy(group[free].actuators[i].actuatorName, EMPTY_MAX_NAME);
+                group[free].actuators[i].actuatorFilled = '0';
             }
         }
     }
@@ -261,7 +263,7 @@ void updateGroup(struct Group *group, char *groupString)
             // Copy the sensorType into the node structure
             strncpy(group[check].actuators[actuatorFree].nodeName, position, MAX_NAME_LENGTH - 1);
             group[check].actuators[actuatorFree].nodeName[MAX_NAME_LENGTH - 1] = '\0'; // Ensure null-termination
-
+            
             // Copy the sensorType into the group structure
             position += MAX_NAME_LENGTH;
             strncpy(group[check].actuators[actuatorFree].actuatorType, position, MAX_NAME_LENGTH - 1);

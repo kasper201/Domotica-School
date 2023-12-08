@@ -143,7 +143,7 @@ int main(void)
 
 			if (val >= 1 && buttonPressed == 0)
 			{
-				printk("TriggerSensor STM32 STM_Button\n");
+				printk("TriggerSensor STM32_______ STM_Button__\n");
 				buttonPressed = 1;
 			}
 			else if (val == 0 && buttonPressed == 1)
