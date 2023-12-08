@@ -305,7 +305,7 @@ static void prov_reset(void)
 {
 	bt_mesh_prov_disable(BT_MESH_PROV_ADV | BT_MESH_PROV_GATT | BT_MESH_PROV_REMOTE);//disable mesh provisioning
 	clear_provisioning_data();//reset provisioning data
-	bt_mesh_prov_enable(BT_MESH_PROV_ADV | BT_MESH_PROV_REMOTE);//re-enable mesh provisioning
+	bt_mesh_prov_enable(BT_MESH_PROV_ADV | BT_MESH_PROV_GATT);
 	//bt_mesh_prov_enable(BT_MESH_PROV_ADV | BT_MESH_PROV_GATT);
 }
 
@@ -418,7 +418,7 @@ static void bt_ready(int err)
 
 	/* This will be a no-op if settings_load() loaded provisioning info */
 	//bt_mesh_prov_enable(BT_MESH_PROV_ADV | BT_MESH_PROV_GATT); // for self provisioning
-	bt_mesh_prov_enable(BT_MESH_PROV_ADV);
+	bt_mesh_prov_enable(BT_MESH_PROV_ADV | BT_MESH_PROV_GATT);
 
 	printk("Mesh initialized\n");
 }
@@ -445,7 +445,7 @@ int bluetoothInit(void)
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
 	}
-	prov_reset();
+	//prov_reset();
 	//selfProv(); // oops this is for selfprovisioning
 	return 0;
 }
