@@ -6,6 +6,25 @@
 // Defines group strings
 char groups[MAX_GROUPS_ALLOWED][MAX_INFO_STRING_LENGTH];
 
+// Empty max string
+char EMPTY_MAX_NAME[MAX_NAME_LENGTH];
+
+// MAX name empty string
+void createEmptyMax()
+{
+    for (int i = 0; i < MAX_NAME_LENGTH; i++)
+    {
+        if (i < MAX_NAME_LENGTH - 1)
+        {
+            EMPTY_MAX_NAME[i] = '_';
+        }
+        else
+        {
+            EMPTY_MAX_NAME[i] = '\0';
+        }
+    }
+}
+
 // Sends groups to application
 void groupsToPc(struct Group *group)
 {
@@ -150,20 +169,23 @@ void createGroup(struct Group *group, char *groupString)
             group[free].groupName[MAX_NAME_LENGTH - 1] = '\0'; // Ensure null-termination
             group[free].groupFilled = '1';
 
+            //Fills the empty string with '_"
+            createEmptyMax();
+
             // Fills all sensor data with empty info
             for (int i = 0; i < MAX_SENSORS_IN_GROUP; i++)
             {
-                group[free].sensors[i].nodeName[EMPTY_MAX_NAME];
-                group[free].sensors[i].sensorType[EMPTY_MAX_NAME];
-                group[free].sensors[i].sensorName[EMPTY_MAX_NAME];
+                strcpy(group[free].sensors[i].nodeName, EMPTY_MAX_NAME);
+                strcpy(group[free].sensors[i].sensorType, EMPTY_MAX_NAME);
+                strcpy(group[free].sensors[i].sensorName, EMPTY_MAX_NAME);
             }
 
             // Fills all actuator data with empty info
             for (int i = 0; i < MAX_ACTUATORS_IN_GROUP; i++)
             {
-                group[free].actuators[i].nodeName[EMPTY_MAX_NAME];
-                group[free].actuators[i].actuatorType[EMPTY_MAX_NAME];
-                group[free].actuators[i].actuatorName[EMPTY_MAX_NAME];
+                strcpy(group[free].actuators[i].nodeName, EMPTY_MAX_NAME);
+                strcpy(group[free].actuators[i].actuatorType, EMPTY_MAX_NAME);
+                strcpy(group[free].actuators[i].actuatorName, EMPTY_MAX_NAME);
             }
         }
     }
@@ -184,11 +206,12 @@ void updateGroup(struct Group *group, char *groupString)
     }
 
     // Add a sensor
-    keyword = "AddSensor ";
+    char *keyword = "AddSensor ";
+    char *position = strstr(groupString, keyword);
     if (strstr(groupString, keyword))
     {
         int sensorFree = 0;
-        while (group[free].sensors[sensorFree].sensorFilled != '0' && sensorFree < MAX_SENSORS_IN_GROUP)
+        while (group[check].sensors[sensorFree].sensorFilled != '0' && sensorFree < MAX_SENSORS_IN_GROUP)
         {
             sensorFree++;
         }
@@ -199,20 +222,20 @@ void updateGroup(struct Group *group, char *groupString)
             position += strlen(keyword);
 
             // Copy the sensorType into the node structure
-            strncpy(group[free].sensors[sensorFree].nodeName, position, MAX_NAME_LENGTH - 1);
-            group[free].sensors[sensorFree].nodeName[MAX_NAME_LENGTH - 1] = '\0'; // Ensure null-termination
+            strncpy(group[check].sensors[sensorFree].nodeName, position, MAX_NAME_LENGTH - 1);
+            group[check].sensors[sensorFree].nodeName[MAX_NAME_LENGTH - 1] = '\0'; // Ensure null-termination
 
             // Copy the sensorType into the group structure
             position += MAX_NAME_LENGTH;
-            strncpy(group[free].sensors[sensorFree].sensorType, position, MAX_NAME_LENGTH - 1);
-            group[free].sensors[sensorFree].sensorType[MAX_NAME_LENGTH - 1] = '\0'; // Ensure null-termination
+            strncpy(group[check].sensors[sensorFree].sensorType, position, MAX_NAME_LENGTH - 1);
+            group[check].sensors[sensorFree].sensorType[MAX_NAME_LENGTH - 1] = '\0'; // Ensure null-termination
 
             // Copy the sensorName into the node structure
             position += MAX_NAME_LENGTH;
-            strncpy(group[free].sensors[sensorFree].sensorName, position, MAX_NAME_LENGTH - 1);
-            group[free].sensors[sensorFree].sensorName[MAX_NAME_LENGTH - 1] = '\0'; // Ensure null-termination
+            strncpy(group[check].sensors[sensorFree].sensorName, position, MAX_NAME_LENGTH - 1);
+            group[check].sensors[sensorFree].sensorName[MAX_NAME_LENGTH - 1] = '\0'; // Ensure null-termination
 
-            group[free].sensors[sensorFree].sensorFilled = '1';
+            group[check].sensors[sensorFree].sensorFilled = '1';
         }
     }
 }

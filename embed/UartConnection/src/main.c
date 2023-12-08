@@ -44,9 +44,6 @@ void button_pressed(const struct device *dev, struct gpio_callback *cb,
 	// printk("Button pressed at %" PRIu32 "\n", k_cycle_get_32());
 }
 
-// String to use if a max name value needs to be __
-extern char EMPTY_MAX_NAME[MAX_NAME_LENGTH];
-
 // Important structs for storing information
 struct Node node;
 struct Group group[MAX_GROUPS_ALLOWED];
@@ -107,19 +104,6 @@ int main(void)
 	uartSetup();
 	int buttonPressed = 0;
 	int ledState = 0;
-
-	// MAX name empty string
-	for (int i = 0; i < MAX_NAME_LENGTH; i++)
-	{
-		if (i < MAX_NAME_LENGTH - 1)
-		{
-			EMPTY_MAX_NAME[i] = '_';
-		}
-		else
-		{
-			EMPTY_MAX_NAME = '\0';
-		}
-	}
 
 	// Reset if groups are filled
 	for (int i = 0; i < MAX_GROUPS_ALLOWED; i++)
