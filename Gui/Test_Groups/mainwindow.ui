@@ -555,6 +555,9 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_14">
         <item>
+         <widget class="QListWidget" name="widget_led"/>
+        </item>
+        <item>
          <widget class="QPushButton" name="appButton">
           <property name="text">
            <string>Application Button</string>

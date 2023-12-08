@@ -2,8 +2,8 @@
 #include "uart.h"
 #include "nodeData.h"
 #include "groupData.h"
+#include "main.h"
 
-#include <string.h>
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/uart.h>
@@ -14,7 +14,7 @@
 #define MESSAGE_SIZE 200 //Defines the maximum size for the incoming string
 
 //Reads input from the application and decides what to do with it
-void readPc(char (*nodes)[MAX_INFO_STRING_LENGTH], char (*groups)[MAX_INFO_STRING_LENGTH], int *ledState)
+void readPc(struct Node* node, char (*groups)[MAX_INFO_STRING_LENGTH], int *ledState)
 {
     char Message[MESSAGE_SIZE];
     k_msgq_get(&uart_msgq, &Message, K_NO_WAIT);
@@ -24,7 +24,7 @@ void readPc(char (*nodes)[MAX_INFO_STRING_LENGTH], char (*groups)[MAX_INFO_STRIN
     {
         printk("Connection is established\n");
         k_msleep(3);
-        nodesToPc(nodes);
+        nodesToPc(node);
         k_msleep(3);
         groupsToPc(groups);
     }
@@ -36,19 +36,19 @@ void readPc(char (*nodes)[MAX_INFO_STRING_LENGTH], char (*groups)[MAX_INFO_STRIN
 
     if (strstr(Message, "UpdateActuator"))
     {
-        if(strstr(Message, "STM32"))
+        if(strstr(Message, "STM32_______"))
         {
-            if(strstr(Message, "STM_LED"))
+            if(strstr(Message, "STM_LED_____"))
             {
                 if(strstr(Message, "true"))
                 {
                     *ledState = 1;
-                    printk("UpdateAppActuator STM32 STM_LED true\n");
+                    printk("UpdateAppActuator STM32_______ STM_LED_____ true\n");
                 }
                 if(strstr(Message, "false"))
                 {
                     *ledState = 0;
-                    printk("UpdateAppActuator STM32 STM_LED false\n");
+                    printk("UpdateAppActuator STM32_______ STM_LED_____ false\n");
                 }
             }
         }
