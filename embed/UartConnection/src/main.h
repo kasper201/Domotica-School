@@ -27,4 +27,8 @@ struct Node {
     struct Actuator actuator[MAX_ACTUATOR_FOR_NODE];
 };
 
+struct Group {
+    char groupName[MAX_NAME_LENGTH];
+};
+
 #endif //MAIN_H_
