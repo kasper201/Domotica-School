@@ -2,6 +2,7 @@
 
 #include <zephyr/sys/printk.h>
 #include <string.h>
+#include <zephyr/kernel.h>
 
 // Defines group strings
 char groups[MAX_GROUPS_ALLOWED][MAX_INFO_STRING_LENGTH];
@@ -36,6 +37,7 @@ void groupsToPc(struct Group *group)
             printk("AddGroup %s ", group[i].groupName);
             printk("AddSensor %s %s %s ", group[i].sensors->nodeName, group[i].sensors->sensorType, group[i].sensors->sensorName);
             printk("AddActuator %s %s %s\n", group[i].actuators->nodeName, group[i].actuators->actuatorType, group[i].actuators->actuatorName);
+            k_msleep(5);
         }
     }
 }
