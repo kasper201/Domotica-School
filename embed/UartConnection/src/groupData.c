@@ -43,6 +43,7 @@ void addGroup(struct Group *group, char* groupString)
             group->sensors->nodeName[MAX_NAME_LENGTH - 1] = '\0';  // Ensure null-termination
 
             // Copy the sensorType into the group structure
+            position += MAX_NAME_LENGTH;
             strncpy(group->sensors->sensorType, position, MAX_NAME_LENGTH - 1);
             group->sensors->sensorType[MAX_NAME_LENGTH - 1] = '\0';  // Ensure null-termination
 
