@@ -27,6 +27,11 @@ void readPc(struct Node* node, struct Group* group, int *ledState)
         nodesToPc(node);
         k_msleep(3);
         groupsToPc(group);
+        //empties Message
+        for(int i = 0; i < MESSAGE_SIZE; i++)
+        {
+            Message[i] = '0';
+        }
     }
 
     if (strstr(Message, "AddGroup"))

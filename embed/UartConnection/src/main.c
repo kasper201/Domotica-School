@@ -100,9 +100,13 @@ int main(void)
 	for(int i = 0; i < MAX_GROUPS_ALLOWED; i++)
 	{
 		group[i].groupFilled = '0';
+		for(int b = 0; b < MAX_NAME_LENGTH; b++)
+		{
+			group[i].groupName[b] = '0';
+		}
 	}
 
-	printk("Press the button\n");
+	printk("Start\n");
 	if (led.port) {
 		while (1) {
 			/* If we have an LED, match its state to the button's. */

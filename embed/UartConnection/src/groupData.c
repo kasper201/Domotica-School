@@ -25,27 +25,30 @@ void groupsToPc(struct Group *group)
 void addGroup(struct Group *group, char* groupString)
 {
     int free = 0;
-    while (group[free].groupFilled == '1')
+    char filled = '0';
+    while (group[free].groupFilled == '1' && free < MAX_GROUPS_ALLOWED)
     {
-        free++;
-        if(free >= MAX_GROUPS_ALLOWED)
+        if(strstr(groupString, group[free].groupName))
         {
-            printk("No free group left");
+            filled = '1';
             break;
         }
-    }
 
-    if(group[free].groupFilled == '0')
+        free++;
+    }
+    
+    if(group[free].groupFilled == '0' && filled != '1')
     {
+        printk("%d\n", free);
         if(strstr(groupString, "AddGroup"))
         {
             char* keyword = "AddGroup ";
             char* position = strstr(groupString, keyword);
 
-            // Move the pointer to the start of nodeName (8 characters after "AddGroup")
+            // Move the pointer to the start of groupName (8 characters after "AddGroup")
             position += strlen(keyword);
 
-            // Copy the nodeName into the node structure
+            // Copy the groupName into the group structure
             strncpy(group[free].groupName, position, MAX_NAME_LENGTH - 1);
             group[free].groupName[MAX_NAME_LENGTH - 1] = '\0';  // Ensure null-termination
 
