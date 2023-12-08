@@ -93,7 +93,7 @@ void init()
 
 void boardOutputNumber(bt_mesh_output_action_t action, uint32_t number)
 {
-	
+
 }
 
 void boardProvComplete(void)

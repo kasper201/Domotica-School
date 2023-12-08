@@ -405,6 +405,7 @@ static void bt_ready(int err)
 
 	printk("Bluetooth initialized\n");
 
+
 	err = bt_mesh_init(&prov, &comp);
 	if (err) {
 		printk("Initializing mesh failed (err %d)\n", err);
@@ -417,14 +418,13 @@ static void bt_ready(int err)
 
 	/* This will be a no-op if settings_load() loaded provisioning info */
 	//bt_mesh_prov_enable(BT_MESH_PROV_ADV | BT_MESH_PROV_GATT); // for self provisioning
-	bt_mesh_prov_enable(BT_MESH_PROV_ADV | BT_MESH_PROV_REMOTE);
+	bt_mesh_prov_enable(BT_MESH_PROV_ADV);
 
 	printk("Mesh initialized\n");
 }
 
 int bluetoothInit(void)
 {
-	static struct k_work button_work;
 	int err = -1;
 
 	printk("Initializing...\n");
@@ -437,6 +437,8 @@ int bluetoothInit(void)
 		dev_uuid[0] = 0xdd;
 		dev_uuid[1] = 0xdd;
 	}
+
+	k_work_init_delayable(&onoff.work, onoff_timeout);
 
 	/* Initialize the Bluetooth Subsystem */
 	err = bt_enable(bt_ready);
