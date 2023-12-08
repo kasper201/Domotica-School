@@ -209,9 +209,9 @@ void updateGroup(struct Group *group, char *groupString)
 
     // Add a sensor
     char *keyword = "AddSensor ";
-    char *position = strstr(groupString, keyword);
     if (strstr(groupString, keyword))
     {
+        char *position = strstr(groupString, keyword);
         int sensorFree = 0;
         while (group[check].sensors[sensorFree].sensorFilled != '0' && sensorFree < MAX_SENSORS_IN_GROUP)
         {
@@ -238,6 +238,41 @@ void updateGroup(struct Group *group, char *groupString)
             group[check].sensors[sensorFree].sensorName[MAX_NAME_LENGTH - 1] = '\0'; // Ensure null-termination
 
             group[check].sensors[sensorFree].sensorFilled = '1';
+        }
+    }
+
+    // Add a Actuator
+    keyword = "AddActuator ";
+
+    if (strstr(groupString, keyword))
+    {
+        char *position = strstr(groupString, keyword);
+        int actuatorFree = 0;
+        while (group[check].actuators[actuatorFree].actuatorFilled != '0' && actuatorFree < MAX_ACTUATORS_IN_GROUP)
+        {
+            actuatorFree++;
+        }
+
+        if (actuatorFree < MAX_ACTUATORS_IN_GROUP)
+        {
+            position = strstr(groupString, keyword);
+            position += strlen(keyword);
+
+            // Copy the sensorType into the node structure
+            strncpy(group[check].actuators[actuatorFree].nodeName, position, MAX_NAME_LENGTH - 1);
+            group[check].actuators[actuatorFree].nodeName[MAX_NAME_LENGTH - 1] = '\0'; // Ensure null-termination
+
+            // Copy the sensorType into the group structure
+            position += MAX_NAME_LENGTH;
+            strncpy(group[check].actuators[actuatorFree].actuatorType, position, MAX_NAME_LENGTH - 1);
+            group[check].actuators[actuatorFree].actuatorType[MAX_NAME_LENGTH - 1] = '\0'; // Ensure null-termination
+
+            // Copy the sensorName into the node structure
+            position += MAX_NAME_LENGTH;
+            strncpy(group[check].actuators[actuatorFree].actuatorName, position, MAX_NAME_LENGTH - 1);
+            group[check].actuators[actuatorFree].actuatorName[MAX_NAME_LENGTH - 1] = '\0'; // Ensure null-termination
+
+            group[check].actuators[actuatorFree].actuatorFilled = '1';
         }
     }
 }

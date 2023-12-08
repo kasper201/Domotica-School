@@ -287,6 +287,9 @@ void MainWindow::on_pushButton_Add_Actuator_Group_clicked()
         QString actuatorName = actuatorList->currentItem()->text().split('\t').value(0);
         QString actuatorType = actuatorList->currentItem()->text().split('\t').value(1);
 
+        QString addActuator = "UpdateGroup " + groupName + " AddActuator " + nodeName + " " + actuatorType + " " + actuatorName;
+        portSetup.WriteToComport(addActuator);
+
         groups.addActuator(groupName, nodeName, actuatorType, actuatorName);
     } else
     {
