@@ -266,6 +266,9 @@ void MainWindow::on_pushButton_Add_Sensor_Group_clicked()
         QString sensorName = sensorList->currentItem()->text().split('\t').value(0);
         QString sensorType = sensorList->currentItem()->text().split('\t').value(1);
 
+        QString addSensor = "UpdateGroup " + groupName + " AddSensor " + nodeName + " " + sensorType + " " + sensorName;
+        portSetup.WriteToComport(addSensor);
+
         groups.addSensor(groupName, nodeName, sensorType, sensorName);
         //updateCurrentGroupOverview();
     } else
