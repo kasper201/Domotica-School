@@ -51,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent)
     deleteActuator = ui->pushButton_Delete_Actuator;//Deletes selected actuator from selected group
 
     //Adds application node
-    function.addNodes("AddNode Application AddSensor Button App_Button AddActuator LED App_LED false", node, nodeList);
+    function.addNodes("AddNode Application_ AddSensor Button______ App_Button__ AddActuator LED_________ App_LED_____ false", node, nodeList);
 
     setupComportList();
     function.addTitles(false, nodeList, sensorList, actuatorList, node);
