@@ -46,6 +46,7 @@ void button_pressed(const struct device *dev, struct gpio_callback *cb,
 }
 
 struct Node node;
+struct Group group;
 
 int main(void)
 {
@@ -118,7 +119,8 @@ int main(void)
 			strcpy(nodes[0], "AddNode STM32_______ AddSensor Button______ STM_Button__ AddActuator LED_________ STM_LED_____ false\n");
 			strcpy(groups[0], "AddGroup Test_Group AddSensor Application Button App_Button AddActuator STM32_______ LED_________ STM_LED_____\n");
 			addNode(&node, nodes[0]);
-			readPc(&node, groups, &ledState); //Reads uart output from the pc
+			addGroup(&group, groups[0]);
+			readPc(&node, &group, &ledState); //Reads uart output from the pc
 
 			k_msleep(SLEEP_TIME_MS);
 		}

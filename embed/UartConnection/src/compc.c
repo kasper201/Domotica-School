@@ -14,7 +14,7 @@
 #define MESSAGE_SIZE 200 //Defines the maximum size for the incoming string
 
 //Reads input from the application and decides what to do with it
-void readPc(struct Node* node, char (*groups)[MAX_INFO_STRING_LENGTH], int *ledState)
+void readPc(struct Node* node, struct Group* group, int *ledState)
 {
     char Message[MESSAGE_SIZE];
     k_msgq_get(&uart_msgq, &Message, K_NO_WAIT);
@@ -26,7 +26,7 @@ void readPc(struct Node* node, char (*groups)[MAX_INFO_STRING_LENGTH], int *ledS
         k_msleep(3);
         nodesToPc(node);
         k_msleep(3);
-        groupsToPc(groups);
+        groupsToPc(group);
     }
 
     if (strstr(Message, "AddGroup"))
