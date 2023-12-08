@@ -123,9 +123,9 @@ int main(void)
 		}
 
 		// Reset actuator so we can check if a actuator has already been added
-		for (int s = 0; s < MAX_SENSORS_IN_GROUP; s++)
+		for (int s = 0; s < MAX_ACTUATORS_IN_GROUP; s++)
 		{
-			group[i].sensors[s].sensorFilled = '0';
+			group[i].actuators[s].actuatorFilled = '0';
 		}
 	}
 	strcpy(nodes[0], "AddNode STM32_______ AddSensor Button______ STM_Button__ AddActuator LED_________ STM_LED_____ false\n");

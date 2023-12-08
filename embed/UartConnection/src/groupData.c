@@ -171,7 +171,7 @@ void createGroup(struct Group *group, char *groupString)
             group[free].groupName[MAX_NAME_LENGTH - 1] = '\0'; // Ensure null-termination
             group[free].groupFilled = '1';
 
-            //Fills the empty string with '_"
+            // Fills the empty string with '_"
             createEmptyMax();
 
             // Fills all sensor data with empty info
@@ -263,7 +263,7 @@ void updateGroup(struct Group *group, char *groupString)
             // Copy the sensorType into the node structure
             strncpy(group[check].actuators[actuatorFree].nodeName, position, MAX_NAME_LENGTH - 1);
             group[check].actuators[actuatorFree].nodeName[MAX_NAME_LENGTH - 1] = '\0'; // Ensure null-termination
-            
+
             // Copy the sensorType into the group structure
             position += MAX_NAME_LENGTH;
             strncpy(group[check].actuators[actuatorFree].actuatorType, position, MAX_NAME_LENGTH - 1);
@@ -279,19 +279,63 @@ void updateGroup(struct Group *group, char *groupString)
     }
 }
 
-//Delete a group
-void deleteGroup(struct Group* group, char* Message)
+// Delete a group
+void deleteGroup(struct Group *group, char *Message)
 {
-    char* keyword = "DeleteGroup ";
-    if(strstr(Message, keyword))
+    char *keyword = "DeleteGroup ";
+    if (strstr(Message, keyword))
     {
         int selected = 0;
-        while(!strstr(Message, group[selected].groupName) && selected < MAX_GROUPS_ALLOWED)
+        while (!strstr(Message, group[selected].groupName) && selected < MAX_GROUPS_ALLOWED)
         {
             selected++;
         }
 
-        strcpy(group[selected].groupName, EMPTY_MAX_NAME);
-        group[selected].groupFilled = '0';
+        strcpy(group[selected].groupName, EMPTY_MAX_NAME); // So no accidental name comparison is going to block something
+        group[selected].groupFilled = '0';                 // So it can be filled again
+
+        // Reset sensor so we can check if a sensor has already been added
+        for (int s = 0; s < MAX_SENSORS_IN_GROUP; s++)
+        {
+            strcpy(group[selected].sensors[s].nodeName, EMPTY_MAX_NAME);
+            strcpy(group[selected].sensors[s].sensorType, EMPTY_MAX_NAME);
+            strcpy(group[selected].sensors[s].sensorName, EMPTY_MAX_NAME);
+            group[selected].sensors[s].sensorFilled = '0';
+        }
+
+        // Reset actuator so we can check if a actuator has already been added
+        for (int a = 0; a < MAX_ACTUATORS_IN_GROUP; a++)
+        {
+            strcpy(group[selected].actuators[a].nodeName, EMPTY_MAX_NAME);
+            strcpy(group[selected].actuators[a].actuatorType, EMPTY_MAX_NAME);
+            strcpy(group[selected].actuators[a].actuatorName, EMPTY_MAX_NAME);
+            group[selected].actuators[a].actuatorFilled = '0';
+        }
+    }
+}
+
+// Delete a sensor
+void deleteSensor(struct Group *group, char *Message)
+{
+    char *keyword = "DeleteSensor ";
+    if(strstr(Message, keyword))
+    {
+        int selected = 0;
+        while (!strstr(Message, group[selected].groupName) && selected < MAX_GROUPS_ALLOWED)
+        {
+            selected++;
+        }
+        int sensor = 0;
+        while (!strstr(Message, group[selected].sensors[sensor].sensorName) && sensor < MAX_SENSORS_IN_GROUP)
+        {
+            sensor++;
+        }
+        if(strstr(Message, group[selected].sensors[sensor].sensorName))
+        {
+            strcpy(group[selected].sensors[sensor].nodeName, EMPTY_MAX_NAME);
+            strcpy(group[selected].sensors[sensor].sensorType, EMPTY_MAX_NAME);
+            strcpy(group[selected].sensors[sensor].sensorName, EMPTY_MAX_NAME);
+            group[selected].sensors[sensor].sensorFilled = '0';
+        }
     }
 }

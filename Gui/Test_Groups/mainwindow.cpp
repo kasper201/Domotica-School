@@ -369,6 +369,9 @@ void MainWindow::on_pushButton_Delete_Sensor_clicked()
         QString sensorName = sensorListGroup->currentItem()->text().split('\t').value(0);
         QString groupName = groupList->currentItem()->text();
 
+        QString deleteSensor = "DeleteSensor " + groupName + " " + sensorName;
+        portSetup.WriteToComport(deleteSensor);
+
         ui->userFeedbackLabel->setText("Sensor: " + sensorName + " has been deleted from: " + groupName);
         groups.deleteSensor(groupName, sensorName);
         sensorListGroup->takeItem(sensorListGroup->currentRow());
