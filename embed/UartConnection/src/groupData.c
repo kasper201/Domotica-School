@@ -276,3 +276,20 @@ void updateGroup(struct Group *group, char *groupString)
         }
     }
 }
+
+//Delete a group
+void deleteGroup(struct Group* group, char* Message)
+{
+    char* keyword = "DeleteGroup ";
+    if(strstr(Message, keyword))
+    {
+        int selected = 0;
+        while(!strstr(Message, group[selected].groupName) && selected < MAX_GROUPS_ALLOWED)
+        {
+            selected++;
+        }
+
+        strcpy(group[selected].groupName, EMPTY_MAX_NAME);
+        group[selected].groupFilled = '0';
+    }
+}

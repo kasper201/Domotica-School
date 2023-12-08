@@ -47,6 +47,12 @@ void readPc(struct Node* node, struct Group* group, int *ledState)
         updateGroup(group, Message);
     }
 
+    //Delete a group
+    if (strstr(Message, "DeleteGroup"))
+    {
+        deleteGroup(group, Message);
+    }
+
     //Change led status
     if (strstr(Message, "UpdateActuator"))
     {

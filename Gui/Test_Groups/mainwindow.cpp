@@ -136,6 +136,7 @@ void MainWindow::on_pushButton_Connect_clicked()
 
         comLabel->setText("Not connected");
         connectComport->setText("Connect");
+        ui->userFeedbackLabel->setText("Connected");
         isComportConnected = false;
     } else if (isComportConnected == false && comportList->selectedItems().isEmpty())
     {
@@ -143,6 +144,7 @@ void MainWindow::on_pushButton_Connect_clicked()
         qDebug() << "No comport was selected";
     }else
     {
+        ui->userFeedbackLabel->setText("Connection failed");
         qDebug() << "Failed with connection";
     }
 }
@@ -259,52 +261,74 @@ void MainWindow::on_listWidget_Nodes_itemClicked()
 //Adds a sensor to a group
 void MainWindow::on_pushButton_Add_Sensor_Group_clicked()
 {
-    if(!groupLinkList->selectedItems().isEmpty())
+    if(!sensorList->selectedItems().isEmpty())
     {
-        QString groupName = groupLinkList->currentItem()->text();
-        QString nodeName = nodeList->currentItem()->text();
-        QString sensorName = sensorList->currentItem()->text().split('\t').value(0);
-        QString sensorType = sensorList->currentItem()->text().split('\t').value(1);
+        if(!groupLinkList->selectedItems().isEmpty())
+        {
+            QString groupName = groupLinkList->currentItem()->text();
+            QString nodeName = nodeList->currentItem()->text();
+            QString sensorName = sensorList->currentItem()->text().split('\t').value(0);
+            QString sensorType = sensorList->currentItem()->text().split('\t').value(1);
 
-        QString addSensor = "UpdateGroup " + groupName + " AddSensor " + nodeName + " " + sensorType + " " + sensorName;
-        portSetup.WriteToComport(addSensor);
+            ui->userFeedbackLabel->setText("Sensor: " + sensorName + " has been added to group: " + groupName);
+            QString addSensor = "UpdateGroup " + groupName + " AddSensor " + nodeName + " " + sensorType + " " + sensorName;
+            portSetup.WriteToComport(addSensor);
 
-        groups.addSensor(groupName, nodeName, sensorType, sensorName);
-        //updateCurrentGroupOverview();
+            groups.addSensor(groupName, nodeName, sensorType, sensorName);
+            //updateCurrentGroupOverview();
+        } else
+        {
+            ui->userFeedbackLabel->setText("A group should be selected");
+            qDebug() << "A group should be selected first";
+        }
     } else
     {
-        qDebug() << "A group should be selected first";
+        ui->userFeedbackLabel->setText("Select a sensor first");
     }
 }
 
 //Adds a actuator to a group
 void MainWindow::on_pushButton_Add_Actuator_Group_clicked()
 {
-    if(!groupLinkList->selectedItems().isEmpty())
+    if(!actuatorList->selectedItems().isEmpty())
     {
-        QString groupName = groupLinkList->currentItem()->text();
-        QString nodeName = nodeList->currentItem()->text();
-        QString actuatorName = actuatorList->currentItem()->text().split('\t').value(0);
-        QString actuatorType = actuatorList->currentItem()->text().split('\t').value(1);
+        if(!groupLinkList->selectedItems().isEmpty())
+        {
+            QString groupName = groupLinkList->currentItem()->text();
+            QString nodeName = nodeList->currentItem()->text();
+            QString actuatorName = actuatorList->currentItem()->text().split('\t').value(0);
+            QString actuatorType = actuatorList->currentItem()->text().split('\t').value(1);
 
-        QString addActuator = "UpdateGroup " + groupName + " AddActuator " + nodeName + " " + actuatorType + " " + actuatorName;
-        portSetup.WriteToComport(addActuator);
+            ui->userFeedbackLabel->setText("Actuator: " + actuatorName + " has been added to group: " + groupName);
+            QString addActuator = "UpdateGroup " + groupName + " AddActuator " + nodeName + " " + actuatorType + " " + actuatorName;
+            portSetup.WriteToComport(addActuator);
 
-        groups.addActuator(groupName, nodeName, actuatorType, actuatorName);
+            groups.addActuator(groupName, nodeName, actuatorType, actuatorName);
+        } else
+        {
+            ui->userFeedbackLabel->setText("A group should be selected");
+            qDebug() << "A group should be selected first";
+        }
     } else
     {
-        qDebug() << "A group should be selected first";
+    ui->userFeedbackLabel->setText("Select an actuator first");
     }
 }
 
 //Adds group with name in lineEdit
 void MainWindow::on_pushButton_Add_Group_clicked()
 {
-    groups.addGroupInstance(addGroupLine->text());
-    QString CreateGroup = "CreateGroup " + addGroupLine->text();
-    portSetup.WriteToComport(CreateGroup);
-    function.updateGroupLists(groupList, groupLinkList, sensorAddButton, actuatorAddButton, groups, nodeList);
-    addGroupLine->clear();
+    if(addGroupLine->text() != "")
+    {
+        groups.addGroupInstance(addGroupLine->text());
+        QString CreateGroup = "CreateGroup " + addGroupLine->text();
+        portSetup.WriteToComport(CreateGroup);
+        function.updateGroupLists(groupList, groupLinkList, sensorAddButton, actuatorAddButton, groups, nodeList);
+        addGroupLine->clear();
+    } else
+    {
+        ui->userFeedbackLabel->setText("Enter a group name");
+    }
 }
 
 //Deletes selected group
@@ -312,12 +336,20 @@ void MainWindow::on_pushButton_Delete_Group_clicked()
 {
     if(!groupList->selectedItems().isEmpty())
     {
-        groups.deleteGroupInstance(groupList->currentItem()->text());
+    QString groupName = groupList->currentItem()->text();
+        groups.deleteGroupInstance(groupName);
+
+        QString deleteGroup = "DeleteGroup " + groupName;
+        portSetup.WriteToComport(deleteGroup);
+
         groupList->takeItem(groupList->currentRow());
         function.updateCurrentGroupOverview(sensorListGroup, actuatorListGroup, groupList, groups);
+
+        ui->userFeedbackLabel->setText("Group: " + groupName + " has been deleted");
         groupLabel->setText("Group has been deleted select another group");
     } else
     {
+        ui->userFeedbackLabel->setText("Select a group");
         qDebug() << "No group was selected";
     }
 }
@@ -337,9 +369,11 @@ void MainWindow::on_pushButton_Delete_Sensor_clicked()
         QString sensorName = sensorListGroup->currentItem()->text().split('\t').value(0);
         QString groupName = groupList->currentItem()->text();
 
+        ui->userFeedbackLabel->setText("Sensor: " + sensorName + " has been deleted from: " + groupName);
         groups.deleteSensor(groupName, sensorName);
         sensorListGroup->takeItem(sensorListGroup->currentRow());
     } else if(sensorListGroup->selectedItems().isEmpty()) {
+        ui->userFeedbackLabel->setText("Select a sensor to delete");
         qDebug() << "select a sensor";
     }
 }
@@ -352,9 +386,11 @@ void MainWindow::on_pushButton_Delete_Actuator_clicked()
         QString actuatorName = actuatorListGroup->currentItem()->text().split('\t').value(0);
         QString groupName = groupList->currentItem()->text();
 
+        ui->userFeedbackLabel->setText("Actuator: " + actuatorName + " has been deleted from: " + groupName);
         groups.deleteActuator(groupName, actuatorName);
         actuatorListGroup->takeItem(actuatorListGroup->currentRow());
     } else if(actuatorListGroup->selectedItems().isEmpty()) {
+        ui->userFeedbackLabel->setText("Select an actuator to delete");
         qDebug() << "select an actuator";
     }
 }
@@ -401,7 +437,7 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
         function.addTitles(false, nodeList, sensorList, actuatorList, node);
     } else if(index == 3)
     {
-        if(node.getActuatorStatus("Application", "App_LED") == "true")
+        if(node.getActuatorStatus("Application_", "App_LED_____") == "true")
         {
             ui->widget_led->setStyleSheet("background-color: yellow;");
         } else {

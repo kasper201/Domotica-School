@@ -11,5 +11,6 @@ void groupsToPc(struct Group *group);
 void addGroup(struct Group *group, char* groupString);
 void createGroup(struct Group* group, char* groupString);
 void updateGroup(struct Group* group, char* groupString);
+void deleteGroup(struct Group* group, char* Message);
 
 #endif //GROUPDATA_H_
