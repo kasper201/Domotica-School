@@ -405,7 +405,7 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
 //Triggers when the application button is clicked
 void MainWindow::on_appButton_clicked()
 {
-    groupsTriggered = sensorInput.sensorTrigger(groups, "TriggerSensor Application App_Button");
+    groupsTriggered = sensorInput.sensorTrigger(groups, "TriggerSensor Application_ App_Button__");
     readData();
 }
 
