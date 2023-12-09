@@ -75,12 +75,10 @@ void readPc(struct Node *node, struct Group *group, int *ledState)
                 if (strstr(Message, "true"))
                 {
                     *ledState = 1;
-                    printk("UpdateAppActuator STM32_______ STM_LED_____ true\n");
                 }
                 if (strstr(Message, "false"))
                 {
                     *ledState = 0;
-                    printk("UpdateAppActuator STM32_______ STM_LED_____ false\n");
                 }
             }
         }

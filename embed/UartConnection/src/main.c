@@ -154,10 +154,12 @@ int main(void)
 			if (ledState == 1)
 			{
 				gpio_pin_set_dt(&led, 1);
+				printk("UpdateAppActuator STM32_______ STM_LED_____ true\n");
 			}
 			else
 			{
 				gpio_pin_set_dt(&led, 0);
+				printk("UpdateAppActuator STM32_______ STM_LED_____ false\n");
 			}
 
 			readPc(&node, group, &ledState); // Reads uart output from the pc
