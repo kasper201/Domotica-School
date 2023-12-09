@@ -389,6 +389,9 @@ void MainWindow::on_pushButton_Delete_Actuator_clicked()
         QString actuatorName = actuatorListGroup->currentItem()->text().split('\t').value(0);
         QString groupName = groupList->currentItem()->text();
 
+        QString deleteActuator = "DeleteActuator " + groupName + " " + actuatorName;
+        portSetup.WriteToComport(deleteActuator);
+
         ui->userFeedbackLabel->setText("Actuator: " + actuatorName + " has been deleted from: " + groupName);
         groups.deleteActuator(groupName, actuatorName);
         actuatorListGroup->takeItem(actuatorListGroup->currentRow());

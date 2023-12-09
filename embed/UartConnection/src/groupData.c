@@ -318,7 +318,7 @@ void deleteGroup(struct Group *group, char *Message)
 void deleteSensor(struct Group *group, char *Message)
 {
     char *keyword = "DeleteSensor ";
-    if(strstr(Message, keyword))
+    if (strstr(Message, keyword))
     {
         int selected = 0;
         while (!strstr(Message, group[selected].groupName) && selected < MAX_GROUPS_ALLOWED)
@@ -330,12 +330,38 @@ void deleteSensor(struct Group *group, char *Message)
         {
             sensor++;
         }
-        if(strstr(Message, group[selected].sensors[sensor].sensorName))
+        if (strstr(Message, group[selected].sensors[sensor].sensorName))
         {
             strcpy(group[selected].sensors[sensor].nodeName, EMPTY_MAX_NAME);
             strcpy(group[selected].sensors[sensor].sensorType, EMPTY_MAX_NAME);
             strcpy(group[selected].sensors[sensor].sensorName, EMPTY_MAX_NAME);
             group[selected].sensors[sensor].sensorFilled = '0';
+        }
+    }
+}
+
+// Delete a actuator
+void deleteActuator(struct Group *group, char *Message)
+{
+    char *keyword = "DeleteActuator ";
+    if (strstr(Message, keyword))
+    {
+        int selected = 0;
+        while (!strstr(Message, group[selected].groupName) && selected < MAX_GROUPS_ALLOWED)
+        {
+            selected++;
+        }
+        int actuator = 0;
+        while (!strstr(Message, group[selected].actuators[actuator].actuatorName) && actuator < MAX_SENSORS_IN_GROUP)
+        {
+            actuator++;
+        }
+        if (strstr(Message, group[selected].actuators[actuator].actuatorName))
+        {
+            strcpy(group[selected].actuators[actuator].nodeName, EMPTY_MAX_NAME);
+            strcpy(group[selected].actuators[actuator].actuatorType, EMPTY_MAX_NAME);
+            strcpy(group[selected].actuators[actuator].actuatorName, EMPTY_MAX_NAME);
+            group[selected].actuators[actuator].actuatorFilled = '0';
         }
     }
 }
