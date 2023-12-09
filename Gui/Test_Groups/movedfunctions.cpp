@@ -158,7 +158,10 @@ void MovedFunctions::addTitles(bool nodeNotNeeded, QListWidget* nodeList, QListW
         QStringList allNodeNames = node.getAllNodeNames();
         foreach (const QString &nodeName, allNodeNames)   //Adds all groups to groupLinkList
         {
-            nodeList->addItem(nodeName);
+            if(nodeName.size() > 11)
+            {
+                nodeList->addItem(nodeName);
+            }
         }
     }
     sensorList->clear();
