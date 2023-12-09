@@ -35,8 +35,27 @@ void groupsToPc(struct Group *group)
         if (group[i].groupFilled == '1')
         {
             printk("AddGroup %s ", group[i].groupName);
-            printk("AddSensor %s %s %s ", group[i].sensors->nodeName, group[i].sensors->sensorType, group[i].sensors->sensorName);
-            printk("AddActuator %s %s %s\n", group[i].actuators->nodeName, group[i].actuators->actuatorType, group[i].actuators->actuatorName);
+
+            //print all sensors
+            for (int s = 0; s < MAX_SENSORS_IN_GROUP; s++)
+            {
+                if(group[i].sensors[s].sensorFilled = '1')
+                {
+                    printk("AddSensor %s %s %s ", group[i].sensors[s].nodeName, group[i].sensors[s].sensorType, group[i].sensors[s].sensorName);
+                }
+            }
+
+            //print all actuators
+            for (int a = 0; a < MAX_SENSORS_IN_GROUP; a++)
+            {
+                if(group[i].actuators[a].actuatorFilled = '1')
+                {
+                     printk("AddActuator %s %s %s ", group[i].actuators[a].nodeName, group[i].actuators[a].actuatorType, group[i].actuators[a].actuatorName);
+                }
+            }
+
+            printk("\n");
+
             k_msleep(5);
         }
     }
