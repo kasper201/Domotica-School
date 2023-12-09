@@ -76,7 +76,12 @@ QString MovedFunctions::addGroups(QString input, Groups& groups, QListWidget* gr
             input = stringM.removedTillWhitespace(input);
             QString sensorName = stringM.removedFromWhitespace(input);
             input = stringM.removedTillWhitespace(input);
-            groups.addSensor(groupName, nodeName, sensorType, sensorName);
+            if(nodeName.contains("____________") || sensorType.contains("____________") || sensorName.contains("____________"))
+            {
+            } else
+            {
+                groups.addSensor(groupName, nodeName, sensorType, sensorName);
+            }
         }
 
         while(input.contains("AddActuator"))
@@ -89,7 +94,12 @@ QString MovedFunctions::addGroups(QString input, Groups& groups, QListWidget* gr
             input = stringM.removedTillWhitespace(input);
             QString actuatorName = stringM.removedFromWhitespace(input);
             input = stringM.removedTillWhitespace(input);
-            groups.addActuator(groupName, nodeName, actuatorType, actuatorName);
+            if(nodeName.contains("____________") || actuatorType.contains("____________") || actuatorName.contains("____________"))
+            {
+            } else
+            {
+                groups.addActuator(groupName, nodeName, actuatorType, actuatorName);
+            }
         }
 
         input = "";
@@ -148,7 +158,10 @@ void MovedFunctions::addTitles(bool nodeNotNeeded, QListWidget* nodeList, QListW
         QStringList allNodeNames = node.getAllNodeNames();
         foreach (const QString &nodeName, allNodeNames)   //Adds all groups to groupLinkList
         {
-            nodeList->addItem(nodeName);
+            if(nodeName.size() > 11)
+            {
+                nodeList->addItem(nodeName);
+            }
         }
     }
     sensorList->clear();
