@@ -361,6 +361,7 @@ void btnPressed()
 	 *       be generated from true random numbers. It is done in this
 	 *       sample to allow testing without a provisioner.
 	 */
+	/*
 	static uint8_t net_key[16];
 	static uint8_t dev_key[16];
 	static uint8_t app_key[16];
@@ -380,7 +381,7 @@ void btnPressed()
 		return;
 	}
 
-	/* Add an application key to both Generic OnOff models: */
+	// Add an application key to both Generic OnOff models: 
 	err = bt_mesh_app_key_add(0, 0, app_key);
 	if (err) {
 		printk("App key add failed (err: %d)\n", err);
@@ -389,11 +390,11 @@ void btnPressed()
 
 	/* Models must be bound to an app key to send and receive messages with
 	 * it:
-	 */
+	 *//*
 	models[2].keys[0] = 0;
 	models[3].keys[0] = 0;
 
-	printk("Provisioned and configured!\n");
+	printk("Provisioned and configured!\n");*/
 }
 
 static void bt_ready(int err)
