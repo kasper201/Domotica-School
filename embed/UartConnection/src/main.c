@@ -45,6 +45,8 @@ void button_pressed(const struct device *dev, struct gpio_callback *cb,
 	//printk("Button pressed at %" PRIu32 "\n", k_cycle_get_32());
 }
 
+struct Node node;
+
 int main(void)
 {
 	int ret;
@@ -113,9 +115,10 @@ int main(void)
 			} else {
 				gpio_pin_set_dt(&led, 0);
 			}
-			strcpy(nodes[0], "AddNode STM32 AddSensor Button STM_Button AddActuator LED STM_LED false\n");
-			strcpy(groups[0], "AddGroup Test_Group AddSensor Application Button App_Button AddActuator STM32 LED STM_LED\n");
-			readPc(nodes, groups, &ledState); //Reads uart output from the pc
+			strcpy(nodes[0], "AddNode STM32_______ AddSensor Button______ STM_Button__ AddActuator LED_________ STM_LED_____ false\n");
+			strcpy(groups[0], "AddGroup Test_Group AddSensor Application Button App_Button AddActuator STM32_______ LED_________ STM_LED_____\n");
+			addNode(&node, nodes[0]);
+			readPc(&node, groups, &ledState); //Reads uart output from the pc
 
 			k_msleep(SLEEP_TIME_MS);
 		}
