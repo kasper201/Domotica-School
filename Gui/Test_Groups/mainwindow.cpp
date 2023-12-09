@@ -225,12 +225,12 @@ void MainWindow::readData()
             }
             if (actuatorUpdate.contains("App_LED"))
             {
-                if(node.getActuatorStatus("Application", "App_LED") == "false")
+                if(node.getActuatorStatus("Application_", "App_LED_____") == "false")
                 {
-                    node.updateActuatorStatus("Application", "App_LED", "true");
+                    node.updateActuatorStatus("Application_", "App_LED_____", "true");
                     ui->widget_led->setStyleSheet("background-color: yellow;");
                 } else {
-                    node.updateActuatorStatus("Application", "App_LED", "false");
+                    node.updateActuatorStatus("Application_", "App_LED_____", "false");
                     ui->widget_led->setStyleSheet("background-color: black;");
                 }
                 actuatorsTriggered.removeOne(actuatorUpdate);
