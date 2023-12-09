@@ -279,14 +279,34 @@ static int output_number(bt_mesh_output_action_t action, uint32_t number)
 	return 0;
 }
 
+void clear_provisioning_data(void)
+{
+    int err;
+
+    // Clear provisioning data from settings
+    err = settings_delete("bt/mesh");
+    if (err) {
+        printk("Failed to clear provisioning data (err %d)\n", err);
+        return;
+    }
+
+    printk("Provisioning data cleared\n");
+}
+
 static void prov_complete(uint16_t net_idx, uint16_t addr)
 {
 	boardProvComplete();
+	printk("Provisioning completed. Network Index: 0x%04x, Address: 0x%04x\n",
+           net_idx, addr);
+
 }
 
 static void prov_reset(void)
 {
+	bt_mesh_prov_disable(BT_MESH_PROV_ADV | BT_MESH_PROV_GATT | BT_MESH_PROV_REMOTE);//disable mesh provisioning
+	clear_provisioning_data();//reset provisioning data
 	bt_mesh_prov_enable(BT_MESH_PROV_ADV | BT_MESH_PROV_GATT);
+	//bt_mesh_prov_enable(BT_MESH_PROV_ADV | BT_MESH_PROV_GATT);
 }
 
 static uint8_t dev_uuid[16];
@@ -326,8 +346,9 @@ static int gen_onoff_send(bool val)
 	return bt_mesh_model_send(&models[3], &ctx, &buf, NULL, NULL);
 }
 
-void genONOFFStart()
+void btnPressed()
 {
+
 	if (bt_mesh_is_provisioned()) {
 		(void)gen_onoff_send(!onoff.val);
 		return;
@@ -384,6 +405,7 @@ static void bt_ready(int err)
 
 	printk("Bluetooth initialized\n");
 
+
 	err = bt_mesh_init(&prov, &comp);
 	if (err) {
 		printk("Initializing mesh failed (err %d)\n", err);
@@ -395,6 +417,7 @@ static void bt_ready(int err)
 	}
 
 	/* This will be a no-op if settings_load() loaded provisioning info */
+	//bt_mesh_prov_enable(BT_MESH_PROV_ADV | BT_MESH_PROV_GATT); // for self provisioning
 	bt_mesh_prov_enable(BT_MESH_PROV_ADV | BT_MESH_PROV_GATT);
 
 	printk("Mesh initialized\n");
@@ -402,7 +425,6 @@ static void bt_ready(int err)
 
 int bluetoothInit(void)
 {
-	static struct k_work button_work;
 	int err = -1;
 
 	printk("Initializing...\n");
@@ -416,11 +438,14 @@ int bluetoothInit(void)
 		dev_uuid[1] = 0xdd;
 	}
 
+	k_work_init_delayable(&onoff.work, onoff_timeout);
+
 	/* Initialize the Bluetooth Subsystem */
 	err = bt_enable(bt_ready);
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
 	}
-	genONOFFStart();
+	//prov_reset();
+	//selfProv(); // oops this is for selfprovisioning
 	return 0;
 }
