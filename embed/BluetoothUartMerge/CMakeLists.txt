@@ -20,6 +20,10 @@ target_sources(app PRIVATE
     src/main.c
     src/bluetooth.c
     src/board.c
+    src/compc.c
+    src/groupData.c
+    src/nodeData.c
+    
     # Add more source files as needed
 )
 
