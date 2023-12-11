@@ -130,8 +130,8 @@ int main(void)
 		}
 	}
 	strcpy(nodes[0], "AddNode STM32_______ AddSensor Button______ STM_Button__ AddActuator LED_________ STM_LED_____ false\n");
-	strcpy(groups[0], "AddGroup Test_Group__ AddSensor Application_ Button______ App_Button__ AddSensor STM32_______ Button_______ STM_Button__ AddActuator STM32_______ LED_________ STM_LED_____\n");
-	//strcpy(groups[0], "AddGroup Test_Group__ AddSensor Application_ Button______ App_Button__ AddActuator STM32_______ LED_________ STM_LED_____\n");
+	//strcpy(groups[0], "AddGroup Test_Group__ AddSensor Application_ Button______ App_Button__ AddSensor STM32_______ Button______ STM_Button__ AddActuator STM32_______ LED_________ STM_LED_____\n");
+	strcpy(groups[0], "AddGroup Test_Group__ AddSensor Application_ Button______ App_Button__ AddActuator STM32_______ LED_________ STM_LED_____\n");
 	addNode(&node, nodes[0]);
 	addGroup(group, groups[0]);
 
