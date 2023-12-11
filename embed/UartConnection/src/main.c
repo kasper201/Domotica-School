@@ -130,7 +130,7 @@ int main(void)
 		}
 	}
 	strcpy(nodes[0], "AddNode STM32_______ AddSensor Button______ STM_Button__ AddActuator LED_________ STM_LED_____ false\n");
-	//strcpy(groups[0], "AddGroup Test_Group__ AddSensor Application_ Button______ App_Button__ AddSensor STM32_______ Button______ STM_Button__ AddActuator STM32_______ LED_________ STM_LED_____\n");
+	// strcpy(groups[0], "AddGroup Test_Group__ AddSensor Application_ Button______ App_Button__ AddSensor STM32_______ Button______ STM_Button__ AddActuator STM32_______ LED_________ STM_LED_____\n");
 	strcpy(groups[0], "AddGroup Test_Group__ AddSensor Application_ Button______ App_Button__ AddActuator STM32_______ LED_________ STM_LED_____\n");
 	addNode(&node, nodes[0]);
 	addGroup(group, groups[0]);
@@ -145,7 +145,17 @@ int main(void)
 
 			if (val >= 1 && buttonPressed == 0)
 			{
-				printk("TriggerSensor STM32_______ STM_Button__\n");
+				for (int i = 0; i < MAX_GROUPS_ALLOWED; i++)
+				{
+					for (int s = 0; s < MAX_SENSORS_IN_GROUP; s++)
+					{
+						if(strstr(group[i].sensors[s].nodeName, node.nodeName) && strstr(group[i].sensors[s].sensorName, "STM_Button__"))
+						{
+							printk("TriggerSensor STM32_______ STM_Button__\n");
+						}
+					}
+				}
+
 				buttonPressed = 1;
 			}
 			else if (val == 0 && buttonPressed == 1)
