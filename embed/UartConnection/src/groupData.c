@@ -39,7 +39,7 @@ void groupsToPc(struct Group *group)
             //print all sensors
             for (int s = 0; s < MAX_SENSORS_IN_GROUP; s++)
             {
-                if(group[i].sensors[s].sensorFilled = '1')
+                if(group[i].sensors[s].sensorFilled == '1')
                 {
                     printk("AddSensor %s %s %s ", group[i].sensors[s].nodeName, group[i].sensors[s].sensorType, group[i].sensors[s].sensorName);
                 }
@@ -48,7 +48,7 @@ void groupsToPc(struct Group *group)
             //print all actuators
             for (int a = 0; a < MAX_SENSORS_IN_GROUP; a++)
             {
-                if(group[i].actuators[a].actuatorFilled = '1')
+                if(group[i].actuators[a].actuatorFilled == '1')
                 {
                      printk("AddActuator %s %s %s ", group[i].actuators[a].nodeName, group[i].actuators[a].actuatorType, group[i].actuators[a].actuatorName);
                 }
