@@ -17,6 +17,7 @@
 #include "groupData.h"
 #include "uart.h"
 #include "compc.h"
+#include "triggered.h"
 
 #define SLEEP_TIME_MS 10
 
@@ -44,8 +45,11 @@ void button_pressed(const struct device *dev, struct gpio_callback *cb,
 	// printk("Button pressed at %" PRIu32 "\n", k_cycle_get_32());
 }
 
+//Led Name
+extern char* LED_NAME = "STM_LED_____";
+
 // Important structs for storing information
-struct Node node;
+struct Node node[MAX_NODES_ALLOWED];
 struct Group group[MAX_GROUPS_ALLOWED];
 
 int main(void)
@@ -132,7 +136,7 @@ int main(void)
 	strcpy(nodes[0], "AddNode STM32_______ AddSensor Button______ STM_Button__ AddActuator LED_________ STM_LED_____ false\n");
 	// strcpy(groups[0], "AddGroup Test_Group__ AddSensor Application_ Button______ App_Button__ AddSensor STM32_______ Button______ STM_Button__ AddActuator STM32_______ LED_________ STM_LED_____\n");
 	strcpy(groups[0], "AddGroup Test_Group__ AddSensor Application_ Button______ App_Button__ AddActuator STM32_______ LED_________ STM_LED_____\n");
-	addNode(&node, nodes[0]);
+	addNode(&node[0], nodes[0]);
 	addGroup(group, groups[0]);
 
 	printk("Start\n");
@@ -149,9 +153,11 @@ int main(void)
 				{
 					for (int s = 0; s < MAX_SENSORS_IN_GROUP; s++)
 					{
-						if(strstr(group[i].sensors[s].nodeName, node.nodeName) && strstr(group[i].sensors[s].sensorName, "STM_Button__"))
+						if(strstr(group[i].sensors[s].nodeName, node[0].nodeName) && strstr(group[i].sensors[s].sensorName, "STM_Button__"))
 						{
 							printk("TriggerSensor STM32_______ STM_Button__\n");
+							printk("This group is triggered : %s\n", group[i].groupName);
+							triggeredGroup(group[i], node[0], &ledState);
 						}
 					}
 				}
@@ -182,7 +188,7 @@ int main(void)
 				}
 			}
 
-			readPc(&node, group, &ledState); // Reads uart output from the pc
+			readPc(&node[0], group, &ledState); // Reads uart output from the pc
 
 			k_msleep(SLEEP_TIME_MS);
 		}
