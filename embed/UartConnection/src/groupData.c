@@ -36,21 +36,21 @@ void groupsToPc(struct Group *group)
         {
             printk("AddGroup %s ", group[i].groupName);
 
-            //print all sensors
+            // print all sensors
             for (int s = 0; s < MAX_SENSORS_IN_GROUP; s++)
             {
-                if(group[i].sensors[s].sensorFilled == '1')
+                if (group[i].sensors[s].sensorFilled == '1')
                 {
                     printk("AddSensor %s %s %s ", group[i].sensors[s].nodeName, group[i].sensors[s].sensorType, group[i].sensors[s].sensorName);
                 }
             }
 
-            //print all actuators
+            // print all actuators
             for (int a = 0; a < MAX_SENSORS_IN_GROUP; a++)
             {
-                if(group[i].actuators[a].actuatorFilled == '1')
+                if (group[i].actuators[a].actuatorFilled == '1')
                 {
-                     printk("AddActuator %s %s %s ", group[i].actuators[a].nodeName, group[i].actuators[a].actuatorType, group[i].actuators[a].actuatorName);
+                    printk("AddActuator %s %s %s ", group[i].actuators[a].nodeName, group[i].actuators[a].actuatorType, group[i].actuators[a].actuatorName);
                 }
             }
 
@@ -223,6 +223,7 @@ void createGroup(struct Group *group, char *groupString)
 void updateGroup(struct Group *group, char *groupString)
 {
     int check = 0;
+    char filled = '0';
     while (!strstr(groupString, group[check].groupName) && check < MAX_GROUPS_ALLOWED)
     {
         check++;
@@ -236,10 +237,15 @@ void updateGroup(struct Group *group, char *groupString)
         int sensorFree = 0;
         while (group[check].sensors[sensorFree].sensorFilled != '0' && sensorFree < MAX_SENSORS_IN_GROUP)
         {
+            if (strstr(groupString, group[check].sensors[sensorFree].sensorName))
+            {
+                filled = '1';
+                break;
+            }
             sensorFree++;
         }
 
-        if (sensorFree < MAX_SENSORS_IN_GROUP)
+        if (sensorFree < MAX_SENSORS_IN_GROUP && filled != '1')
         {
             position = strstr(groupString, keyword);
             position += strlen(keyword);
@@ -263,6 +269,7 @@ void updateGroup(struct Group *group, char *groupString)
     }
 
     // Add a Actuator
+    filled = '0';
     keyword = "AddActuator ";
 
     if (strstr(groupString, keyword))
@@ -271,10 +278,15 @@ void updateGroup(struct Group *group, char *groupString)
         int actuatorFree = 0;
         while (group[check].actuators[actuatorFree].actuatorFilled != '0' && actuatorFree < MAX_ACTUATORS_IN_GROUP)
         {
+            if (strstr(groupString, group[check].actuators[actuatorFree].actuatorName))
+            {
+                filled = '1';
+                break;
+            }
             actuatorFree++;
         }
 
-        if (actuatorFree < MAX_ACTUATORS_IN_GROUP)
+        if (actuatorFree < MAX_ACTUATORS_IN_GROUP && filled != '1')
         {
             position = strstr(groupString, keyword);
             position += strlen(keyword);
