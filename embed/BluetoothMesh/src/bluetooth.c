@@ -447,6 +447,5 @@ int bluetoothInit(void)
 		printk("Bluetooth init failed (err %d)\n", err);
 	}
 	//prov_reset();
-	//selfProv(); // oops this is for selfprovisioning
 	return 0;
 }
