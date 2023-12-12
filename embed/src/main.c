@@ -6,15 +6,15 @@
 #include "bluetooth.h"
 #include "board.h"
 
-void main(void)
+int main(void)
 {
     init();
-    int i = 1;
     while(1)
-    {    
-        ledSet(true);
+    {
+        /*ledSet(true);
         k_msleep(500);
         ledSet(false);
-        k_msleep(500);
+        k_msleep(500);*/
     }
+    return 0;
 }

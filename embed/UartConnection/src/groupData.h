@@ -2,11 +2,17 @@
 #define GROUPDATA_H_
 
 #include "nodeData.h"
-
-#define MAX_GROUPS_ALLOWED 10       //Max number of groups allowed to be active at the same time
+#include "main.h"
 
 extern char groups[MAX_GROUPS_ALLOWED][MAX_INFO_STRING_LENGTH];
 
-void groupsToPc(char (*groups)[MAX_INFO_STRING_LENGTH]);
+void createEmptyMax();
+void groupsToPc(struct Group *group);
+void addGroup(struct Group *group, char* groupString);
+void createGroup(struct Group* group, char* groupString);
+void updateGroup(struct Group* group, char* groupString);
+void deleteGroup(struct Group* group, char* Message);
+void deleteSensor(struct Group *group, char *Message);
+void deleteActuator(struct Group *group, char *Message);
 
 #endif //GROUPDATA_H_
