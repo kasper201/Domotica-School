@@ -103,7 +103,7 @@ static inline uint8_t model_time_encode(int32_t ms)
 	return 0x3f;
 }
 
-static int onoff_status_send(struct bt_mesh_model *model,
+static int onoff_status_send(struct bt_mesh_model *model, //? what is dis for
 			     struct bt_mesh_msg_ctx *ctx)
 {
 	uint32_t remaining;
@@ -325,7 +325,7 @@ static int gen_onoff_send(bool val)
 {
 	struct bt_mesh_msg_ctx ctx = {
 		.app_idx = models[3].keys[0], /* Use the bound key */
-		.addr = BT_MESH_ADDR_ALL_NODES,
+		.addr = BT_MESH_ADDR_ALL_NODES, 
 		.send_ttl = BT_MESH_TTL_DEFAULT,
 	};
 	static uint8_t tid;
