@@ -27,7 +27,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -159,7 +159,7 @@
         <string>Groups Overview</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_13">
-        <item>
+        <item alignment="Qt::AlignHCenter">
          <widget class="QFrame" name="frame_3">
           <property name="frameShape">
            <enum>QFrame::StyledPanel</enum>
