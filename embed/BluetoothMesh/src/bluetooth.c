@@ -152,6 +152,7 @@ static void onoff_timeout(struct k_work *work)
 
 /* Generic OnOff Server message handlers */
 
+
 static int gen_onoff_get(struct bt_mesh_model *model,
 			 struct bt_mesh_msg_ctx *ctx,
 			 struct net_buf_simple *buf)
