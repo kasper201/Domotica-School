@@ -147,7 +147,7 @@ int main(void)
 			/* If we have an LED, match its state to the button's. */
 			int val = gpio_pin_get_dt(&button);
 
-			if (val >= 1 && buttonPressed == 0)
+			if (val >= 1 && buttonPressed <= 0)
 			{
 				for (int i = 0; i < MAX_GROUPS_ALLOWED; i++)
 				{
@@ -163,7 +163,7 @@ int main(void)
 
 				buttonPressed = 1;
 			}
-			else if (val == 0 && buttonPressed == 1)
+			else if (val == 0 && buttonPressed >= 1)
 			{
 				buttonPressed = 0;
 			}
