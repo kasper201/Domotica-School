@@ -104,6 +104,7 @@ int main(void)
 	uartSetup();
 	int buttonPressed = 0;
 	int ledState = 0;
+	int ledActivated = 0;
 
 	// Reset if groups are filled
 	for (int i = 0; i < MAX_GROUPS_ALLOWED; i++)
@@ -154,12 +155,20 @@ int main(void)
 			if (ledState == 1)
 			{
 				gpio_pin_set_dt(&led, 1);
-				printk("UpdateAppActuator STM32_______ STM_LED_____ true\n");
+				if (ledActivated == 0)
+				{
+					printk("UpdateAppActuator STM32_______ STM_LED_____ true\n");
+					ledActivated = 1;
+				}
 			}
 			else
 			{
 				gpio_pin_set_dt(&led, 0);
-				printk("UpdateAppActuator STM32_______ STM_LED_____ false\n");
+				if (ledActivated == 1)
+				{
+					printk("UpdateAppActuator STM32_______ STM_LED_____ false\n");
+					ledActivated = 0;
+				}
 			}
 
 			readPc(&node, group, &ledState); // Reads uart output from the pc
