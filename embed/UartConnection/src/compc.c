@@ -3,6 +3,7 @@
 #include "nodeData.h"
 #include "groupData.h"
 #include "main.h"
+#include "triggered.h"
 
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
@@ -70,9 +71,9 @@ void readPc(struct Node *node, struct Group *group, int *ledState)
     {
         for (int i = 0; i < MAX_GROUPS_ALLOWED; i++)
         {
-            if (strstr(Message, group[i].sensors[s].nodeName, node[0].nodeName) && strstr(group[i].groupName))
+            if (strstr(Message, group[i].groupName))
             {
-                triggeredGroup(group[i], node[0], &ledState);
+                triggeredGroup(group[i], node[0], ledState);
             }
         }
     }
