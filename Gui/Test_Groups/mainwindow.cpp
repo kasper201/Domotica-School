@@ -177,21 +177,42 @@ void MainWindow::readData()
             Data_From_SerialPort = function.addGroups(Data_From_SerialPort, groups, groupList);
 
 
-            if(Data_From_SerialPort.contains("TriggerSensor"))
+            if(Data_From_SerialPort.contains("GroupTriggered"))
             {
-                groupsTriggered = sensorInput.sensorTrigger(groups, Data_From_SerialPort);
+                QString input = Data_From_SerialPort;
+                input = stringM.removedTillWhitespace(Data_From_SerialPort);
+                actuatorsTriggered = sensorInput.groupTriggered(groups, node, input);
+                if(!actuatorsTriggered.isEmpty())
+                {
+                    actuatorUpdate = actuatorsTriggered.first();
+                    if (actuatorUpdate.contains("App_LED"))
+                    {
+                        if(node.getActuatorStatus("Application_", "App_LED_____") == "false")
+                        {
+                            node.updateActuatorStatus("Application_", "App_LED_____", "true");
+                            ui->widget_led->setStyleSheet("background-color: yellow;");
+                        } else {
+                            node.updateActuatorStatus("Application_", "App_LED_____", "false");
+                            ui->widget_led->setStyleSheet("background-color: black;");
+                        }
+                        actuatorsTriggered.removeOne(actuatorUpdate);
+                        qDebug() << node.getActuatorStatus("Application", "App_LED");
+                    }
+                }
             }
 
             if(Data_From_SerialPort.contains("UpdateAppActuator"))
             {
                 sensorInput.actuatorUpdate(node, Data_From_SerialPort);
                 updateNodeLists();
-                actuatorsTriggered.removeOne(actuatorUpdate);
-                actuatorUpdateLock = false;
+                //actuatorsTriggered.removeOne(actuatorUpdate);
+                //actuatorUpdateLock = false;
             }
 
             Data_From_SerialPort = "";
         }
+
+        /*
         //Allows a group update because there are no actuators of the last group left
         if(actuatorsTriggered.isEmpty())
         {
@@ -236,7 +257,7 @@ void MainWindow::readData()
                 actuatorsTriggered.removeOne(actuatorUpdate);
                 qDebug() << node.getActuatorStatus("Application", "App_LED");
             }
-        }
+        }*/
     }
 }
 
@@ -311,7 +332,7 @@ void MainWindow::on_pushButton_Add_Actuator_Group_clicked()
         }
     } else
     {
-    ui->userFeedbackLabel->setText("Select an actuator first");
+        ui->userFeedbackLabel->setText("Select an actuator first");
     }
 }
 
@@ -320,11 +341,23 @@ void MainWindow::on_pushButton_Add_Group_clicked()
 {
     if(addGroupLine->text() != "")
     {
-        groups.addGroupInstance(addGroupLine->text());
-        QString CreateGroup = "CreateGroup " + addGroupLine->text();
-        portSetup.WriteToComport(CreateGroup);
-        function.updateGroupLists(groupList, groupLinkList, sensorAddButton, actuatorAddButton, groups, nodeList);
-        addGroupLine->clear();
+        QString newGroupName = addGroupLine->text();
+        int groupNameLength = newGroupName.length();
+        if(groupNameLength > 0)
+        {
+            qDebug() << groupNameLength;
+            for(int l = groupNameLength; l < requiredGroupNameLength; l++)
+            {
+                newGroupName += "_";
+                qDebug() << l;
+            }
+            newGroupName = newGroupName.left(requiredGroupNameLength);
+            groups.addGroupInstance(newGroupName);
+            QString CreateGroup = "CreateGroup " + newGroupName;
+            portSetup.WriteToComport(CreateGroup);
+            function.updateGroupLists(groupList, groupLinkList, sensorAddButton, actuatorAddButton, groups, nodeList);
+            addGroupLine->clear();
+        }
     } else
     {
         ui->userFeedbackLabel->setText("Enter a group name");
@@ -336,7 +369,7 @@ void MainWindow::on_pushButton_Delete_Group_clicked()
 {
     if(!groupList->selectedItems().isEmpty())
     {
-    QString groupName = groupList->currentItem()->text();
+        QString groupName = groupList->currentItem()->text();
         groups.deleteGroupInstance(groupName);
 
         QString deleteGroup = "DeleteGroup " + groupName;
@@ -456,6 +489,28 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
 void MainWindow::on_appButton_clicked()
 {
     groupsTriggered = sensorInput.sensorTrigger(groups, "TriggerSensor Application_ App_Button__");
-    readData();
+    for (const QString& groupName : groupsTriggered)
+    {
+        actuatorsTriggered = groups.getActuators(groupName);
+        for (const QString& actuatorShit : actuatorsTriggered)
+        {
+            if (actuatorShit.contains("App_LED_____"))
+            {
+                if(node.getActuatorStatus("Application_", "App_LED_____") == "false")
+                {
+                    node.updateActuatorStatus("Application_", "App_LED_____", "true");
+                    ui->widget_led->setStyleSheet("background-color: yellow;");
+                } else {
+                    node.updateActuatorStatus("Application_", "App_LED_____", "false");
+                    ui->widget_led->setStyleSheet("background-color: black;");
+                }
+                actuatorsTriggered.removeOne(actuatorUpdate);
+                qDebug() << node.getActuatorStatus("Application", "App_LED");
+            }
+        }
+        QString sendData = "GroupTriggered " + groupName + "\n";
+        portSetup.WriteToComport(sendData);
+    }
 }
+
 
