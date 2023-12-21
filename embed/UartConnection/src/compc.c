@@ -65,6 +65,18 @@ void readPc(struct Node *node, struct Group *group, int *ledState)
         deleteActuator(group, Message);
     }
 
+    // See which groups are triggered
+    if (strstr(Message, "GroupTriggered"))
+    {
+        for (int i = 0; i < MAX_GROUPS_ALLOWED; i++)
+        {
+            if (strstr(Message, group[i].sensors[s].nodeName, node[0].nodeName) && strstr(group[i].groupName))
+            {
+                triggeredGroup(group[i], node[0], &ledState);
+            }
+        }
+    }
+
     // Change led status
     if (strstr(Message, "UpdateActuator"))
     {

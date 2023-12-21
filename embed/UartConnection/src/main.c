@@ -45,8 +45,8 @@ void button_pressed(const struct device *dev, struct gpio_callback *cb,
 	// printk("Button pressed at %" PRIu32 "\n", k_cycle_get_32());
 }
 
-//Led Name
-extern char* LED_NAME = "STM_LED_____";
+// Led Name
+extern char *LED_NAME = "STM_LED_____";
 
 // Important structs for storing information
 struct Node node[MAX_NODES_ALLOWED];
@@ -153,10 +153,10 @@ int main(void)
 				{
 					for (int s = 0; s < MAX_SENSORS_IN_GROUP; s++)
 					{
-						if(strstr(group[i].sensors[s].nodeName, node[0].nodeName) && strstr(group[i].sensors[s].sensorName, "STM_Button__"))
+						if (strstr(group[i].sensors[s].nodeName, node[0].nodeName) && strstr(group[i].sensors[s].sensorName, "STM_Button__"))
 						{
 							printk("TriggerSensor STM32_______ STM_Button__\n");
-							printk("This group is triggered : %s\n", group[i].groupName);
+							printk("GroupTriggered %s\n", group[i].groupName);
 							triggeredGroup(group[i], node[0], &ledState);
 						}
 					}
