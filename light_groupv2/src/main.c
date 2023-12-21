@@ -19,6 +19,7 @@
 #include <zephyr/bluetooth/mesh/cfg_cli.h>
 #include <zephyr/drivers/gpio.h>
 #define SLEEP_TIME_MS	1
+//test
 /*
  * Get button configuration from the devicetree sw0 alias. This is mandatory.
  */
