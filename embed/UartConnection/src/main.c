@@ -155,7 +155,6 @@ int main(void)
 					{
 						if (strstr(group[i].sensors[s].nodeName, node[0].nodeName) && strstr(group[i].sensors[s].sensorName, "STM_Button__"))
 						{
-							printk("TriggerSensor STM32_______ STM_Button__\n");
 							printk("GroupTriggered %s\n", group[i].groupName);
 							triggeredGroup(group[i], node[0], &ledState);
 						}
