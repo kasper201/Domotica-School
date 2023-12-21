@@ -3,6 +3,7 @@
 #include "nodeData.h"
 #include "groupData.h"
 #include "main.h"
+#include "triggered.h"
 
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
@@ -63,6 +64,18 @@ void readPc(struct Node *node, struct Group *group, int *ledState)
     if (strstr(Message, "DeleteActuator"))
     {
         deleteActuator(group, Message);
+    }
+
+    // See which groups are triggered
+    if (strstr(Message, "GroupTriggered"))
+    {
+        for (int i = 0; i < MAX_GROUPS_ALLOWED; i++)
+        {
+            if (strstr(Message, group[i].groupName))
+            {
+                triggeredGroup(group[i], node[0], ledState);
+            }
+        }
     }
 
     // Change led status

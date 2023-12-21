@@ -14,5 +14,6 @@ Gui/build-Test_Gui-Desktop_Qt_6_6_0_MinGW_64_bit-Debug/
 Gui/build-Test_Groups-Desktop_Qt_6_6_0_MinGW_64_bit-Debug/
 Gui/build-Test_Groups-Desktop_Qt_6_6_0_MinGW_64_bit-Release/
 Gui/build-ThreadedEcho-Desktop_Qt_6_6_0_MinGW_64_bit-Debug/
+Gui/Releases/
 build/
 .vscode

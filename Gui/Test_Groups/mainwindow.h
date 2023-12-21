@@ -98,6 +98,8 @@ private:
     QPushButton* sensorAddButton;
     QPushButton* actuatorAddButton;
 
+    const int requiredGroupNameLength = 12;
+
     //shows group
     QListWidget* groupList;
     QLineEdit* addGroupLine;

@@ -32,10 +32,10 @@ QStringList Sensor::groupTriggered(Groups& groups, Node& node, QString groupName
 {
     QStringList actuatorsTriggered = groups.getActuators(groupName);
     AllUpdates.clear();
-    for (const QString& groupName : actuatorsTriggered)
+    for (const QString& Name : actuatorsTriggered)
     {
-        QString actuatorName = groupName.split('\t').value(0);
-        QString actuatorNode = groupName.split('\t').value(1);
+        QString actuatorName = Name.split('\t').value(0);
+        QString actuatorNode = Name.split('\t').value(1);
         QString actuatorStatus = node.getActuatorStatus(actuatorNode, actuatorName);
         QString actuatorStatusInverted;
         if(actuatorStatus == "false")
