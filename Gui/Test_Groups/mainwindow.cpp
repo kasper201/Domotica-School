@@ -205,59 +205,10 @@ void MainWindow::readData()
             {
                 sensorInput.actuatorUpdate(node, Data_From_SerialPort);
                 updateNodeLists();
-                //actuatorsTriggered.removeOne(actuatorUpdate);
-                //actuatorUpdateLock = false;
             }
 
             Data_From_SerialPort = "";
         }
-
-        /*
-        //Allows a group update because there are no actuators of the last group left
-        if(actuatorsTriggered.isEmpty())
-        {
-            groupUpdateLock = false;
-        }
-
-
-        foreach (const QString &groupName, groupsTriggered)   //Adds all groups to groupLinkList
-        {
-            qDebug() << groupName;
-        }
-
-        //Goes to the next group after the first one is updated
-        if(!groupsTriggered.isEmpty() && groupUpdateLock == false)
-        {
-            QString groupName = groupsTriggered.first();
-            actuatorsTriggered = sensorInput.groupTriggered(groups, node, groupName);
-            qDebug() << groupName;
-            groupsTriggered.removeOne(groupName);
-            groupUpdateLock = true;
-        }
-
-        if(!actuatorsTriggered.isEmpty() && actuatorUpdateLock == false)
-        {
-            actuatorUpdate = actuatorsTriggered.first();
-            if(!actuatorUpdate.contains("App_LED"))
-            {
-                qDebug() << actuatorUpdate;
-                portSetup.WriteToComport(actuatorUpdate);
-                actuatorUpdateLock = true;
-            }
-            if (actuatorUpdate.contains("App_LED"))
-            {
-                if(node.getActuatorStatus("Application_", "App_LED_____") == "false")
-                {
-                    node.updateActuatorStatus("Application_", "App_LED_____", "true");
-                    ui->widget_led->setStyleSheet("background-color: yellow;");
-                } else {
-                    node.updateActuatorStatus("Application_", "App_LED_____", "false");
-                    ui->widget_led->setStyleSheet("background-color: black;");
-                }
-                actuatorsTriggered.removeOne(actuatorUpdate);
-                qDebug() << node.getActuatorStatus("Application", "App_LED");
-            }
-        }*/
     }
 }
 
