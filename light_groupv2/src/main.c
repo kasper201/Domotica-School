@@ -18,7 +18,6 @@
 #include <stdbool.h>
 #include <zephyr/bluetooth/mesh/cfg_cli.h>
 #include <zephyr/drivers/gpio.h>
-#include "subscribe.h"
 #define SLEEP_TIME_MS	1
 //test
 /*
@@ -144,15 +143,23 @@ void button_pressed(const struct device *dev, struct gpio_callback *cb,
 	extern uint16_t extern_addr;
 	printk("Button pressed at %" PRIu32 "\n", k_cycle_get_32());
 	printk("Button pressed net_idx: 0x%04x and addr: 0x%04x\n", extern_net_idx, extern_addr);
-	uint16_t elem_addr = 0;
+	uint16_t net_idx = extern_net_idx;
+	uint16_t addr = extern_addr;
+	uint16_t elem_addr = addr;
 	uint16_t sub_addr = 0xC000;
 	uint16_t mod_id = 0x1000;
+	int err;
+	uint8_t status = 0;
 	if(elem_addr = 0)
 	{
 		printk("no addres found");
 	}
 	else{
-		//subscribe(net_idx, addr, elem_addr,sub_addr,mod_id);
+		err = bt_mesh_cfg_cli_mod_sub_add(net_idx, addr, elem_addr, sub_addr, mod_id,
+												  &status);
+		if (err) {
+		printk("sub failed (err %d)\n", err);
+		}
 	}
 	return;
 }
