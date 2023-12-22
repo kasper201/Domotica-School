@@ -19,7 +19,6 @@
 #include <zephyr/bluetooth/mesh/cfg_cli.h>
 #include <zephyr/drivers/gpio.h>
 #include "subscribe.h"
-#include "extern_var.h"
 #define SLEEP_TIME_MS	1
 //test
 /*
@@ -72,10 +71,10 @@ void clear_provisioning_data(void)
 }
 static void prov_complete(uint16_t net_idx, uint16_t addr)
 {
-	//extern_net_idx = net_idx;
-	//extern_addr = addr;
-	//SetNetidx(net_idx);
-	//SetAddr(addr);
+	extern uint16_t extern_net_idx;
+	extern uint16_t extern_addr;
+	extern_net_idx = net_idx;
+	extern_addr = addr;
 	boardProvComplete();
 	printk("Provisioning completed. Network Index: 0x%04x, Address: 0x%04x\n",
            net_idx, addr);
@@ -128,14 +127,12 @@ static void bt_ready(int err)
 	bt_mesh_prov_enable(BT_MESH_PROV_ADV | BT_MESH_PROV_GATT);
 
 	printk("Mesh initialized\n");
-	//printk("miAddres : %d\n", addr);
 
 	if (IS_ENABLED(CONFIG_SOC_SERIES_NRF52X) && IS_ENABLED(CONFIG_MCUMGR_TRANSPORT_BT)) {
 		err = smp_dfu_init();
 		if (err) {
 			printk("Unable to initialize DFU (err %d)\n", err);
 		}
-		//printk("smpAddres : %d\n", addr);
 	}
 	printk("end bt_ready\n");
 }
@@ -143,7 +140,10 @@ static void bt_ready(int err)
 void button_pressed(const struct device *dev, struct gpio_callback *cb,
 		    uint32_t pins)
 {
+	extern uint16_t extern_net_idx;
+	extern uint16_t extern_addr;
 	printk("Button pressed at %" PRIu32 "\n", k_cycle_get_32());
+	printk("Button pressed net_idx: 0x%04x and addr: 0x%04x\n", extern_net_idx, extern_addr);
 	uint16_t elem_addr = 0;
 	uint16_t sub_addr = 0xC000;
 	uint16_t mod_id = 0x1000;
@@ -156,7 +156,22 @@ void button_pressed(const struct device *dev, struct gpio_callback *cb,
 	}
 	return;
 }
+void subscribe(uint16_t net_idx, uint16_t addr,uint16_t elem_addr,uint16_t sub_addr,uint16_t mod_id)
+{
+	int err;
+	uint8_t status = 0;
 
+	err = bt_mesh_cfg_cli_mod_sub_add(net_idx, addr, elem_addr, sub_addr, mod_id,
+												  &status);
+	if (err) {
+		printk("sub failed (err %d)\n", err);
+	}
+	printk("Sub Network Index: 0x%04x, Address: 0x%04x\n",
+           net_idx, addr);
+	printk("Sub add (err: %d, status: %d)\n", err,
+				   status);
+				   
+}
 static void button_init(void)
 {
 	int ret;
@@ -202,12 +217,13 @@ static void button_init(void)
 		}
 	}
 }
+uint16_t extern_net_idx = 0;
+uint16_t extern_addr = 0;
 int main(void)
 {
 	int err;
-	uint16_t test = 12;
-	SetAddr(test);
-	extern_net_idx = 0;
+	extern uint16_t extern_net_idx;
+	extern uint16_t extern_addr;
 	printk("Initializing...\n");
 
 	err = bt_enable(bt_ready);
