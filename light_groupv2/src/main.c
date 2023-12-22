@@ -18,6 +18,8 @@
 #include <stdbool.h>
 #include <zephyr/bluetooth/mesh/cfg_cli.h>
 #include <zephyr/drivers/gpio.h>
+#include "subscribe.h"
+#include "extern_var.h"
 #define SLEEP_TIME_MS	1
 //test
 /*
@@ -70,7 +72,10 @@ void clear_provisioning_data(void)
 }
 static void prov_complete(uint16_t net_idx, uint16_t addr)
 {
-	int err;
+	//extern_net_idx = net_idx;
+	//extern_addr = addr;
+	//SetNetidx(net_idx);
+	//SetAddr(addr);
 	boardProvComplete();
 	printk("Provisioning completed. Network Index: 0x%04x, Address: 0x%04x\n",
            net_idx, addr);
@@ -134,26 +139,11 @@ static void bt_ready(int err)
 	}
 	printk("end bt_ready\n");
 }
-void subscribe(uint16_t net_idx, uint16_t addr,uint16_t elem_addr,uint16_t sub_addr,uint16_t mod_id)
-{
-	int err;
-	uint8_t status = 0;
-
-	err = bt_mesh_cfg_cli_mod_sub_add(net_idx, addr, elem_addr, sub_addr, mod_id,
-												  &status);
-	if (err) {
-		printk("sub failed (err %d)\n", err);
-	}
-	printk("Sub add (err: %d, status: %d)\n", err,
-				   status);
-}
 
 void button_pressed(const struct device *dev, struct gpio_callback *cb,
 		    uint32_t pins)
 {
 	printk("Button pressed at %" PRIu32 "\n", k_cycle_get_32());
-	printk("Network Index: 0x%04x, Address: 0x%04x\n",
-           data->net_idx, data->addr);
 	uint16_t elem_addr = 0;
 	uint16_t sub_addr = 0xC000;
 	uint16_t mod_id = 0x1000;
@@ -215,6 +205,9 @@ static void button_init(void)
 int main(void)
 {
 	int err;
+	uint16_t test = 12;
+	SetAddr(test);
+	extern_net_idx = 0;
 	printk("Initializing...\n");
 
 	err = bt_enable(bt_ready);
