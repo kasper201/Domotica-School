@@ -18,6 +18,8 @@ target_sources(app PRIVATE
     src/main.c
     src/bluetooth.c
     src/board.c
+    src/uart.c
+    src/group.c
     # Add more source files as needed
 )
 
