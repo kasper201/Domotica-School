@@ -18,7 +18,54 @@ void uart_thread_function(void *a, void *b, void *c)
         char buf[128];
         int len = k_msgq_get(&uart_msgq, buf, K_FOREVER);
         buf[len] = '\0';
-        printk("Received: %s\n", buf);
+        if(len != 0)
+        {
+            if(buf[0] == 's')
+            {
+                //printk("Subscribing to group\n");
+                uint16_t groupAddress = 0x0001;
+                uint16_t elementAddress = 0x0001;
+                uint16_t mod_id = 0x1000;
+                uint16_t netKeyIndex = 0x000;
+                uint16_t address = 0x0001;
+                subscribeToGroup(groupAddress, elementAddress, mod_id, netKeyIndex, address);
+            }
+            else if(buf[0] == 'p')
+            {
+                //printk("Publishing to group\n");
+                uint16_t groupAddress = 0x0001;
+                uint16_t elementAddress = 0x0001;
+                uint16_t mod_id = 0x1000;
+                uint16_t netKeyIndex = 0x000;
+                uint16_t address = 0x0001;
+                publishToGroup(groupAddress, elementAddress, mod_id, netKeyIndex, address);
+            }
+            else if(buf[0] == 'u')
+            {
+                //printk("Unsubscribing from group\n");
+                uint16_t groupAddress = 0x0001;
+                uint16_t elementAddress = 0x0001;
+                uint16_t mod_id = 0x1000;
+                uint16_t netKeyIndex = 0x000;
+                uint16_t address = 0x0001;
+                unsubscribeFromGroup(groupAddress, elementAddress, mod_id, netKeyIndex, address);
+            }
+            else if(buf[0] == 'c')
+            {
+                //printk("Clearing group\n");
+                uint16_t groupAddress = 0x0001;
+                uint16_t elementAddress = 0x0001;
+                uint16_t mod_id = 0x1000;
+                uint16_t netKeyIndex = 0x000;
+                uint16_t address = 0x0001;
+                clearGroup(groupAddress, elementAddress, mod_id, netKeyIndex, address);
+            }
+            else if(buf[0] == 'r')
+            {
+                //printk("Resetting node\n");
+                resetNode();
+            }
+        }
     }
 }
 
