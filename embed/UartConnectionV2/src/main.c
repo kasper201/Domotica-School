@@ -30,7 +30,8 @@ void uart_thread_function(void *a, void *b, void *c)
                 uint16_t address = 0x0001;
                 subscribeToGroup(groupAddress, elementAddress, mod_id, netKeyIndex, address);
             }
-            else if(buf[0] == 'p')
+            //publish to group
+            /*else if(buf[0] == 'p')
             {
                 //printk("Publishing to group\n");
                 uint16_t groupAddress = 0x0001;
@@ -39,7 +40,7 @@ void uart_thread_function(void *a, void *b, void *c)
                 uint16_t netKeyIndex = 0x000;
                 uint16_t address = 0x0001;
                 publishToGroup(groupAddress, elementAddress, mod_id, netKeyIndex, address);
-            }
+            }*/
             else if(buf[0] == 'u')
             {
                 //printk("Unsubscribing from group\n");
@@ -72,6 +73,7 @@ void uart_thread_function(void *a, void *b, void *c)
 int main(void)
 {
     init();
+    k_thread_create(&uart_thread_data, uart_thread_stack, K_THREAD_STACK_SIZEOF(uart_thread_stack), uart_thread_function, NULL, NULL, NULL, 0, K_INHERIT_PERMS, K_NO_WAIT); // Create thread for uart
     while(1)
     {
         /*ledSet(true);
