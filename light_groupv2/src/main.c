@@ -139,13 +139,13 @@ static void bt_ready(int err)
 void button_pressed(const struct device *dev, struct gpio_callback *cb,
 		    uint32_t pins)
 {
-	extern uint16_t extern_net_idx;
-	extern uint16_t extern_addr;
+	uint16_t button_net_idx = 0;
+	uint16_t button_addr = 0;
+	getNetIdx(&button_net_idx);
+	getAddr(&button_addr);
 	printk("Button pressed at %" PRIu32 "\n", k_cycle_get_32());
-	printk("Button pressed net_idx: 0x%04x and addr: 0x%04x\n", extern_net_idx, extern_addr);
-	uint16_t net_idx = extern_net_idx;
-	uint16_t addr = extern_addr;
-	uint16_t elem_addr = addr;
+	printk("Button pressed net_idx: 0x%04x and addr: 0x%04x\n", button_net_idx, button_addr);
+	uint16_t elem_addr = button_addr;
 	uint16_t sub_addr = 0xC000;
 	uint16_t mod_id = 0x1000;
 	int err;
@@ -155,11 +155,11 @@ void button_pressed(const struct device *dev, struct gpio_callback *cb,
 		printk("no addres found");
 	}
 	else{
-		err = bt_mesh_cfg_cli_mod_sub_add(net_idx, addr, elem_addr, sub_addr, mod_id,
+		/*err = bt_mesh_cfg_cli_mod_sub_add(button_net_idx, button_addr, elem_addr, sub_addr, mod_id,
 												  &status);
 		if (err) {
 		printk("sub failed (err %d)\n", err);
-		}
+		}*/
 	}
 	return;
 }
@@ -226,6 +226,16 @@ static void button_init(void)
 }
 uint16_t extern_net_idx = 0;
 uint16_t extern_addr = 0;
+void getNetIdx(uint16_t *input)
+{
+	extern uint16_t extern_net_idx;
+	*input = extern_net_idx;
+}
+void getAddr(uint16_t *input)
+{
+	extern uint16_t extern_addr;
+	*input = extern_addr;
+}
 int main(void)
 {
 	int err;
