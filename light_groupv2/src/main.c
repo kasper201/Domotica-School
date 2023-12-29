@@ -135,7 +135,34 @@ static void bt_ready(int err)
 	}
 	printk("end bt_ready\n");
 }
+int buttoncount = 0;
+uint16_t extern_net_idx = 0;
+uint16_t extern_addr = 0;
+void getNetIdx(uint16_t *input)
+{
+	extern uint16_t extern_net_idx;
+	*input = extern_net_idx;
+}
+void getAddr(uint16_t *input)
+{
+	extern uint16_t extern_addr;
+	*input = extern_addr;
+}
+void subscribe(uint16_t net_idx, uint16_t addr,uint16_t elem_addr,uint16_t sub_addr,uint16_t mod_id)
+{
+	int err;
+	uint8_t status = 0;
 
+	err = bt_mesh_cfg_cli_mod_sub_add(net_idx, addr, elem_addr, sub_addr, mod_id,&status);
+	if (err) {
+		printk("sub failed (err %d)\n", err);
+	}
+	printk("Sub Network Index: 0x%04x, Address: 0x%04x\n",
+           net_idx, addr);
+	printk("Sub add (err: %d, status: %d)\n", err,
+				   status);
+				   
+}
 void button_pressed(const struct device *dev, struct gpio_callback *cb,
 		    uint32_t pins)
 {
@@ -144,12 +171,14 @@ void button_pressed(const struct device *dev, struct gpio_callback *cb,
 	getNetIdx(&button_net_idx);
 	getAddr(&button_addr);
 	printk("Button pressed at %" PRIu32 "\n", k_cycle_get_32());
-	printk("Button pressed net_idx: 0x%04x and addr: 0x%04x\n", button_net_idx, button_addr);
+	//printk("Button pressed net_idx: 0x%04x and addr: 0x%04x\n", button_net_idx, button_addr);
 	uint16_t elem_addr = button_addr;
-	uint16_t sub_addr = 0xC000;
+	uint16_t sub_addr = 0xC001;
 	uint16_t mod_id = 0x1000;
 	int err;
-	uint8_t status = 0;
+	uint8_t status;
+	printk("Button pressed net_idx: 0x%04x, addr: 0x%04x, elem_addr: 0x%04x, sub_addr: 0x%04x and mod_id: 0x%04x\n",
+	button_net_idx, button_addr,elem_addr,sub_addr,mod_id);
 	if(elem_addr = 0)
 	{
 		printk("no addres found");
@@ -161,23 +190,20 @@ void button_pressed(const struct device *dev, struct gpio_callback *cb,
 		printk("sub failed (err %d)\n", err);
 		}*/
 	}
-	return;
-}
-void subscribe(uint16_t net_idx, uint16_t addr,uint16_t elem_addr,uint16_t sub_addr,uint16_t mod_id)
-{
-	int err;
-	uint8_t status = 0;
-
-	err = bt_mesh_cfg_cli_mod_sub_add(net_idx, addr, elem_addr, sub_addr, mod_id,
+	extern int buttoncount;
+	buttoncount = buttoncount + 1;
+	printk("button count: %d\n",buttoncount);
+	if(buttoncount == 10)
+	{
+		printk("run subscribe function\n");
+		//subscribe(button_net_idx, button_addr, elem_addr, sub_addr, mod_id);
+		err = bt_mesh_cfg_cli_mod_sub_add(button_net_idx, button_addr, elem_addr, sub_addr, mod_id,
 												  &status);
-	if (err) {
+		if (err) {
 		printk("sub failed (err %d)\n", err);
+		}
 	}
-	printk("Sub Network Index: 0x%04x, Address: 0x%04x\n",
-           net_idx, addr);
-	printk("Sub add (err: %d, status: %d)\n", err,
-				   status);
-				   
+	return;
 }
 static void button_init(void)
 {
@@ -223,18 +249,6 @@ static void button_init(void)
 			printk("Set up LED at %s pin %d\n", led.port->name, led.pin);
 		}
 	}
-}
-uint16_t extern_net_idx = 0;
-uint16_t extern_addr = 0;
-void getNetIdx(uint16_t *input)
-{
-	extern uint16_t extern_net_idx;
-	*input = extern_net_idx;
-}
-void getAddr(uint16_t *input)
-{
-	extern uint16_t extern_addr;
-	*input = extern_addr;
 }
 int main(void)
 {
