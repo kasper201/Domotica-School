@@ -2,7 +2,7 @@
 #define GROUP_H_
 
 #include <zephyr/bluetooth/bluetooth.h>
-#include <bluetooth/mesh/models.h>
+#include <zephyr/bluetooth/mesh.h>
 #include <zephyr/bluetooth/mesh/access.h>
 #include <stdint.h>
 #include <stdbool.h>

@@ -9,6 +9,6 @@ void subscribeToGroup(uint16_t groupAddress, uint16_t elementAddress, uint16_t m
     if (err) {
         printk("Subscription failed (err %d)\n", err);
     }
-    printk("Sub Network Index: 0x%04x, Address: 0x%04x\n", net_idx, addr);
+    printk("Sub Network Index: 0x%04x, Address: 0x%04x\n", netKeyIndex, address);
     printk("Subscription add (err: %d, status: %d)\n", err, status);
 }

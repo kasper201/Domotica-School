@@ -6,9 +6,10 @@
 #include "bluetooth.h"
 #include "board.h"
 #include "uart.h"
+#include "group.h"
 
 // Values for setup uartReceive
-k_thread_stack_define(uart_thread_stack, 1024);
+K_THREAD_STACK_DEFINE(uart_thread_stack, 1024);
 struct k_thread uart_thread_data;
 
 void uart_thread_function(void *a, void *b, void *c)
@@ -22,7 +23,7 @@ void uart_thread_function(void *a, void *b, void *c)
         {
             if(buf[0] == 's')
             {
-                //printk("Subscribing to group\n");
+                printk("Subscribing to group\n");
                 uint16_t groupAddress = 0x0001;
                 uint16_t elementAddress = 0x0001;
                 uint16_t mod_id = 0x1000;
@@ -40,7 +41,7 @@ void uart_thread_function(void *a, void *b, void *c)
                 uint16_t netKeyIndex = 0x000;
                 uint16_t address = 0x0001;
                 publishToGroup(groupAddress, elementAddress, mod_id, netKeyIndex, address);
-            }*/
+            }*//*
             else if(buf[0] == 'u')
             {
                 //printk("Unsubscribing from group\n");
@@ -65,7 +66,7 @@ void uart_thread_function(void *a, void *b, void *c)
             {
                 //printk("Resetting node\n");
                 resetNode();
-            }
+            }*/
         }
     }
 }
