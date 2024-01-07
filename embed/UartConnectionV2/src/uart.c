@@ -1,7 +1,11 @@
 #include <string.h>
+#include <stdbool.h>
+#include <string.h>
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/uart.h>
+#include <zephyr/sys/printk.h>
+
 #include "uart.h"
 
 //Setup uart connection to pc
@@ -51,6 +55,16 @@ void serial_cb(const struct device *dev, void *user_data)
 		}
 		// else: characters beyond buffer size are dropped 
 	}
+}
+
+int readPC(void)
+{
+	char Message[MSG_SIZE];
+	k_msgq_get(&uart_msgq, &Message, K_NO_WAIT);
+    k_msgq_cleanup(&uart_msgq);
+	if(strstr(Message, "s"))
+		printk("Message: %s\n", Message);
+	return 0;
 }
 
 //Setup uart device

@@ -4,5 +4,6 @@
 extern struct k_msgq uart_msgq; // Declare uart_msgq here
 
 int uartSetup(void);
+int readPC(void);
 
 #endif //UART_H_
