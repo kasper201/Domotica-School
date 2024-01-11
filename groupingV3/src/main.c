@@ -61,12 +61,23 @@ void button_pressed(const struct device *dev, struct gpio_callback *cb,
 	getNetIdx(&button_net_idx);
 	getAddr(&button_addr);
 	uint16_t elem_addr = button_addr;
-	uint16_t sub_addr = 0xC001;
-	uint16_t mod_id = 0x1000;
+	uint16_t sub_addr = 0xC000;
+	uint16_t mod_id = BT_MESH_MODEL_ID_GEN_ONOFF_SRV; // BT_MESH_MODEL_ID_GEN_ONOFF_SRV is set as mod id in model
 	int err;
-	uint8_t status;
+	uint8_t status = 0;
 	printk("Button pressed net_idx: 0x%04x, addr: 0x%04x, elem_addr: 0x%04x, sub_addr: 0x%04x and mod_id: 0x%04x\n",
 	button_net_idx, button_addr,elem_addr,sub_addr,mod_id);
+	// show tests
+	if(BT_MESH_ADDR_IS_UNICAST(button_addr))
+	{
+		// checks if buton_addr is the unicast addr
+		printk("addr: 0x%04x is unicast\n",button_addr);
+	}
+	if(BT_MESH_ADDR_IS_GROUP(sub_addr))
+	{
+		// checks if sub_addr is a valid group
+		printk("sub_addr: 0x%04x is group\n",sub_addr);
+	}
 	if(elem_addr = 0)
 	{
 		printk("no addres found");
@@ -74,8 +85,10 @@ void button_pressed(const struct device *dev, struct gpio_callback *cb,
 	else{
 		printk("run subscribe function\n");
 		//subscribe(button_net_idx, button_addr, elem_addr, sub_addr, mod_id);
-		err = bt_mesh_cfg_cli_mod_sub_add(button_net_idx, button_addr, elem_addr, sub_addr, mod_id,
-												  &status);
+		/*err = bt_mesh_cfg_cli_mod_sub_add(button_net_idx, button_addr, button_addr, sub_addr, BT_MESH_MODEL_ID_GEN_ONOFF_SRV,
+												  NULL);*/
+
+		err = bt_mesh_cfg_cli_mod_sub_add(button_net_idx, button_addr, button_addr, sub_addr, mod_id,NULL);	
 		if (err) {
 		printk("sub failed (err %d)\n", err);
 		}
