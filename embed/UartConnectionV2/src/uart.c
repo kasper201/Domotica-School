@@ -4,8 +4,6 @@
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/uart.h>
-#include <zephyr/sys/printk.h>
-
 #include "uart.h"
 #include "board.h"
 
@@ -60,15 +58,16 @@ void serial_cb(const struct device *dev, void *user_data)
 
 int readPC()
 {
-	k_msgq_get(&uart_msgq, &rx_buf, K_NO_WAIT);
-    k_msgq_cleanup(&uart_msgq);
-	if((strstr(rx_buf, "test") != NULL))
+	k_msgq_get(&uart_msgq, &rx_buf, K_FOREVER);
+	// Check if the received message contains "WIFI GOT IP"
+	if (strstr(rx_buf, "HELP") != NULL)
 	{
-		printk("Subscribing to group\n");
-		ledSet(1);
 		return 1;
 	}
-	return 0;
+	else
+	{
+		return 0;
+	}
 }
 
 //Setup uart device

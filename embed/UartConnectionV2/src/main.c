@@ -95,7 +95,11 @@ int main(void)
         k_msleep(500);
         ledSet(false);
         k_msleep(500);
-        uart();
+        if(readPC())
+        {
+            printf("Message received\n");
+        }
+        //uart();
     }
     return 0;
 }
