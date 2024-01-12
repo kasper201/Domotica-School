@@ -20,6 +20,7 @@ target_sources(app PRIVATE
     src/board.c
     src/uart.c
     src/group.c
+    src/pcCom.c
     # Add more source files as needed
 )
 

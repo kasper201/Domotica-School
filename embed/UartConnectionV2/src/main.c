@@ -3,6 +3,8 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/sys/printk.h>
+
+#include "pcCom.h"
 #include "bluetooth.h"
 #include "board.h"
 #include "uart.h"
@@ -95,10 +97,7 @@ int main(void)
         k_msleep(500);
         ledSet(false);
         k_msleep(500);
-        if(readPC())
-        {
-            printf("Message received\n");
-        }
+        readPC();
         //uart();
     }
     return 0;

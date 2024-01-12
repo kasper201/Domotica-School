@@ -1,25 +1,22 @@
 #include <string.h>
-#include <stdbool.h>
-#include <string.h>
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/uart.h>
 #include "uart.h"
-#include "board.h"
 
+//Setup uart connection to pc
 #define UART_DEVICE_NODE DT_ALIAS(usart)
-#define MSG_SIZE 128
-
-K_MSGQ_DEFINE(uart_msgq, MSG_SIZE, 10, 4);
-
 static const struct device *const uart_dev = DEVICE_DT_GET(UART_DEVICE_NODE);
+
+//Data retrieval
+#define MSG_SIZE 128
 static char rx_buf[MSG_SIZE];
 static int rx_buf_pos;
 
-/*
- * Read characters from UART until line end is detected. Afterwards push the
- * data to the message queue.
- */
+//Define msgq
+K_MSGQ_DEFINE(uart_msgq, MSG_SIZE, 10, 4);
+
+//Needed to read data from uart
 void serial_cb(const struct device *dev, void *user_data)
 {
 	uint8_t c;
@@ -53,20 +50,6 @@ void serial_cb(const struct device *dev, void *user_data)
 			rx_buf[rx_buf_pos++] = c;
 		}
 		// else: characters beyond buffer size are dropped 
-	}
-}
-
-int readPC()
-{
-	k_msgq_get(&uart_msgq, &rx_buf, K_FOREVER);
-	// Check if the received message contains "WIFI GOT IP"
-	if (strstr(rx_buf, "HELP") != NULL)
-	{
-		return 1;
-	}
-	else
-	{
-		return 0;
 	}
 }
 

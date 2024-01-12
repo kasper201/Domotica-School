@@ -1,12 +1,8 @@
 #ifndef UART_H_
 #define UART_H_
 
-
 extern struct k_msgq uart_msgq; // Declare uart_msgq here
 
-#define MSG_SIZE 128
-
 int uartSetup(void);
-int readPC(void);
 
 #endif //UART_H_
