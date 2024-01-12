@@ -8,11 +8,11 @@
 #include "uart.h"
 #include "group.h"
 
-// Values for setup uartReceive
-K_THREAD_STACK_DEFINE(uart_thread_stack, 1024);
-struct k_thread uart_thread_data;
+// // Values for setup uartReceive
+// K_THREAD_STACK_DEFINE(uart_thread_stack, 1024);
+// struct k_thread uart_thread_data;
 
-void uart_thread_function(void *a, void *b, void *c)
+void uart()
 {
     printf("UART thread started\n");
     while (1)
@@ -20,7 +20,10 @@ void uart_thread_function(void *a, void *b, void *c)
         //char buf[128];
         //int len = k_msgq_get(&uart_msgq, buf, K_FOREVER);
         //buf[len] = '\0';
-        readPC();
+        if(readPC())
+        {
+            printf("Message received\n");
+        }
         // if(len != 0)
         // {
         //     if(buf[0] == 's')
@@ -68,6 +71,14 @@ void uart_thread_function(void *a, void *b, void *c)
         //     {
         //         //printk("Resetting node\n");
         //         resetNode();
+        //     }
+        //     else if(buf[0] == 'a')
+        //     {
+        //         ///added to group
+        //     }
+        //     else if(buf[0] == 'd')
+        //     {
+        //         ///disconnected from group
         //     }*/
         // }
     }
@@ -78,13 +89,13 @@ int main(void)
     init();
     k_msleep(1000);
     // k_thread_create(&uart_thread_data, uart_thread_stack, K_THREAD_STACK_SIZEOF(uart_thread_stack), uart_thread_function, NULL, NULL, NULL, 0, K_INHERIT_PERMS, K_NO_WAIT); // Create thread for uart
-    uart_thread_function(NULL, NULL, NULL);
     while(1)
     {
-        /*ledSet(true);
+        ledSet(true);
         k_msleep(500);
         ledSet(false);
-        k_msleep(500);*/
+        k_msleep(500);
+        uart();
     }
     return 0;
 }

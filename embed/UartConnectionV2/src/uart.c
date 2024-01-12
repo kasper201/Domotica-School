@@ -7,20 +7,21 @@
 #include <zephyr/sys/printk.h>
 
 #include "uart.h"
+#include "board.h"
 
-//Setup uart connection to pc
 #define UART_DEVICE_NODE DT_ALIAS(usart)
-static const struct device *const uart_dev = DEVICE_DT_GET(UART_DEVICE_NODE);
-
-//Data retrieval
 #define MSG_SIZE 128
+
+K_MSGQ_DEFINE(uart_msgq, MSG_SIZE, 10, 4);
+
+static const struct device *const uart_dev = DEVICE_DT_GET(UART_DEVICE_NODE);
 static char rx_buf[MSG_SIZE];
 static int rx_buf_pos;
 
-//Define msgq
-K_MSGQ_DEFINE(uart_msgq, MSG_SIZE, 10, 4);
-
-//Needed to read data from uart
+/*
+ * Read characters from UART until line end is detected. Afterwards push the
+ * data to the message queue.
+ */
 void serial_cb(const struct device *dev, void *user_data)
 {
 	uint8_t c;
@@ -57,13 +58,16 @@ void serial_cb(const struct device *dev, void *user_data)
 	}
 }
 
-int readPC(void)
+int readPC()
 {
-	char Message[MSG_SIZE];
-	k_msgq_get(&uart_msgq, &Message, K_NO_WAIT);
+	k_msgq_get(&uart_msgq, &rx_buf, K_NO_WAIT);
     k_msgq_cleanup(&uart_msgq);
-	if(strstr(Message, "s"))
-		printk("Message: %s\n", Message);
+	if((strstr(rx_buf, "test") != NULL))
+	{
+		printk("Subscribing to group\n");
+		ledSet(1);
+		return 1;
+	}
 	return 0;
 }
 
