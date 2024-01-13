@@ -23,14 +23,31 @@ void readPc()
     if (strstr(Message, "connected"))
     {
         printk("Connection is established\n");
-        ledSet(true);
+        k_msleep(3);
+        // empties Message
+        for (int i = 0; i < MESSAGE_SIZE; i++)
+        {
+            Message[i] = '0';
+        }
     }
 
-    // Create a group
-    if (strstr(Message, "CreateGroup"))
+    // Change led status
+    if (strstr(Message, "UpdateActuator"))
     {
-        printk("Creating group\n");
-        
+        if (strstr(Message, "STM32_______"))
+        {
+            if (strstr(Message, "STM_LED_____"))
+            {
+                if (strstr(Message, "true"))
+                {
+                    ledSet(true);
+                }
+                if (strstr(Message, "false"))
+                {
+                    ledSet(false);
+                }
+            }
+        }
     }
 
     for (int i = 0; i < MESSAGE_SIZE; i++)

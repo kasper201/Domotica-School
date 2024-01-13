@@ -11,6 +11,7 @@
 
 #include "board.h"
 #include "bluetooth.h"
+#include "uart.h"
 
 #define SW0_NODE	DT_ALIAS(sw0)
 #if !DT_NODE_HAS_STATUS(SW0_NODE, okay)
@@ -86,6 +87,7 @@ void init()
 {
     ledInit();
     buttonInit();
+	uartSetup();
     bluetoothInit();
 }
 

@@ -355,14 +355,6 @@ void btnPressed()
 		return;
 	}
 
-	/* Self-provision with an arbitrary address.
-	 *
-	 * NOTE: This should never be done in a production environment.
-	 *       Addresses should be assigned by a provisioner, and keys should
-	 *       be generated from true random numbers. It is done in this
-	 *       sample to allow testing without a provisioner.
-	 */
-	/*
 	static uint8_t net_key[16];
 	static uint8_t dev_key[16];
 	static uint8_t app_key[16];
