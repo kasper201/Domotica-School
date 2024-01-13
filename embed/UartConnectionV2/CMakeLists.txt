@@ -4,6 +4,8 @@
 cmake_minimum_required(VERSION 3.20.0)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
+set(DTS_OVERLAY_FILE ${CMAKE_SOURCE_DIR}/board/nrf52833dk_nrf52833.overlay)
+
 # Include the Zephyr build system
 include($ENV{ZEPHYR_BASE}/cmake/app/boilerplate.cmake NO_POLICY_SCOPE)
 project(embed)
@@ -14,15 +16,8 @@ include_directories(
 )
 
 # Add your source files
-target_sources(app PRIVATE
-    src/main.c
-    src/bluetooth.c
-    src/board.c
-    src/uart.c
-    src/group.c
-    src/pcCom.c
-    # Add more source files as needed
-)
+FILE(GLOB app_sources src/*.c)
+target_sources(app PRIVATE ${app_sources})
 
 zephyr_include_directories(
     ${ZEPHYR_BASE}/subsys/gpio

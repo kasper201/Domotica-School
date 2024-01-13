@@ -22,10 +22,6 @@ void uart()
         //char buf[128];
         //int len = k_msgq_get(&uart_msgq, buf, K_FOREVER);
         //buf[len] = '\0';
-        if(readPC())
-        {
-            printf("Message received\n");
-        }
         // if(len != 0)
         // {
         //     if(buf[0] == 's')
@@ -90,14 +86,15 @@ int main(void)
 {
     init();
     k_msleep(1000);
+    printk("Starting\n");
     // k_thread_create(&uart_thread_data, uart_thread_stack, K_THREAD_STACK_SIZEOF(uart_thread_stack), uart_thread_function, NULL, NULL, NULL, 0, K_INHERIT_PERMS, K_NO_WAIT); // Create thread for uart
     while(1)
     {
-        ledSet(true);
-        k_msleep(500);
-        ledSet(false);
-        k_msleep(500);
-        readPC();
+        // ledSet(true);
+        // k_msleep(500);
+        // ledSet(false);
+        // k_msleep(500);
+        readPc();
         //uart();
     }
     return 0;

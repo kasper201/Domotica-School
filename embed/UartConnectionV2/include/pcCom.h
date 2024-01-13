@@ -1,6 +1,6 @@
 #ifndef PCCOM_H_
 #define PCCOM_H_
 
-int readPC();
+void readPc();
 
 #endif // PCCOM_H_

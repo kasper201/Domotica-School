@@ -2,7 +2,9 @@
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/uart.h>
+
 #include "uart.h"
+#include "pcCom.h"
 
 //Setup uart connection to pc
 #define UART_DEVICE_NODE DT_ALIAS(usart)
