@@ -115,8 +115,6 @@ void MainWindow::on_pushButton_Connect_clicked()
         ui->tabWidget_3->setCurrentIndex(0);
 
         //Writes connected to dongle
-        QString wakeUp = "WakeupArduino";
-        comport->write(wakeUp.toLatin1() + char(10) );
         comport->write(connected.toLatin1() + char(10) );
 
         connectComport->setText("Disconnect");
