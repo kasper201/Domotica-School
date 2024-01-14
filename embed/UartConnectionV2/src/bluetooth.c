@@ -327,7 +327,13 @@ static const struct bt_mesh_prov prov = {
 	.reset = prov_reset,
 };
 
-void getAddr(uint16_t *input)
+void getNetIdx(uint16_t *input) // get network index
+{
+	extern uint16_t extern_net_idx;
+	*input = extern_net_idx;
+}
+
+void getAddr(uint16_t *input) // get address of the device
 {
 	extern uint16_t extern_addr;
 	*input = extern_addr;
