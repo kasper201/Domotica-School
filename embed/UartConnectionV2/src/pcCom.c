@@ -9,37 +9,38 @@
 #include <zephyr/sys/printk.h>
 #include <stdbool.h>
 #include <string.h>
+#include <stdlib.h>
 
 #define MESSAGE_SIZE 256 // Defines the maximum size for the incoming string
 
 void caseConnected(char *Message)
 {
-    printk("Connection is established\n");
-    k_msleep(3);
-    // empties Message
-    for (int i = 0; i < MESSAGE_SIZE; i++)
-    {
-        Message[i] = '0';
-    }
+    printk("Connection established\n");
 }
 
 void groupToggle(bool onoff, char *Message)
 {
     if(onoff)
-        memmove(Message, Message + 16, strlen(Message) - 16 + 1);
-    else
         memmove(Message, Message + 17, strlen(Message) - 17 + 1);
+    else
+        memmove(Message, Message + 18, strlen(Message) - 18 + 1);
     uint16_t groupAddress = atoi(Message);
 
     printk("Toggling group %d\n", groupAddress);
     gen_onoff_send(onoff, groupAddress); //send onoff message to group
-
 }
 
 // Reads input from the application and decides what to do with it
 void readPc()
 {
     char Message[MESSAGE_SIZE];
+
+    // Clear the message array
+    for (int i = 0; i < MESSAGE_SIZE; i++)
+    {
+        Message[i] = '\0';
+    }
+
     k_msgq_get(&uart_msgq, &Message, K_NO_WAIT);
     k_msgq_cleanup(&uart_msgq);
 
