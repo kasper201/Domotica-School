@@ -99,3 +99,5 @@ int main(void)
     }
     return 0;
 }
+
+// west build -p always -b nrf52833dk_nrf52833 D:\domotica\DOMOTICA-SCHOOL\embed\UartConnectionV2\

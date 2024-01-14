@@ -21,6 +21,9 @@
 #include "board.h"
 #include "bluetooth.h"
 
+uint16_t extern_net_idx = 0;
+uint16_t extern_addr = 0;
+
 #define OP_ONOFF_GET       BT_MESH_MODEL_OP_2(0x82, 0x01)
 #define OP_ONOFF_SET       BT_MESH_MODEL_OP_2(0x82, 0x02)
 #define OP_ONOFF_SET_UNACK BT_MESH_MODEL_OP_2(0x82, 0x03)
@@ -103,8 +106,7 @@ static inline uint8_t model_time_encode(int32_t ms)
 	return 0x3f;
 }
 
-static int onoff_status_send(struct bt_mesh_model *model, //? what is dis for
-			     struct bt_mesh_msg_ctx *ctx)
+static int onoff_status_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx) // send onoff status to all nodes in the ctx group
 {
 	uint32_t remaining;
 
@@ -296,6 +298,10 @@ void clear_provisioning_data(void)
 
 static void prov_complete(uint16_t net_idx, uint16_t addr)
 {
+	extern uint16_t extern_net_idx;
+	extern uint16_t extern_addr;
+	extern_net_idx = net_idx;
+	extern_addr = addr;
 	boardProvComplete();
 	printk("Provisioning completed. Network Index: 0x%04x, Address: 0x%04x\n",
            net_idx, addr);
@@ -321,18 +327,30 @@ static const struct bt_mesh_prov prov = {
 	.reset = prov_reset,
 };
 
-/** Send an OnOff Set message from the Generic OnOff Client to all nodes. */
-static int gen_onoff_send(bool val)
+void getAddr(uint16_t *input)
 {
+	extern uint16_t extern_addr;
+	*input = extern_addr;
+}
+
+/** Send an OnOff Set message from the Generic OnOff Client to all nodes. */
+extern int gen_onoff_send(bool val, uint16_t groupAddress)
+{
+	uint16_t localGroupAddress = 0x0001;
+	if(groupAddress == -1)
+		getAddr(&localGroupAddress);
+	else
+		localGroupAddress = groupAddress;
+
 	struct bt_mesh_msg_ctx ctx = {
 		.app_idx = models[3].keys[0], /* Use the bound key */
-		.addr = BT_MESH_ADDR_ALL_NODES, 
+		.addr = localGroupAddress, 
 		.send_ttl = BT_MESH_TTL_DEFAULT,
 	};
 	static uint8_t tid;
 
 	if (ctx.app_idx == BT_MESH_KEY_UNUSED) {
-		printk("The Generic OnOff Client must be bound to a key before "
+		printk("The Client must be bound to a key before "
 		       "sending.\n");
 		return -ENOENT;
 	}
@@ -351,7 +369,7 @@ void btnPressed()
 {
 
 	if (bt_mesh_is_provisioned()) {
-		(void)gen_onoff_send(!onoff.val);
+		(void)gen_onoff_send(!onoff.val, -1);
 		return;
 	}
 
