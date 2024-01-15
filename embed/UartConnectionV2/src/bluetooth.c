@@ -463,6 +463,5 @@ int bluetoothInit(void)
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
 	}
-	//prov_reset();
 	return 0;
 }
