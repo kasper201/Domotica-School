@@ -374,8 +374,8 @@ void btnPressed()
 {
 
 	if (bt_mesh_is_provisioned()) {
-		printk("Group address: 0x%04x\n", getAddr());
-		(void)gen_onoff_send(!onoff.val, -1);
+		printk("Group address %d\n", getAddr());
+		(void)gen_onoff_send(!onoff.val, getAddr());
 		return;
 	}
 
