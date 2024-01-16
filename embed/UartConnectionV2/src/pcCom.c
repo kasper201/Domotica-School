@@ -22,20 +22,17 @@ void caseConnected(char *Message)
 
 }
 
-void groupToggle(bool onoff, char *Message)
+void groupToggle(char *Message)
 {
-    if(onoff)
-        memmove(Message, Message + 17, strlen(Message) - 17 + 1);
-    else
-        memmove(Message, Message + 18, strlen(Message) - 18 + 1);
     uint16_t groupAddress = atoi(Message);
 
     printk("Toggling group %d\n", groupAddress);
-    gen_onoff_send(onoff, groupAddress); //send onoff message to group
+    gen_onoff_send(!onoffVal(), groupAddress); //send onoff message to group
 }
 
 void uartSubscribeGroup(char *Message)
 {
+    printk("Message: %s\n", Message);
     uint16_t netKeyIndex = 0x0000;
     uint16_t groupAddress = atoi(Message); // address of the group that is being subscribed to
     memmove(Message, Message + 6, strlen(Message) - 6 + 1);
@@ -49,6 +46,7 @@ void uartSubscribeGroup(char *Message)
     getNetIdx(&netKeyIndex);
     k_msleep(1); // wait for netKeyIndex to be set
     printk("netKeyIndex: %04x\n", netKeyIndex);	
+    printk("index: %04x, address: %04x, elementAddress: %04x, groupAddress: %04x, mod_id: %04x\n", netKeyIndex, address, elementAddress, groupAddress, mod_id);
     subscribeToGroup(netKeyIndex, address, elementAddress, groupAddress, mod_id);
 }
 
@@ -67,6 +65,7 @@ void uartUnsubscribeGroup(char *Message)
     getNetIdx(&netKeyIndex);
     k_msleep(1); // wait for netKeyIndex to be set
     printk("netKeyIndex: %04x\n", netKeyIndex);	
+    printk("index: %04x, address: %04x, elementAddress: %04x, groupAddress: %04x, mod_id: %04x\n", netKeyIndex, address, elementAddress, groupAddress, mod_id);
     unsubscribeFromGroup(netKeyIndex, address, elementAddress, groupAddress, mod_id);
 }
 
@@ -89,16 +88,10 @@ void readPc()
     {
         caseConnected(Message);
     } 
-    else if(strstr(Message, "toggle_group_")) // checks for "toggle_group_on" or "toggle_group_off"
+    else if(strstr(Message, "toggle_group_")) // checks for "toggle_group" in the message	
     {
-        if(strstr(Message, "on_"))
-        {
-            groupToggle(true, Message);
-        }
-        else if(strstr(Message, "off_"))
-        {
-            groupToggle(false, Message);
-        }
+        memmove(Message, Message + 14, strlen(Message) - 14 + 1);
+        groupToggle(Message);
     }
     else if(strstr(Message, "unsubscribe_group_"))
     {
@@ -117,9 +110,5 @@ void readPc()
         printk("Unknown command\n");
     }
 
-    for (int i = 0; i < MESSAGE_SIZE; i++)
-    {
-        Message[i] = ' ';
-    }
     k_msgq_cleanup(&uart_msgq);
 }

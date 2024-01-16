@@ -106,6 +106,11 @@ static inline uint8_t model_time_encode(int32_t ms)
 	return 0x3f;
 }
 
+bool onoffVal()
+{
+	return onoff.val;
+}
+
 static int onoff_status_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx) // send onoff status to all nodes in the ctx group
 {
 	uint32_t remaining;
