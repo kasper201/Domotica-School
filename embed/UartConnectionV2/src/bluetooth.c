@@ -106,6 +106,11 @@ static inline uint8_t model_time_encode(int32_t ms)
 	return 0x3f;
 }
 
+bool onoffVal()
+{
+	return onoff.val;
+}
+
 static int onoff_status_send(struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx) // send onoff status to all nodes in the ctx group
 {
 	uint32_t remaining;
@@ -333,24 +338,23 @@ void getNetIdx(uint16_t *input) // get network index
 	*input = extern_net_idx;
 }
 
-void getAddr(uint16_t *input) // get address of the device
+uint16_t getAddr() // get address of the device (simplified)
 {
 	extern uint16_t extern_addr;
-	*input = extern_addr;
+	return extern_addr;
+}
+
+uint16_t getGroup(uint16_t groupNr) // not used but useful for understanding how to get groups
+{
+	return models[3].groups[groupNr];
 }
 
 /** Send an OnOff Set message from the Generic OnOff Client to all nodes. */
 extern int gen_onoff_send(bool val, uint16_t groupAddress)
 {
-	uint16_t localGroupAddress = 0x0001;
-	if(groupAddress == -1)
-		getAddr(&localGroupAddress);
-	else
-		localGroupAddress = groupAddress;
-
 	struct bt_mesh_msg_ctx ctx = {
 		.app_idx = models[3].keys[0], /* Use the bound key */
-		.addr = localGroupAddress, 
+		.addr = groupAddress, 
 		.send_ttl = BT_MESH_TTL_DEFAULT,
 	};
 	static uint8_t tid;
@@ -373,9 +377,14 @@ extern int gen_onoff_send(bool val, uint16_t groupAddress)
 
 void btnPressed()
 {
-
-	if (bt_mesh_is_provisioned()) {
-		(void)gen_onoff_send(!onoff.val, -1);
+	printk("amount of groups: %d\n", models[3].groups_cnt);	
+	if (bt_mesh_is_provisioned()) 
+	{
+		for(int i = 0; i < models[3].groups_cnt; i++)
+		{
+			printk("Group address %d\n", models[3].groups[i]);
+			(void)gen_onoff_send(!onoff.val, models[3].groups[i]);
+		}
 		return;
 	}
 
