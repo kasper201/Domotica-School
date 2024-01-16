@@ -100,17 +100,17 @@ void readPc()
             groupToggle(false, Message);
         }
     }
-    else if(strstr(Message, "subscribe_group_"))
-    {
-        memmove(Message, Message + 16, strlen(Message) - 16 + 1);
-        // printk("Message: %s\n", Message);
-        uartSubscribeGroup(Message);
-    }
     else if(strstr(Message, "unsubscribe_group_"))
     {
         memmove(Message, Message + 18, strlen(Message) - 18 + 1);
         // printk("Message: %s\n", Message);
         uartUnsubscribeGroup(Message);
+    }
+    else if(strstr(Message, "subscribe_group_"))
+    {
+        memmove(Message, Message + 16, strlen(Message) - 16 + 1);
+        // printk("Message: %s\n", Message);
+        uartSubscribeGroup(Message);
     }
     else if(strlen(Message) > 0)
     {
