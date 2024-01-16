@@ -28,6 +28,7 @@ public:
     QStringList checkGroups(QString sensorName, QString nodeName);  //checks if a sensor has been matched with a group
 
     int getGroupAddress(QString groupName);                         //returns the address of the given group
+    QString getGroupName(int groupAddress);                         //returns the name of the given address
 
     struct groupParts {
         QMultiHash<QString, QPair<QString, QString>> sensorsInGroup;    //Sensor name, Node name, Sensor type

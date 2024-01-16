@@ -175,10 +175,11 @@ void MainWindow::readData()
             Data_From_SerialPort = function.addGroups(Data_From_SerialPort, groups, groupList);
 
 
-            if(Data_From_SerialPort.contains("GroupTriggered"))
+            if(Data_From_SerialPort.contains("toggle group"))
             {
                 QString input = Data_From_SerialPort;
-                input = stringM.removedTillWhitespace(Data_From_SerialPort);
+                input = stringM.removedTillWhitespace(input);
+                input = stringM.removedTillWhitespace(input);
                 actuatorsTriggered = sensorInput.groupTriggered(groups, node, input);
                 if(!actuatorsTriggered.isEmpty())
                 {
@@ -463,7 +464,7 @@ void MainWindow::on_appButton_clicked()
                     ui->widget_led->setStyleSheet("background-color: black;");
                 }
                 actuatorsTriggered.removeOne(actuatorUpdate);
-                qDebug() << node.getActuatorStatus("Application", "App_LED");
+                //qDebug() << node.getActuatorStatus("Application", "App_LED");
             }
         }
         //QString sendData = "GroupTriggered " + groupName + "\n";

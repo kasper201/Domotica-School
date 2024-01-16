@@ -28,8 +28,10 @@ QStringList Sensor::sensorTrigger(Groups& groups, QString data)
     return groups.checkGroups(sensorName, nodeName); //Shows which groups are triggered
 }
 
-QStringList Sensor::groupTriggered(Groups& groups, Node& node, QString groupName)
+QStringList Sensor::groupTriggered(Groups& groups, Node& node, QString groupAddress)
 {
+    int groupAddressInt = groupAddress.toInt();
+    QString groupName = groups.getGroupName(groupAddressInt);
     QStringList actuatorsTriggered = groups.getActuators(groupName);
     AllUpdates.clear();
     for (const QString& Name : actuatorsTriggered)

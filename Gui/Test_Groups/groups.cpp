@@ -169,3 +169,17 @@ int Groups::getGroupAddress(QString groupName)
 {
     return groupAddress.value(groupName);
 }
+
+QString Groups::getGroupName(int groupAddress)
+{
+    for (auto it = this->groupAddress.begin(); it != this->groupAddress.end(); ++it)
+    {
+        if (it.value() == groupAddress)
+        {
+            return it.key();
+        }
+    }
+
+    // Return an empty string if the group address is not found
+    return QString();
+}
