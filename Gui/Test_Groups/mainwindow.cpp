@@ -244,6 +244,11 @@ void MainWindow::on_pushButton_Add_Sensor_Group_clicked()
             QString addSensor = "UpdateGroup " + groupName + " AddSensor " + nodeName + " " + sensorType + " " + sensorName;
             portSetup.WriteToComport(addSensor);
 
+            //[UB] Update for bluetooth integration
+            qDebug() << "Group Address: " << groups.getGroupAddress(groupName);
+            QString subscribe = "subscribe_group_" + QString("%1").arg(groups.getGroupAddress(groupName), 5, 10, QChar('0'));
+            qDebug() << subscribe;
+
             groups.addSensor(groupName, nodeName, sensorType, sensorName);
             //updateCurrentGroupOverview();
         } else

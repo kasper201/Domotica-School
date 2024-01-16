@@ -33,6 +33,9 @@ private:
 
     //QMap with node name and node components
     QMap<QString, NodeComponents> nodeInstances;
+
+    //QMap with node name and the node address
+    QMap<QString, int> nodeAddress;
 };
 
 #endif // NODE_H

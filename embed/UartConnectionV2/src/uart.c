@@ -58,11 +58,11 @@ int uartSetup()
 {
 	if (!device_is_ready(uart_dev))
 	{
-		printk("UART device not found!");
+		printk("UART device not found!\n");
 		return -1;
 	} else
     {
-        printk("UART device found!");
+        printk("UART device found!\n");
     }
 
 	/* configure interrupt and callback to receive data */

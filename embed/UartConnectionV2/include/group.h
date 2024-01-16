@@ -10,5 +10,6 @@
 #include <zephyr/drivers/gpio.h>
 
 void subscribeToGroup(uint16_t groupAddress, uint16_t elementAddress, uint16_t mod_id, uint16_t netKeyIndex, uint16_t address);
+void unsubscribeFromGroup(uint16_t groupAddress, uint16_t elementAddress, uint16_t mod_id, uint16_t netKeyIndex, uint16_t address);
 
 #endif // GROUP_H_
