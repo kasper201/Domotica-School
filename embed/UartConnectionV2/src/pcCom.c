@@ -54,7 +54,7 @@ void uartSubscribeGroup(char *Message)
 
 void uartUnsubscribeGroup(char *Message)
 {
-    uint16_t netKeyIndex = 0x0000;
+    uint16_t netKeyIndex = 0x0001;
     uint16_t groupAddress = atoi(Message); // address of the group that is being subscribed to
     memmove(Message, Message + 6, strlen(Message) - 6 + 1);
     uint16_t elementAddress = atoi(Message); // element address of the device that is subscribing to the group
@@ -67,7 +67,7 @@ void uartUnsubscribeGroup(char *Message)
     getNetIdx(&netKeyIndex);
     k_msleep(1); // wait for netKeyIndex to be set
     printk("netKeyIndex: %04x\n", netKeyIndex);	
-    //unsubscribeFromGroup(netKeyIndex, address, elementAddress, groupAddress, mod_id);
+    unsubscribeFromGroup(netKeyIndex, address, elementAddress, groupAddress, mod_id);
 }
 
 // Reads input from the application and decides what to do with it
