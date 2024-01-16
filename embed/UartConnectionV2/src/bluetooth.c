@@ -344,6 +344,11 @@ uint16_t getAddr() // get address of the device (simplified)
 	return extern_addr;
 }
 
+uint16_t getGroup(uint16_t groupNr) // not used but useful for understanding how to get groups
+{
+	return models[3].groups[groupNr];
+}
+
 /** Send an OnOff Set message from the Generic OnOff Client to all nodes. */
 extern int gen_onoff_send(bool val, uint16_t groupAddress)
 {
@@ -372,10 +377,14 @@ extern int gen_onoff_send(bool val, uint16_t groupAddress)
 
 void btnPressed()
 {
-
-	if (bt_mesh_is_provisioned()) {
-		printk("Group address %d\n", getAddr());
-		(void)gen_onoff_send(!onoff.val, getAddr());
+	printk("amount of groups: %d\n", models[3].groups_cnt);	
+	if (bt_mesh_is_provisioned()) 
+	{
+		for(int i = 0; i < models[3].groups_cnt; i++)
+		{
+			printk("Group address %d\n", models[3].groups[i]);
+			(void)gen_onoff_send(!onoff.val, models[3].groups[i]);
+		}
 		return;
 	}
 
