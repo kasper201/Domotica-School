@@ -12,7 +12,7 @@ public:
     Node();
     ~Node();
 
-    void addNodeInstance(QString nodeName);
+    void addNodeInstance(QString nodeName, int nodeAddress);
     void addSensor(QString nodeName, QString sensorType, QString sensorName);
     void addActuator(QString nodeName, QString actuatorType, QString actuatorName, QString actuatorStatus);
 
@@ -21,6 +21,8 @@ public:
     QStringList getAllActuatorNames(QString nodeName) const;
     QString getActuatorStatus(QString nodeName, QString actuatorName);
     void updateActuatorStatus(QString nodeName, QString actuatorName, QString actuatorStatus);
+
+    int getNodeAddress(QString nodeName);
 
     struct NodeComponents
     {

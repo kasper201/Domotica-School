@@ -11,10 +11,11 @@ Node::~Node()
 }
 
 //stores node name
-void Node::addNodeInstance(QString nodeName)
+void Node::addNodeInstance(QString nodeName, int nodeAddressValue)
 {
     NodeComponents newNode;
     nodeInstances.insert(nodeName, newNode);
+    nodeAddress.insert(nodeName, nodeAddressValue);
 }
 
 //stores sensor
@@ -93,4 +94,9 @@ QString Node::getActuatorStatus(QString nodeName, QString actuatorName)
 void Node::updateActuatorStatus(QString nodeName, QString actuatorName, QString actuatorStatus)
 {
     nodeInstances[nodeName].actuatorState.insert(actuatorName, actuatorStatus);
+}
+
+int Node::getNodeAddress(QString nodeName)
+{
+    return nodeAddress.value(nodeName);
 }

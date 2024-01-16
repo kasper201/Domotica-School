@@ -26,11 +26,11 @@ void Groups::addGroupInstance(QString groupName)
     {
         groupParts newGroupParts;
         groupMap.insert(groupName, newGroupParts);
-        for (int address = 0; address < maxGroupAddress; address++)
+        for (int address = startValueAddress; address < (startValueAddress + maxGroupAddress); address++)
         {
             if(!groupAddress.values().contains(address))
             {
-                groupAddress[groupName] = address;
+                groupAddress.insert(groupName, address);
                 break;
             }
         }

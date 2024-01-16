@@ -20,7 +20,20 @@ QString MovedFunctions::addNodes(QString input, Node& node, QListWidget* nodeLis
 
         //Adds a node
         QString nodeName = stringM.removedFromWhitespace(input);
-        node.addNodeInstance(nodeName);
+        input = stringM.removedTillWhitespace(input);
+        QString stringNodeAddress = stringM.removedFromWhitespace(input);
+        bool conversionSucces = false;
+        int nodeAddress = stringNodeAddress.toInt(&conversionSucces);
+        if(conversionSucces && nodeAddress != 11111)
+        {
+            node.addNodeInstance(nodeName, nodeAddress);
+        } else if (conversionSucces && nodeAddress == 11111)
+        {
+            //something
+        } else
+        {
+            qDebug() << "conversion failed of integer for the node: " << nodeName;
+        }
         nodeList->addItem(nodeName);
         input = stringM.removedTillWhitespace(input);
 

@@ -51,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent)
     deleteActuator = ui->pushButton_Delete_Actuator;//Deletes selected actuator from selected group
 
     //Adds application node
-    function.addNodes("AddNode Application_ AddSensor Button______ App_Button__ AddActuator LED_________ App_LED_____ false", node, nodeList);
+    function.addNodes("AddNode Application_ 00025 AddSensor Button______ App_Button__ AddActuator LED_________ App_LED_____ false", node, nodeList);
 
     setupComportList();
     function.addTitles(false, nodeList, sensorList, actuatorList, node);
@@ -241,13 +241,13 @@ void MainWindow::on_pushButton_Add_Sensor_Group_clicked()
             QString sensorType = sensorList->currentItem()->text().split('\t').value(1);
 
             ui->userFeedbackLabel->setText("Sensor: " + sensorName + " has been added to group: " + groupName);
-            QString addSensor = "UpdateGroup " + groupName + " AddSensor " + nodeName + " " + sensorType + " " + sensorName;
-            portSetup.WriteToComport(addSensor);
 
             //[UB] Update for bluetooth integration
-            qDebug() << "Group Address: " << groups.getGroupAddress(groupName);
-            QString subscribe = "subscribe_group_" + QString("%1").arg(groups.getGroupAddress(groupName), 5, 10, QChar('0'));
-            qDebug() << subscribe;
+            QString subscribe = "subscribe_group_" + QString("%1").arg(groups.getGroupAddress(groupName), 5, 10, QChar('0'));   //Adds groupAddress
+            subscribe += "_" + QString("%1").arg(groups.getGroupAddress(groupName), 5, 10, QChar('0'));                          //!!Adds elementAddress (wat het ook moet worden)
+            subscribe += "_" + QString("%1").arg(4097, 5, 10, QChar('0'));                                                      //Adds mod_id (wat het ook moet worden)
+            subscribe += "_" + QString("%1").arg(node.getNodeAddress(nodeName), 5, 10, QChar('0'));                             //Adds nodeAddress
+             portSetup.WriteToComport(subscribe);
 
             groups.addSensor(groupName, nodeName, sensorType, sensorName);
             //updateCurrentGroupOverview();
@@ -275,8 +275,13 @@ void MainWindow::on_pushButton_Add_Actuator_Group_clicked()
             QString actuatorType = actuatorList->currentItem()->text().split('\t').value(1);
 
             ui->userFeedbackLabel->setText("Actuator: " + actuatorName + " has been added to group: " + groupName);
-            QString addActuator = "UpdateGroup " + groupName + " AddActuator " + nodeName + " " + actuatorType + " " + actuatorName;
-            portSetup.WriteToComport(addActuator);
+
+            //[UB] Update for bluetooth integration
+            QString subscribe = "subscribe_group_" + QString("%1").arg(groups.getGroupAddress(groupName), 5, 10, QChar('0'));   //Adds groupAddress
+            subscribe += "_" + QString("%1").arg(groups.getGroupAddress(groupName), 5, 10, QChar('0'));                          //!!Adds elementAddress (wat het ook moet worden)
+            subscribe += "_" + QString("%1").arg(4096, 5, 10, QChar('0'));                                                      //adds mod_id (wat het ook moet worden)
+            subscribe += "_" + QString("%1").arg(node.getNodeAddress(nodeName), 5, 10, QChar('0'));                             //Adds nodeAddress
+            portSetup.WriteToComport(subscribe);
 
             groups.addActuator(groupName, nodeName, actuatorType, actuatorName);
         } else

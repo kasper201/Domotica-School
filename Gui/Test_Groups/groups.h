@@ -45,7 +45,8 @@ private:
     QPair<QString, QString> actuatorInfo;                           //actuatorName, nodeName
     QMultiHash<QPair<QString, QString>, QString> actuatorGroupLink; //Stores the following: Actuator name, Node name, Group name
 
-    int maxGroupAddress = 1000;
+    int startValueAddress = 49152;        //Start value for groupAddresses
+    int maxGroupAddress = 1000;         //Max value for groupAddresses
 };
 
 #endif // GROUPS_H
