@@ -23,6 +23,7 @@ QString MovedFunctions::addNodes(QString input, Node& node, QListWidget* nodeLis
         QString nodeName = stringM.removedFromWhitespace(input);
         input = stringM.removedTillWhitespace(input);
         QString stringNodeAddress = stringM.removedFromWhitespace(input);
+        input = stringM.removedTillWhitespace(input);                           //Remove the string node address
         bool conversionSucces = false;
         int nodeAddress = stringNodeAddress.toInt(&conversionSucces);           //Value retrieved from the text
         int saveAddress = 11100;                                                //The final value that will be save as address
@@ -30,9 +31,10 @@ QString MovedFunctions::addNodes(QString input, Node& node, QListWidget* nodeLis
         if(conversionSucces && nodeAddress != 11111)
         {
             saveAddress = nodeAddress;
+            QString nodeElementString = stringM.removedFromWhitespace(input);
+            saveElement = nodeElementString.toInt();
         } else if (conversionSucces && nodeAddress == 11111)
         {
-            //something
             NodeDialogBox nodeDialogBox(nodeName);
             if (nodeDialogBox.exec() == QDialog::Accepted) {
                 saveAddress = nodeDialogBox.getNodeAddress();
