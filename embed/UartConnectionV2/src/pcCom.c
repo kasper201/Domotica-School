@@ -26,7 +26,7 @@ void groupToggle(char *Message)
 {
     uint16_t groupAddress = atoi(Message);
 
-    printk("Toggling group %d\n", groupAddress);
+    printk("Toggling group %04x\n", groupAddress);
     gen_onoff_send(!onoffVal(), groupAddress); //send onoff message to group
 }
 

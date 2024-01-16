@@ -338,24 +338,18 @@ void getNetIdx(uint16_t *input) // get network index
 	*input = extern_net_idx;
 }
 
-void getAddr(uint16_t *input) // get address of the device
+uint16_t getAddr() // get address of the device (simplified)
 {
 	extern uint16_t extern_addr;
-	*input = extern_addr;
+	return extern_addr;
 }
 
 /** Send an OnOff Set message from the Generic OnOff Client to all nodes. */
 extern int gen_onoff_send(bool val, uint16_t groupAddress)
 {
-	uint16_t localGroupAddress = 0x0001;
-	if(groupAddress == -1)
-		getAddr(&localGroupAddress);
-	else
-		localGroupAddress = groupAddress;
-
 	struct bt_mesh_msg_ctx ctx = {
 		.app_idx = models[3].keys[0], /* Use the bound key */
-		.addr = localGroupAddress, 
+		.addr = groupAddress, 
 		.send_ttl = BT_MESH_TTL_DEFAULT,
 	};
 	static uint8_t tid;
@@ -380,6 +374,7 @@ void btnPressed()
 {
 
 	if (bt_mesh_is_provisioned()) {
+		printk("Group address: 0x%04x\n", getAddr());
 		(void)gen_onoff_send(!onoff.val, -1);
 		return;
 	}
