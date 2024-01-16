@@ -26,6 +26,14 @@ void Groups::addGroupInstance(QString groupName)
     {
         groupParts newGroupParts;
         groupMap.insert(groupName, newGroupParts);
+        for (int address = 0; address < maxGroupAddress; address++)
+        {
+            if(!groupAddress.values().contains(address))
+            {
+                groupAddress[groupName] = address;
+                break;
+            }
+        }
         qDebug() << "Group: " << groupName << " has been added";
     } else
     {
@@ -122,6 +130,7 @@ QStringList Groups::getActuators(QString groupName)
 void Groups::deleteGroupInstance(QString groupName)
 {
     groupMap.remove(groupName);
+    groupAddress.remove(groupName);
     auto it = sensorGroupLink.begin();
     while (it != sensorGroupLink.end()) {
         if (it.value() == groupName) {
@@ -154,4 +163,9 @@ QStringList Groups::checkGroups(QString sensorName, QString nodeName)
         groupList.append(group);
     }
     return groupList;
+}
+
+int Groups::getGroupAddress(QString groupName)
+{
+    return groupAddress.value(groupName);
 }
