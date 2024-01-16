@@ -466,8 +466,9 @@ void MainWindow::on_appButton_clicked()
                 qDebug() << node.getActuatorStatus("Application", "App_LED");
             }
         }
-        QString sendData = "GroupTriggered " + groupName + "\n";
-        portSetup.WriteToComport(sendData);
+        //QString sendData = "GroupTriggered " + groupName + "\n";
+        QString groupToToggle = "toggle_group_" + QString("%1").arg(groups.getGroupAddress(groupName), 5, 10, QChar('0'));
+        portSetup.WriteToComport(groupToToggle);
     }
 }
 
