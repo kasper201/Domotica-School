@@ -12,7 +12,7 @@ public:
     Node();
     ~Node();
 
-    void addNodeInstance(QString nodeName, int nodeAddress);
+    void addNodeInstance(QString nodeName, int nodeAddress, int nodeElement);
     void addSensor(QString nodeName, QString sensorType, QString sensorName);
     void addActuator(QString nodeName, QString actuatorType, QString actuatorName, QString actuatorStatus);
 
@@ -22,13 +22,15 @@ public:
     QString getActuatorStatus(QString nodeName, QString actuatorName);
     void updateActuatorStatus(QString nodeName, QString actuatorName, QString actuatorStatus);
 
-    int getNodeAddress(QString nodeName);
+    int getNodeAddress(QString nodeName) const;
+    int getNodeElement(QString nodeName) const;
 
     struct NodeComponents
     {
         QMultiHash<QString, QString> sensorHash;
         QMultiHash<QString, QString> actuatorHash;
         QMultiHash<QString, QString> actuatorState;
+        int nodeElement;
     };
 
 private:

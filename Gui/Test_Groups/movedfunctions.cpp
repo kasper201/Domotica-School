@@ -1,4 +1,5 @@
 #include "movedfunctions.h"
+#include "nodedialogbox.h"
 
 MovedFunctions::MovedFunctions()
 {
@@ -23,17 +24,27 @@ QString MovedFunctions::addNodes(QString input, Node& node, QListWidget* nodeLis
         input = stringM.removedTillWhitespace(input);
         QString stringNodeAddress = stringM.removedFromWhitespace(input);
         bool conversionSucces = false;
-        int nodeAddress = stringNodeAddress.toInt(&conversionSucces);
+        int nodeAddress = stringNodeAddress.toInt(&conversionSucces);           //Value retrieved from the text
+        int saveAddress = 11100;                                                //The final value that will be save as address
+        int saveElement = 0;                                                    //The final value for the element address
         if(conversionSucces && nodeAddress != 11111)
         {
-            node.addNodeInstance(nodeName, nodeAddress);
+            saveAddress = nodeAddress;
         } else if (conversionSucces && nodeAddress == 11111)
         {
             //something
+            NodeDialogBox nodeDialogBox(nodeName);
+            if (nodeDialogBox.exec() == QDialog::Accepted) {
+                saveAddress = nodeDialogBox.getNodeAddress();
+                saveElement = nodeDialogBox.getNodeElement();
+            } else {
+                qDebug() << "Operation canceled";
+            }
         } else
         {
             qDebug() << "conversion failed of integer for the node: " << nodeName;
         }
+        node.addNodeInstance(nodeName, saveAddress, saveElement);
         nodeList->addItem(nodeName);
         input = stringM.removedTillWhitespace(input);
 

@@ -50,9 +50,6 @@ MainWindow::MainWindow(QWidget *parent)
     deleteSensor = ui->pushButton_Delete_Sensor;    //Deletes selected sensor from selected group
     deleteActuator = ui->pushButton_Delete_Actuator;//Deletes selected actuator from selected group
 
-    //Adds application node
-    function.addNodes("AddNode Application_ 00025 AddSensor Button______ App_Button__ AddActuator LED_________ App_LED_____ false", node, nodeList);
-
     setupComportList();
     function.addTitles(false, nodeList, sensorList, actuatorList, node);
     tabs->tabBar()->setTabEnabled(1, false);
@@ -116,6 +113,9 @@ void MainWindow::on_pushButton_Connect_clicked()
 
         //Writes connected to dongle
         comport->write(connected.toLatin1() + char(10) );
+
+        //Adds application node
+        function.addNodes("AddNode Application_ 11111 AddSensor Button______ App_Button__ AddActuator LED_________ App_LED_____ false", node, nodeList);
 
         connectComport->setText("Disconnect");
         isComportConnected = true;
@@ -244,8 +244,8 @@ void MainWindow::on_pushButton_Add_Sensor_Group_clicked()
 
             //[UB] Update for bluetooth integration
             QString subscribe = "subscribe_group_" + QString("%1").arg(groups.getGroupAddress(groupName), 5, 10, QChar('0'));   //Adds groupAddress
-            subscribe += "_" + QString("%1").arg(groups.getGroupAddress(groupName), 5, 10, QChar('0'));                          //!!Adds elementAddress (wat het ook moet worden)
-            subscribe += "_" + QString("%1").arg(4097, 5, 10, QChar('0'));                                                      //Adds mod_id (wat het ook moet worden)
+            subscribe += "_" + QString("%1").arg(node.getNodeElement(nodeName), 5, 10, QChar('0'));                             //Adds elementAddress
+            subscribe += "_" + QString("%1").arg(4097, 5, 10, QChar('0'));                                                      //Adds mod_id
             subscribe += "_" + QString("%1").arg(node.getNodeAddress(nodeName), 5, 10, QChar('0'));                             //Adds nodeAddress
              portSetup.WriteToComport(subscribe);
 
@@ -278,7 +278,7 @@ void MainWindow::on_pushButton_Add_Actuator_Group_clicked()
 
             //[UB] Update for bluetooth integration
             QString subscribe = "subscribe_group_" + QString("%1").arg(groups.getGroupAddress(groupName), 5, 10, QChar('0'));   //Adds groupAddress
-            subscribe += "_" + QString("%1").arg(groups.getGroupAddress(groupName), 5, 10, QChar('0'));                          //!!Adds elementAddress (wat het ook moet worden)
+            subscribe += "_" + QString("%1").arg(node.getNodeElement(nodeName), 5, 10, QChar('0'));                             //Adds elementAddress
             subscribe += "_" + QString("%1").arg(4096, 5, 10, QChar('0'));                                                      //adds mod_id (wat het ook moet worden)
             subscribe += "_" + QString("%1").arg(node.getNodeAddress(nodeName), 5, 10, QChar('0'));                             //Adds nodeAddress
             portSetup.WriteToComport(subscribe);
@@ -304,11 +304,10 @@ void MainWindow::on_pushButton_Add_Group_clicked()
         int groupNameLength = newGroupName.length();
         if(groupNameLength > 0)
         {
-            qDebug() << groupNameLength;
+            //qDebug() << groupNameLength;
             for(int l = groupNameLength; l < requiredGroupNameLength; l++)
             {
                 newGroupName += "_";
-                qDebug() << l;
             }
             newGroupName = newGroupName.left(requiredGroupNameLength);
             groups.addGroupInstance(newGroupName);
