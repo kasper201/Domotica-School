@@ -161,7 +161,7 @@ void readPc()
     } 
     else if(strstr(Message, "toggle_group_")) // checks for "toggle_group" in the message	
     {
-        memmove(Message, Message + 14 + mr, strlen(Message) - 14 + mr + 1); //removes toggle_group_ from message
+        memmove(Message, Message + 13 + mr, strlen(Message) - 13 + mr + 1); //removes toggle_group_ from message
         groupToggle(Message);
         mr = 1;
     }
