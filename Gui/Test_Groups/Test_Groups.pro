@@ -15,6 +15,7 @@ SOURCES += \
     mainwindow.cpp \
     movedfunctions.cpp \
     node.cpp \
+    nodedialogbox.cpp \
     portsetup.cpp \
     sensor.cpp \
     stringmodifiers.cpp
@@ -24,6 +25,7 @@ HEADERS += \
     mainwindow.h \
     movedfunctions.h \
     node.h \
+    nodedialogbox.h \
     portsetup.h \
     sensor.h \
     stringmodifiers.h

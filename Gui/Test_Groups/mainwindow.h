@@ -59,6 +59,8 @@ private slots:
 
     void on_appButton_clicked();
 
+    void on_pushButton_NewNode_clicked();
+
 private:
     Ui::MainWindow *ui;
 
@@ -98,6 +100,8 @@ private:
     QPushButton* sensorAddButton;
     QPushButton* actuatorAddButton;
 
+    const int requiredGroupNameLength = 12;
+
     //shows group
     QListWidget* groupList;
     QLineEdit* addGroupLine;
@@ -109,7 +113,7 @@ private:
     QPushButton* deleteActuator;
 
     //Important String for comunication
-    QString connected = "connected";            //Lets the node know that it is connected to the application
+    QString connected = "connected";         //Lets the node know that it is connected to the application
     QString disconnected = "disconnected";      //Lets the node know that the application is disconnected
 
 };
