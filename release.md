@@ -5,7 +5,7 @@ This is the change log for release v2.0.0
 - Added the ability to read existing groups and nodes
 - Added the ability to read existing groups and nodes to UI via USART
 - Added ability to set nodes into groups via the UI
-- Added ability to 
+
 
 ## User interface
 - Is currently in a final product state
@@ -18,3 +18,4 @@ This is the change log for release v2.0.0
 ## Other
 - lucas's part doesn't work yet
 - The application no longer functions as a bridge
+

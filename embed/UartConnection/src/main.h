@@ -12,6 +12,8 @@
 #define MAX_SENSORS_IN_GROUP 2      //Max number of sensors that can be added to a group
 #define MAX_ACTUATORS_IN_GROUP 2    //Max number of actuators that can be added to a group
 
+extern char* LED_NAME;
+
 struct Sensor {
     char sensorName[MAX_NAME_LENGTH];
     char sensorType[MAX_NAME_LENGTH];

@@ -93,7 +93,7 @@ void addGroup(struct Group *group, char *groupString)
 
             // Add a new sensor to the group
             keyword = "AddSensor ";
-            if (strstr(groupString, keyword))
+            while ((position = strstr(groupString, keyword)) != NULL)
             {
                 int sensorFree = 0;
                 while (group[free].sensors[sensorFree].sensorFilled != '0' && sensorFree < MAX_SENSORS_IN_GROUP)
@@ -103,10 +103,10 @@ void addGroup(struct Group *group, char *groupString)
 
                 if (sensorFree < MAX_SENSORS_IN_GROUP)
                 {
-                    position = strstr(groupString, keyword);
+                    // position = strstr(groupString, keyword);
                     position += strlen(keyword);
 
-                    // Copy the sensorType into the node structure
+                    // Copy the sensorNode into the node structure
                     strncpy(group[free].sensors[sensorFree].nodeName, position, MAX_NAME_LENGTH - 1);
                     group[free].sensors[sensorFree].nodeName[MAX_NAME_LENGTH - 1] = '\0'; // Ensure null-termination
 
@@ -115,37 +115,48 @@ void addGroup(struct Group *group, char *groupString)
                     strncpy(group[free].sensors[sensorFree].sensorType, position, MAX_NAME_LENGTH - 1);
                     group[free].sensors[sensorFree].sensorType[MAX_NAME_LENGTH - 1] = '\0'; // Ensure null-termination
 
-                    // Copy the sensorName into the node structure
+                    // Copy the sensorName into the group structure
                     position += MAX_NAME_LENGTH;
                     strncpy(group[free].sensors[sensorFree].sensorName, position, MAX_NAME_LENGTH - 1);
                     group[free].sensors[sensorFree].sensorName[MAX_NAME_LENGTH - 1] = '\0'; // Ensure null-termination
 
                     group[free].sensors[sensorFree].sensorFilled = '1';
                 }
+                groupString = position;
             }
 
             // Add a new actuator to the group
             keyword = "AddActuator ";
-            if (strstr(groupString, keyword))
+            while ((position = strstr(groupString, keyword)) != NULL)
             {
-                position = strstr(groupString, keyword);
-                position += strlen(keyword);
+                int actuatorFree = 0;
+                while (group[free].actuators[actuatorFree].actuatorFilled != '0' && actuatorFree < MAX_ACTUATORS_IN_GROUP)
+                {
+                    actuatorFree++;
+                }
 
-                // Copy the actuatorType into the node structure
-                strncpy(group[free].actuators[0].nodeName, position, MAX_NAME_LENGTH - 1);
-                group[free].actuators[0].nodeName[MAX_NAME_LENGTH - 1] = '\0'; // Ensure null-termination
+                if (actuatorFree < MAX_ACTUATORS_IN_GROUP)
+                {
+                    // position = strstr(groupString, keyword);
+                    position += strlen(keyword);
 
-                // Copy the actuatorName into the node structure
-                position += MAX_NAME_LENGTH;
-                strncpy(group[free].actuators[0].actuatorType, position, MAX_NAME_LENGTH - 1);
-                group[free].actuators[0].actuatorType[MAX_NAME_LENGTH - 1] = '\0'; // Ensure null-termination
+                    // Copy the actuatorNode into the group structure
+                    strncpy(group[free].actuators[0].nodeName, position, MAX_NAME_LENGTH - 1);
+                    group[free].actuators[0].nodeName[MAX_NAME_LENGTH - 1] = '\0'; // Ensure null-termination
 
-                // Copy the actuatorState into the node structure
-                position += MAX_NAME_LENGTH;
-                strncpy(group[free].actuators[0].actuatorName, position, MAX_NAME_LENGTH - 1);
-                group[free].actuators[0].actuatorName[MAX_NAME_LENGTH - 1] = '\0'; // Ensure null-termination
+                    // Copy the actuatorType into the group structure
+                    position += MAX_NAME_LENGTH;
+                    strncpy(group[free].actuators[0].actuatorType, position, MAX_NAME_LENGTH - 1);
+                    group[free].actuators[0].actuatorType[MAX_NAME_LENGTH - 1] = '\0'; // Ensure null-termination
 
-                group[free].actuators[0].actuatorFilled = '1';
+                    // Copy the actuatorName into the group structure
+                    position += MAX_NAME_LENGTH;
+                    strncpy(group[free].actuators[0].actuatorName, position, MAX_NAME_LENGTH - 1);
+                    group[free].actuators[0].actuatorName[MAX_NAME_LENGTH - 1] = '\0'; // Ensure null-termination
+
+                    group[free].actuators[0].actuatorFilled = '1';
+                }
+                groupString = position;
             }
 
             group[free].groupFilled = '1';

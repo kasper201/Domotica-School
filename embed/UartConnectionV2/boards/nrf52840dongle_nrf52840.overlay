@@ -1,0 +1,29 @@
+&uart0 {
+	compatible = "nordic,nrf-uarte";
+	status = "okay";
+	current-speed = <115200>;
+	pinctrl-0 = <&uart0_default>;
+	pinctrl-1 = <&uart0_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+/ {
+	aliases {
+	usart = &uart0;
+	};
+};
+
+/{
+    buttons {
+		compatible = "gpio-keys";
+		button0: button_0 {
+			gpios = <&gpio1 6 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			label = "Push button switch 0";
+			zephyr,code = <INPUT_KEY_0>;
+		};
+	};
+
+    aliases {
+        sw0 = &button0;
+    };
+};
