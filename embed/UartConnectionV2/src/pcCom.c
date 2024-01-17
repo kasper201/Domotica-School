@@ -32,10 +32,11 @@ void caseConnected(char *Message)
         strcpy(onoff, "true");
     }
     printk("Connection established\n");
-    printk("AddNode PcNode %05d %05d AddSensor Button pcButton AddActuator LED pcLED %s", getAddr(), getElem(0), onoff);
+    printk("AddNode PcNode %05d %05d AddSensor Button pcButton AddActuator LED pcLED %s\n", getAddr(), getElem(0), onoff);
     for (int i = 0; i < nameCount; i++)
     {
         printk("AddGroup %d %s\n", groupAddresses[i], names[i]); // Group 49152 [groupname]
+        k_msleep(10);
     }
 }
 
