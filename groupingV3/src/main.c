@@ -10,9 +10,10 @@
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/mesh.h>
-
 uint16_t extern_net_idx = 0;
 uint16_t extern_addr = 0;
+
+static const uint16_t app_idx;
 
 #define OP_ONOFF_GET       BT_MESH_MODEL_OP_2(0x82, 0x01)
 #define OP_ONOFF_SET       BT_MESH_MODEL_OP_2(0x82, 0x02)
@@ -29,6 +30,56 @@ static struct gpio_callback button_cb_data;
 static struct gpio_dt_spec led = GPIO_DT_SPEC_GET_OR(DT_ALIAS(led0), gpios,
 						     {0});
 
+static const uint8_t net_key[16] = {
+	0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
+	0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
+};
+static const uint8_t dev_key[16] = {
+	0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
+	0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
+};
+static const uint8_t app_key[16] = {
+	0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
+	0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
+};
+
+
+static void configure(void)
+{
+	int err;
+	printk("Configuring...\n");
+	uint16_t conf_net_idx = 0;
+	uint16_t conf_addr = 0x0002;
+	getNetIdx(&conf_net_idx);
+	getAddr(&conf_addr);
+	uint16_t sub_addr = 0xC000;
+	uint16_t mod_id = BT_MESH_MODEL_ID_GEN_ONOFF_SRV; // BT_MESH_MODEL_ID_GEN_ONOFF_SRV is set as mod id in model
+	printk("configure using net_idx: 0x%04x, addr: 0x%04x, sub_addr: 0x%04x and mod_id: 0x%04x and health_id: 0x%04x\n",
+	conf_net_idx, conf_addr,sub_addr,mod_id,BT_MESH_MODEL_ID_HEALTH_SRV);
+	/* Add Application Key */
+	printk("add appkey\n");
+	err = bt_mesh_cfg_cli_app_key_add(conf_net_idx, conf_addr, conf_net_idx, app_idx, app_key, NULL);
+	if (err) {
+		printk("add appkey failed (err %d)\n", err);
+		}
+	/* Bind to vendor model */
+	printk("bind appkey\n");
+	err = bt_mesh_cfg_cli_mod_app_bind(conf_net_idx, conf_addr, conf_addr, app_idx, mod_id, NULL);
+	if (err) {
+		printk("bind appkey failed (err %d)\n", err);
+		}
+	/* Bind to Health model */
+	err = bt_mesh_cfg_cli_mod_app_bind(conf_net_idx, conf_addr, conf_addr, app_idx, BT_MESH_MODEL_ID_HEALTH_SRV,
+				     NULL);
+	if (err) {
+		printk("bind health srv failed (err %d)\n", err);
+		}
+	/* Add model subscription */
+	printk("subscribe\n");
+	subscribe(conf_net_idx, conf_addr, conf_addr, sub_addr, mod_id);
+	printk("Configuration complete\n");
+
+}
 
 void ledInit() // most can be removed after testing
 {
@@ -65,8 +116,10 @@ void button_pressed(const struct device *dev, struct gpio_callback *cb,
 	uint16_t mod_id = BT_MESH_MODEL_ID_GEN_ONOFF_SRV; // BT_MESH_MODEL_ID_GEN_ONOFF_SRV is set as mod id in model
 	int err;
 	uint8_t status = 0;
-	printk("Button pressed net_idx: 0x%04x, addr: 0x%04x, elem_addr: 0x%04x, sub_addr: 0x%04x and mod_id: 0x%04x\n",
-	button_net_idx, button_addr,elem_addr,sub_addr,mod_id);
+	uint16_t app_idx = 0;
+	printk("button using net_idx: 0x%04x, addr: 0x%04x, sub_addr: 0x%04x and mod_id: 0x%04x\n",
+	button_net_idx, button_addr,sub_addr,mod_id);
+	
 	// show tests
 	if(BT_MESH_ADDR_IS_UNICAST(button_addr))
 	{
@@ -84,14 +137,7 @@ void button_pressed(const struct device *dev, struct gpio_callback *cb,
 	}
 	else{
 		printk("run subscribe function\n");
-		//subscribe(button_net_idx, button_addr, elem_addr, sub_addr, mod_id);
-		/*err = bt_mesh_cfg_cli_mod_sub_add(button_net_idx, button_addr, button_addr, sub_addr, BT_MESH_MODEL_ID_GEN_ONOFF_SRV,
-												  NULL);*/
-
-		err = bt_mesh_cfg_cli_mod_sub_add(button_net_idx, button_addr, button_addr, sub_addr, mod_id,NULL);	
-		if (err) {
-		printk("sub failed (err %d)\n", err);
-		}
+		subscribe(button_net_idx, button_addr, elem_addr, sub_addr, mod_id);
 	}
 }
 
@@ -365,8 +411,12 @@ static const struct bt_mesh_model_op gen_onoff_cli_op[] = {
 };
 
 /* This application only needs one element to contain its models */
+static struct bt_mesh_cfg_cli cfg_cli = {
+};
+
 static struct bt_mesh_model models[] = {
 	BT_MESH_MODEL_CFG_SRV,
+	BT_MESH_MODEL_CFG_CLI(&cfg_cli),
 	BT_MESH_MODEL_HEALTH_SRV(&health_srv, &health_pub),
 	BT_MESH_MODEL(BT_MESH_MODEL_ID_GEN_ONOFF_SRV, gen_onoff_srv_op, NULL,
 		      NULL),
@@ -493,16 +543,16 @@ void btnPressed()
 	} else {
 		addr = k_uptime_get_32() & BIT_MASK(15);
 	}
-
 	printk("Self-provisioning with address 0x%04x\n", addr);
 	err = bt_mesh_provision(net_key, 0, 0, 0, addr, dev_key);
 	if (err) {
 		printk("Provisioning failed (err: %d)\n", err);
 		return;
 	}
-
 	// Add an application key to both Generic OnOff models: 
-	err = bt_mesh_app_key_add(0, 0, app_key);
+	//printk("add app_key 0x%04x\n", app_key);
+	//err = bt_mesh_cfg_cli_app_key_add(0, addr,key_net_idx, key_app_idx,app_key, 0);
+	//err = bt_mesh_app_key_add(0, 0, app_key);
 	if (err) {
 		printk("App key add failed (err: %d)\n", err);
 		return;
@@ -514,7 +564,7 @@ void btnPressed()
 	models[2].keys[0] = 0;
 	models[3].keys[0] = 0;
 
-	printk("Provisioned and configured!\n");*/
+	printk("Provisioned and configured!\n"); */
 }
 
 static void bt_ready(int err)
@@ -542,6 +592,8 @@ static void bt_ready(int err)
 	bt_mesh_prov_enable(BT_MESH_PROV_ADV | BT_MESH_PROV_GATT);
 
 	printk("Mesh initialized\n");
+
+	provision();
 }
 
 int bluetoothInit(void)
@@ -583,19 +635,43 @@ void getAddr(uint16_t *input)
 void subscribe(uint16_t net_idx, uint16_t addr,uint16_t elem_addr,uint16_t sub_addr,uint16_t mod_id)
 {
 	int err;
-	uint8_t status = 0;
 
-	err = bt_mesh_cfg_cli_mod_sub_add(net_idx, addr, elem_addr, sub_addr, mod_id,&status);
+	err = bt_mesh_cfg_cli_mod_sub_add(net_idx, addr, elem_addr, sub_addr, mod_id,NULL);
 	if (err) {
-		printk("sub failed (err %d)\n", err);
-	}
+		printk("Error in mod_sub_add (err: %d)\n", err);
+    	printk("Node Address: 0x%04x, Element Address: 0x%04x, Sub Address: 0x%04x, Model ID: 0x%04x",
+           addr, addr, sub_addr, mod_id);
+		}
 	printk("Sub Network Index: 0x%04x, Address: 0x%04x\n",
            net_idx, addr);
-	printk("Sub add (err: %d, status: %d)\n", err,
-				   status);
+	printk("Sub add (err: %d)\n", err);
 				   
 }
-
+void provision()
+{
+	int err = 0;
+	uint16_t net_idx = 0;
+	uint8_t flags = 0;
+	uint32_t iv_index = 0;
+	uint16_t addr = 0x0002;
+	
+	
+	err = bt_mesh_provision(net_key, net_idx, flags, iv_index, addr,
+				dev_key);
+				
+	if (err == -EALREADY) {
+		printk("Using stored settings\n");
+	} else if (err) {
+		printk("Provisioning failed (err %d)\n", err);
+		return;
+	} else {
+		printk("Provisioning Function completed. Network Index: 0x%04x, Address: 0x%04x\n",net_idx, addr);
+	}
+	
+	configure();
+	
+	
+}
 int main(void)
 {
     init();
