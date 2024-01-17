@@ -1,0 +1,1 @@
+DEVICE_DT_GET(overlay name)

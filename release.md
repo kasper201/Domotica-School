@@ -6,11 +6,16 @@ This is the change log for release v2.0.0
 - Added the ability to read existing groups and nodes to UI via USART
 - Added ability to set nodes into groups via the UI
 
+
 ## User interface
-- {placeholder}
+- Is currently in a final product state
+- Nodes can be added by hand
+- Works with addresses and other identification numbers as well
 
 ## Known bugs
 - {placeholder}
 
 ## Other
-- {placeholder}
+- lucas's part doesn't work yet
+- The application no longer functions as a bridge
+
