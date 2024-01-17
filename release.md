@@ -1,23 +1,20 @@
 # What's changed
+This is the change log for release v2.0.0
 
 ## Embedded client
-- Added functional Button interrupt
-- Added ledSet functionality
-- Added ability to connect with your phone with node
-- Added ability to turn leds on/off using the button on the board
-
-## Uart Embedded side
-- Reads uart
-- Can read and send out groups
-- Can send out nodes
-- Can interact with the application
+- Added the ability to read existing groups and nodes
+- Added the ability to read existing groups and nodes to UI via USART
+- Added ability to set nodes into groups via the UI
+- Added ability to 
 
 ## User interface
-- Added LED to application
-- Added a functional Button to the application
+- Is currently in a final product state
+- Nodes can be added by hand
+- Works with addresses and other identification numbers as well
 
 ## Known bugs
-- Node dissapears once connected (Embedded client not Uart related)
+- {placeholder}
 
 ## Other
-- The application is currently still functioning as a bridge (Already new code to fix this but might not be up to release specs yet)
+- lucas's part doesn't work yet
+- The application no longer functions as a bridge
