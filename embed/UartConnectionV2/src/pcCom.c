@@ -14,14 +14,58 @@
 
 #define MESSAGE_SIZE 256 // Defines the maximum size for the incoming string
 
+#define MAX_NAMES 256
+#define MAX_NAME_LENGTH 13
+
+static char names[MAX_NAMES][MAX_NAME_LENGTH];
+static int nameCount = 0;
+static uint16_t groupAddresses[MAX_NAMES];
+
 static int mr = 0;
 
 //readPC functions
 void caseConnected(char *Message)
 {
     printk("Connection established\n");
-    // Send out already existing groups (if possible)
+    for (int i = 0; i < nameCount; i++)
+    {
+        printk("AddGroup %d %s\n", groupAddresses[i], names[i]); // Group 49152 [groupname]
+    }
+}
 
+void deleteGroup(char *Message)
+{
+    int index_to_delete = -1;
+
+    // Find the index of the group to delete
+    for (int i = 0; i < nameCount; i++) {
+        if (groupAddresses[i] == atoi(Message)) {
+            index_to_delete = i;
+            break;
+        }
+    }
+
+    // If the group was not found, return
+    if (index_to_delete == -1) {
+        return;
+    }
+
+    // Shift all elements after the index to delete one position to the left
+    for (int i = index_to_delete; i < nameCount - 1; i++) {
+        groupAddresses[i] = groupAddresses[i + 1];
+        strcpy(names[i], names[i + 1]);
+    }
+
+    // Decrease the count of names
+    nameCount--;
+}
+
+void createGroup(char *Message)
+{
+    groupAddresses[nameCount] = atoi(Message); // address of the group that is being created
+    memmove(Message, Message + 6, strlen(Message) - 6 + 1); //removes create_group_ from message
+    strcpy(names[nameCount], Message);
+    nameCount++;
 }
 
 void groupToggle(char *Message)
@@ -93,29 +137,37 @@ void readPc()
     } 
     else if(strstr(Message, "toggle_group_")) // checks for "toggle_group" in the message	
     {
-        memmove(Message, Message + 14 + mr, strlen(Message) - 14 + mr + 1);
+        memmove(Message, Message + 14 + mr, strlen(Message) - 14 + mr + 1); //removes toggle_group_ from message
         groupToggle(Message);
         mr = 1;
-
     }
     else if(strstr(Message, "unsubscribe_group_"))
     {
-        memmove(Message, Message + 18 + mr, strlen(Message) - 18 + mr + 1);
+        memmove(Message, Message + 18 + mr, strlen(Message) - 18 + mr + 1); //removes unsubscribe_group_ from message
         // printk("Message: %s\n", Message);
         uartUnsubscribeGroup(Message);
         mr = 1;
     }
     else if(strstr(Message, "subscribe_group_"))
     {
-        memmove(Message, Message + 16+ mr, strlen(Message) - 16 + mr + 1);
+        memmove(Message, Message + 16+ mr, strlen(Message) - 16 + mr + 1); //removes subscribe_group_ from message
         // printk("Message: %s\n", Message);
         uartSubscribeGroup(Message);
         mr = 1;
     }
-    else if(strlen(Message) > 0)
+    else if(strstr(Message, "create_group_"))
+    {
+        memmove(Message, Message + 13 + mr, strlen(Message) - 13 + mr + 1); //removes create_group_ from message
+        createGroup(Message);
+    }
+    else if(strstr(Message, "delete_group_"))
+    {
+        memmove(Message, Message + 13 + mr, strlen(Message) - 13 + mr + 1); //removes delete_group_ from message
+        deleteGroup(Message);
+    }
+    else if(strlen(Message) > 0) // if the message is not empty and does not contain any of the above defined commands
     {
         printk("Unknown command\n");
     }
-
     k_msgq_cleanup(&uart_msgq);
 }
