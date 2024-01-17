@@ -183,3 +183,8 @@ QString Groups::getGroupName(int groupAddress)
     // Return an empty string if the group address is not found
     return QString();
 }
+
+void Groups::addGroupAddress(QString groupName, int address)
+{
+    groupAddress.insert(groupName, address);
+}

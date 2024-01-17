@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "nodedialogbox.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -115,7 +116,7 @@ void MainWindow::on_pushButton_Connect_clicked()
         comport->write(connected.toLatin1() + char(10) );
 
         //Adds application node
-        function.addNodes("AddNode Application_ 11111 10001 AddSensor Button______ App_Button__ AddActuator LED_________ App_LED_____ false", node, nodeList);
+        function.addNodes("AddNode Application 09999 10001 AddSensor Button App_Button AddActuator LED App_LED false", node, nodeList);
 
         connectComport->setText("Disconnect");
         isComportConnected = true;
@@ -308,11 +309,11 @@ void MainWindow::on_pushButton_Add_Group_clicked()
             //qDebug() << groupNameLength;
             for(int l = groupNameLength; l < requiredGroupNameLength; l++)
             {
-                newGroupName += "_";
+                newGroupName += ".";
             }
             newGroupName = newGroupName.left(requiredGroupNameLength);
             groups.addGroupInstance(newGroupName);
-            QString CreateGroup = "CreateGroup " + newGroupName;
+            QString CreateGroup = "create_group_" + QString("%1").arg(groups.getGroupAddress(newGroupName), 5, 10, QChar('0')) + "_" + newGroupName;
             portSetup.WriteToComport(CreateGroup);
             function.updateGroupLists(groupList, groupLinkList, sensorAddButton, actuatorAddButton, groups, nodeList);
             addGroupLine->clear();
@@ -332,7 +333,7 @@ void MainWindow::on_pushButton_Delete_Group_clicked()
         QString groupName = groupList->currentItem()->text();
 
         //Get the address and send the delete to the nodes
-        QString unsubscribe = "unsubscribe_whole_group_" + QString("%1").arg(groups.getGroupAddress(groupName), 5, 10, QChar('0'));
+        QString unsubscribe = "delete_group_" + QString("%1").arg(groups.getGroupAddress(groupName), 5, 10, QChar('0'));
         portSetup.WriteToComport(unsubscribe);
 
         groups.deleteGroupInstance(groupName);
@@ -480,4 +481,23 @@ void MainWindow::on_appButton_clicked()
     }
 }
 
+
+
+void MainWindow::on_pushButton_NewNode_clicked()
+{
+    NodeDialogBox nodeDialogBox("Filler", 1);
+    if (nodeDialogBox.exec() == QDialog::Accepted) {
+        QString nodeName = " " + nodeDialogBox.getNodeName();
+        QString nodeAddress = " " + QString("%1").arg(nodeDialogBox.getNodeAddress(), 5, 10, QChar('0'));
+        QString nodeElement = " " + QString("%1").arg(nodeDialogBox.getNodeElement(), 5, 10, QChar('0'));
+        QString sensorName = " " + nodeDialogBox.getSensorName();
+        QString actuatorName = " " + nodeDialogBox.getActuatorName();
+
+        QString nodeInfo = "AddNode" + nodeName + nodeAddress + nodeElement + " AddSensor Button" + sensorName + " AddActuator LED" + actuatorName + " false";
+
+        function.addNodes(nodeInfo, node, nodeList);
+    } else {
+        qDebug() << "Operation canceled";
+    }
+}
 

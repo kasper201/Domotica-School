@@ -29,6 +29,7 @@ public:
 
     int getGroupAddress(QString groupName);                         //returns the address of the given group
     QString getGroupName(int groupAddress);                         //returns the name of the given address
+    void addGroupAddress(QString groupName, int groupAddress);      //Adds a group address and name
 
     struct groupParts {
         QMultiHash<QString, QPair<QString, QString>> sensorsInGroup;    //Sensor name, Node name, Sensor type

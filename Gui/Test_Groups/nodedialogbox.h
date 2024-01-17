@@ -15,13 +15,19 @@ class NodeDialogBox : public QDialog
     Q_OBJECT
 
 public:
-    NodeDialogBox(const QString& nodeName, QWidget *parent = nullptr);
+    NodeDialogBox(const QString& nodeName, int whichPopUp, QWidget *parent = nullptr);
     int getNodeAddress() const;
     int getNodeElement() const;
+    QString getNodeName() const;
+    QString getSensorName() const;
+    QString getActuatorName() const;
 
 private:
     QSpinBox *addressSpinBox;
     QSpinBox *elementSpinBox;
+    QLineEdit *nodeNameInput;
+    QLineEdit *sensorNameInput;
+    QLineEdit *actuatorNameInput;
     QPushButton *okButton;
     QPushButton *cancelButton;
 };

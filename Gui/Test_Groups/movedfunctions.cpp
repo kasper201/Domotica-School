@@ -18,7 +18,6 @@ QString MovedFunctions::addNodes(QString input, Node& node, QListWidget* nodeLis
     {
         //Removes parts of the string that are irrelevant
         input = stringM.removedTillWhitespace(input);
-
         //Adds a node
         QString nodeName = stringM.removedFromWhitespace(input);
         input = stringM.removedTillWhitespace(input);
@@ -35,7 +34,7 @@ QString MovedFunctions::addNodes(QString input, Node& node, QListWidget* nodeLis
             saveElement = nodeElementString.toInt();
         } else if (conversionSucces && nodeAddress == 11111)
         {
-            NodeDialogBox nodeDialogBox(nodeName);
+            NodeDialogBox nodeDialogBox(nodeName, 0);
             if (nodeDialogBox.exec() == QDialog::Accepted) {
                 saveAddress = nodeDialogBox.getNodeAddress();
                 saveElement = nodeDialogBox.getNodeElement();
@@ -87,11 +86,20 @@ QString MovedFunctions::addGroups(QString input, Groups& groups, QListWidget* gr
     {
         input = stringM.removedTillWhitespace(input);
 
+        //Get group address
+        int groupAddress = stringM.removedFromWhitespace(input).toInt();
+        input = stringM.removedTillWhitespace(input);
+
         //Adds a group
         QString groupName = stringM.removedFromWhitespace(input);
         groups.addGroupInstance(groupName);
         groupList->addItem(groupName);
         input = stringM.removedTillWhitespace(input);
+
+        //Add address with groupName
+        groups.addGroupAddress(groupName, groupAddress);
+
+
 
         while(input.contains("AddSensor"))
         {
@@ -184,7 +192,7 @@ void MovedFunctions::addTitles(bool nodeNotNeeded, QListWidget* nodeList, QListW
         QStringList allNodeNames = node.getAllNodeNames();
         foreach (const QString &nodeName, allNodeNames)   //Adds all groups to groupLinkList
         {
-            if(nodeName.size() > 11)
+            if(nodeName.size() > 1)
             {
                 nodeList->addItem(nodeName);
             }
