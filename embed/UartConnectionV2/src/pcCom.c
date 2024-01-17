@@ -26,10 +26,10 @@ static int mr = 0;
 //readPC functions
 void caseConnected(char *Message)
 {
-    char onoff[] = {"off"};
+    char onoff[] = {"false"};
     if(onoffVal())
     {
-        strcpy(onoff, "on");
+        strcpy(onoff, "true");
     }
     printk("Connection established\n");
     printk("AddNode PcNode %05d %05d AddSensor Button pcButton AddActuator LED pcLED %s", getAddr(), getElem(0), onoff);
