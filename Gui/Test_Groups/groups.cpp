@@ -26,18 +26,18 @@ void Groups::addGroupInstance(QString groupName)
     {
         groupParts newGroupParts;
         groupMap.insert(groupName, newGroupParts);
-        for (int address = 0; address < maxGroupAddress; address++)
+        for (int address = startValueAddress; address < (startValueAddress + maxGroupAddress); address++)
         {
             if(!groupAddress.values().contains(address))
             {
-                groupAddress[groupName] = address;
+                groupAddress.insert(groupName, address);
                 break;
             }
         }
-        qDebug() << "Group: " << groupName << " has been added";
+        //qDebug() << "Group: " << groupName << " has been added";
     } else
     {
-        qDebug() << "Group: " << groupName << " already exists";
+        //qDebug() << "Group: " << groupName << " already exists";
     }
 }
 
@@ -60,7 +60,7 @@ void Groups::addSensor(QString groupName, QString nodeName, QString sensorType, 
         groupMap[groupName].sensorsInGroup.insert(sensorName, sensorInfo);
     } else                                                                                  //Gives qDebug that sensor has already been added
     {
-        qDebug() << "This sensor has already been added";
+        //qDebug() << "This sensor has already been added";
     }
 }
 
@@ -83,7 +83,7 @@ void Groups::addActuator(QString groupName, QString nodeName, QString actuatorTy
         groupMap[groupName].actuatorsInGroup.insert(actuatorName, actuatorInfo);
     } else                                                                                  //Gives qDebug that actuator has already been added
     {
-        qDebug() << "This actuator has already been added";
+        //qDebug() << "This actuator has already been added";
     }
 }
 
@@ -139,7 +139,7 @@ void Groups::deleteGroupInstance(QString groupName)
             ++it;
         }
     }
-    qDebug() << "Group: " << groupName << " has been deleted";
+    //qDebug() << "Group: " << groupName << " has been deleted";
 }
 
 //Deletes a sensor
@@ -168,4 +168,23 @@ QStringList Groups::checkGroups(QString sensorName, QString nodeName)
 int Groups::getGroupAddress(QString groupName)
 {
     return groupAddress.value(groupName);
+}
+
+QString Groups::getGroupName(int groupAddress)
+{
+    for (auto it = this->groupAddress.begin(); it != this->groupAddress.end(); ++it)
+    {
+        if (it.value() == groupAddress)
+        {
+            return it.key();
+        }
+    }
+
+    // Return an empty string if the group address is not found
+    return QString();
+}
+
+void Groups::addGroupAddress(QString groupName, int address)
+{
+    groupAddress.insert(groupName, address);
 }

@@ -28,6 +28,8 @@ public:
     QStringList checkGroups(QString sensorName, QString nodeName);  //checks if a sensor has been matched with a group
 
     int getGroupAddress(QString groupName);                         //returns the address of the given group
+    QString getGroupName(int groupAddress);                         //returns the name of the given address
+    void addGroupAddress(QString groupName, int groupAddress);      //Adds a group address and name
 
     struct groupParts {
         QMultiHash<QString, QPair<QString, QString>> sensorsInGroup;    //Sensor name, Node name, Sensor type
@@ -45,7 +47,8 @@ private:
     QPair<QString, QString> actuatorInfo;                           //actuatorName, nodeName
     QMultiHash<QPair<QString, QString>, QString> actuatorGroupLink; //Stores the following: Actuator name, Node name, Group name
 
-    int maxGroupAddress = 1000;
+    int startValueAddress = 49152;        //Start value for groupAddresses
+    int maxGroupAddress = 1000;         //Max value for groupAddresses
 };
 
 #endif // GROUPS_H

@@ -59,6 +59,8 @@ private slots:
 
     void on_appButton_clicked();
 
+    void on_pushButton_NewNode_clicked();
+
 private:
     Ui::MainWindow *ui;
 
@@ -111,8 +113,8 @@ private:
     QPushButton* deleteActuator;
 
     //Important String for comunication
-    QString connected = "a";         //Lets the node know that it is connected to the application
-    QString disconnected = "d";      //Lets the node know that the application is disconnected
+    QString connected = "connected";         //Lets the node know that it is connected to the application
+    QString disconnected = "disconnected";      //Lets the node know that the application is disconnected
 
 };
 #endif // MAINWINDOW_H
