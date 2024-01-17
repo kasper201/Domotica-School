@@ -49,7 +49,7 @@ QStringList Sensor::groupTriggered(Groups& groups, Node& node, QString groupAddr
         }
         QString updateActuator = "UpdateActuator " + actuatorNode + " " + actuatorName + " " + actuatorStatusInverted;
         AllUpdates.append(updateActuator);
-        qDebug() << "Update for actuator: " << actuatorName;
+        //qDebug() << "Update for actuator: " << actuatorName;
     }
     return AllUpdates;
 }
@@ -66,6 +66,6 @@ void Sensor::actuatorUpdate(Node& node, QString data)
         QString actuatorStatus = stringM.removedFromWhitespace(data);
         data = stringM.removedTillWhitespace(data);
         node.updateActuatorStatus(nodeName, actuatorName, actuatorStatus);
-        qDebug() << "updated actuator status: " << actuatorStatus;
+        //qDebug() << "updated actuator status: " << actuatorStatus;
     }
 }

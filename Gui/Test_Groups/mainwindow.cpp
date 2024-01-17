@@ -140,11 +140,11 @@ void MainWindow::on_pushButton_Connect_clicked()
     } else if (isComportConnected == false && comportList->selectedItems().isEmpty())
     {
         comLabel->setText("A comport should be selected first");
-        qDebug() << "No comport was selected";
+        //qDebug() << "No comport was selected";
     }else
     {
         ui->userFeedbackLabel->setText("Connection failed");
-        qDebug() << "Failed with connection";
+        //qDebug() << "Failed with connection";
     }
 }
 
@@ -168,7 +168,7 @@ void MainWindow::readData()
         //turns data recieved off again
         if(Is_Data_Recieved == true)
         {
-            qDebug() << "Data from serial port: " << Data_From_SerialPort;
+            //qDebug() << "Data from serial port: " << Data_From_SerialPort;
             Data_From_SerialPort.remove("\r").remove("\n");
             Is_Data_Recieved = false;
 
@@ -196,7 +196,7 @@ void MainWindow::readData()
                             ui->widget_led->setStyleSheet("background-color: black;");
                         }
                         actuatorsTriggered.removeOne(actuatorUpdate);
-                        qDebug() << node.getActuatorStatus("Application", "App_LED");
+                        //qDebug() << node.getActuatorStatus("Application", "App_LED");
                     }
                 }
             }
@@ -218,7 +218,7 @@ void MainWindow::closeConnection()
     if(comport->isOpen())
     {
         comport->write(disconnected.toLatin1() + char(10) );
-        qDebug() << "Closed comport connection: " << disconnected;
+        //qDebug() << "Closed comport connection: " << disconnected;
         comport->close();
     }
 }
@@ -256,7 +256,7 @@ void MainWindow::on_pushButton_Add_Sensor_Group_clicked()
         } else
         {
             ui->userFeedbackLabel->setText("A group should be selected");
-            qDebug() << "A group should be selected first";
+            //qDebug() << "A group should be selected first";
         }
     } else
     {
@@ -289,7 +289,7 @@ void MainWindow::on_pushButton_Add_Actuator_Group_clicked()
         } else
         {
             ui->userFeedbackLabel->setText("A group should be selected");
-            qDebug() << "A group should be selected first";
+            //qDebug() << "A group should be selected first";
         }
     } else
     {
@@ -348,7 +348,7 @@ void MainWindow::on_pushButton_Delete_Group_clicked()
     } else
     {
         ui->userFeedbackLabel->setText("Select a group");
-        qDebug() << "No group was selected";
+        //qDebug() << "No group was selected";
     }
 }
 
@@ -376,7 +376,7 @@ void MainWindow::on_pushButton_Delete_Sensor_clicked()
         sensorListGroup->takeItem(sensorListGroup->currentRow());
     } else if(sensorListGroup->selectedItems().isEmpty()) {
         ui->userFeedbackLabel->setText("Select a sensor to delete");
-        qDebug() << "select a sensor";
+        //qDebug() << "select a sensor";
     }
 }
 
@@ -397,7 +397,7 @@ void MainWindow::on_pushButton_Delete_Actuator_clicked()
         actuatorListGroup->takeItem(actuatorListGroup->currentRow());
     } else if(actuatorListGroup->selectedItems().isEmpty()) {
         ui->userFeedbackLabel->setText("Select an actuator to delete");
-        qDebug() << "select an actuator";
+        //qDebug() << "select an actuator";
     }
 }
 
@@ -497,7 +497,7 @@ void MainWindow::on_pushButton_NewNode_clicked()
 
         function.addNodes(nodeInfo, node, nodeList);
     } else {
-        qDebug() << "Operation canceled";
+        //qDebug() << "Operation canceled";
     }
 }
 

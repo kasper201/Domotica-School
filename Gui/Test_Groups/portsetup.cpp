@@ -23,17 +23,17 @@ void PortSetup::setupComport(const QString &comPortName)
     COMPORT->open(QIODevice::ReadWrite);
 
     if(COMPORT->isOpen()) {
-        qDebug() << "Serial Port is connected";
+        //qDebug() << "Serial Port is connected";
     }
     else {
-        qDebug() << "Serial Port is not connected";
-        qDebug() << COMPORT->error();
+        //qDebug() << "Serial Port is not connected";
+        //qDebug() << COMPORT->error();
     }
 }
 
 //send string to comport
 void PortSetup::WriteToComport(QString sendString)
 {
-    qDebug() << "Data send: " << sendString;
+    //qDebug() << "Data send: " << sendString;
     COMPORT->write(sendString.toLatin1() + char(10) );
 }

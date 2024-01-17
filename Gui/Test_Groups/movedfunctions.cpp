@@ -39,11 +39,11 @@ QString MovedFunctions::addNodes(QString input, Node& node, QListWidget* nodeLis
                 saveAddress = nodeDialogBox.getNodeAddress();
                 saveElement = nodeDialogBox.getNodeElement();
             } else {
-                qDebug() << "Operation canceled";
+                //qDebug() << "Operation canceled";
             }
         } else
         {
-            qDebug() << "conversion failed of integer for the node: " << nodeName;
+            //qDebug() << "conversion failed of integer for the node: " << nodeName;
         }
         node.addNodeInstance(nodeName, saveAddress, saveElement);
         nodeList->addItem(nodeName);
@@ -124,7 +124,7 @@ QString MovedFunctions::addGroups(QString input, Groups& groups, QListWidget* gr
             QString nodeName = stringM.removedFromWhitespace(input);
             input = stringM.removedTillWhitespace(input);
             QString actuatorType = stringM.removedFromWhitespace(input);
-            qDebug() << actuatorType;
+            //qDebug() << actuatorType;
             input = stringM.removedTillWhitespace(input);
             QString actuatorName = stringM.removedFromWhitespace(input);
             input = stringM.removedTillWhitespace(input);

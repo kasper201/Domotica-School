@@ -34,10 +34,10 @@ void Groups::addGroupInstance(QString groupName)
                 break;
             }
         }
-        qDebug() << "Group: " << groupName << " has been added";
+        //qDebug() << "Group: " << groupName << " has been added";
     } else
     {
-        qDebug() << "Group: " << groupName << " already exists";
+        //qDebug() << "Group: " << groupName << " already exists";
     }
 }
 
@@ -60,7 +60,7 @@ void Groups::addSensor(QString groupName, QString nodeName, QString sensorType, 
         groupMap[groupName].sensorsInGroup.insert(sensorName, sensorInfo);
     } else                                                                                  //Gives qDebug that sensor has already been added
     {
-        qDebug() << "This sensor has already been added";
+        //qDebug() << "This sensor has already been added";
     }
 }
 
@@ -83,7 +83,7 @@ void Groups::addActuator(QString groupName, QString nodeName, QString actuatorTy
         groupMap[groupName].actuatorsInGroup.insert(actuatorName, actuatorInfo);
     } else                                                                                  //Gives qDebug that actuator has already been added
     {
-        qDebug() << "This actuator has already been added";
+        //qDebug() << "This actuator has already been added";
     }
 }
 
@@ -139,7 +139,7 @@ void Groups::deleteGroupInstance(QString groupName)
             ++it;
         }
     }
-    qDebug() << "Group: " << groupName << " has been deleted";
+    //qDebug() << "Group: " << groupName << " has been deleted";
 }
 
 //Deletes a sensor
