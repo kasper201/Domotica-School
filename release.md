@@ -1,5 +1,5 @@
 # What's changed
-This is the change log for release v2.0.0
+This is the change log for release v2.0.1
 
 ## Embedded client
 - Added the ability to read existing groups and nodes
@@ -21,6 +21,7 @@ This is the change log for release v2.0.0
 - Is currently in a final product state
 - Nodes can be added by hand
 - Works with addresses and other identification numbers as well
+- Fixed unsubscribe address order issue
 
 ## Known bugs
 - {placeholder}
