@@ -45,11 +45,11 @@ void uartSubscribeGroup(char *Message)
     uint16_t address = atoi(Message); // address of the device that is subscribing to the group
 
     printk("Subscribing to group %04x\n", groupAddress);
-    //getNetIdx(&netKeyIndex);
+    getNetIdx(&netKeyIndex);
     k_msleep(1); // wait for netKeyIndex to be set
     printk("netKeyIndex: %04x\n", netKeyIndex);	
     printk("index: 0x%04x, address: 0x%04x, elementAddress: 0x%04x, groupAddress: 0x%04x, mod_id: 0x%04x\n", netKeyIndex, address, elementAddress, groupAddress, mod_id);
-    subscribeToGroup(netKeyIndex, address, elementAddress, groupAddress, mod_id);
+    subscribeToGroup(groupAddress, elementAddress, mod_id, netKeyIndex, address);
 }
 
 void uartUnsubscribeGroup(char *Message)
@@ -68,7 +68,7 @@ void uartUnsubscribeGroup(char *Message)
     k_msleep(1); // wait for netKeyIndex to be set
     printk("netKeyIndex: %04x\n", netKeyIndex);	
     printk("index: 0x%04x, address: 0x%04x, elementAddress: 0x%04x, groupAddress: 0x%04x, mod_id: 0x%04x\n", netKeyIndex, address, elementAddress, groupAddress, mod_id);
-    unsubscribeFromGroup(netKeyIndex, address, elementAddress, groupAddress, mod_id);
+    unsubscribeFromGroup(groupAddress, elementAddress, mod_id, netKeyIndex, address);
 }
 
 // Reads input from the application and decides what to do with it
