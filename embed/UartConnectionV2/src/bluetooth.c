@@ -344,6 +344,11 @@ uint16_t getAddr() // get address of the device (simplified)
 	return extern_addr;
 }
 
+uint16_t getElem(uint8_t index)
+{
+    return getAddr() + index;
+}
+
 uint16_t getGroup(uint16_t groupNr) // not used but useful for understanding how to get groups
 {
 	return models[3].groups[groupNr];

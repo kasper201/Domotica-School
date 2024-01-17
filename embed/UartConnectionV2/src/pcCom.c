@@ -26,7 +26,13 @@ static int mr = 0;
 //readPC functions
 void caseConnected(char *Message)
 {
+    char onoff[] = {"off"};
+    if(onoffVal())
+    {
+        strcpy(onoff, "on");
+    }
     printk("Connection established\n");
+    printk("AddNode PcNode %05d %05d AddSensor Button pcButton AddActuator LED pcLED %s", getAddr(), getElem(0), onoff);
     for (int i = 0; i < nameCount; i++)
     {
         printk("AddGroup %d %s\n", groupAddresses[i], names[i]); // Group 49152 [groupname]
@@ -60,11 +66,29 @@ void deleteGroup(char *Message)
     nameCount--;
 }
 
+void createGroupFinal(char *Message, int i)
+{
+    groupAddresses[i] = atoi(Message); // address of the group that is being created
+    memmove(Message, Message + 6, strlen(Message) - 6 + 1); //removes create_group_ from message
+    strcpy(names[i], Message);
+}
+
 void createGroup(char *Message)
 {
-    groupAddresses[nameCount] = atoi(Message); // address of the group that is being created
-    memmove(Message, Message + 6, strlen(Message) - 6 + 1); //removes create_group_ from message
-    strcpy(names[nameCount], Message);
+    for(int i = 0; i < nameCount; i++)
+    {
+        if(groupAddresses[i] == atoi(Message) && strstr(Message, names[i]))
+        {
+            printk("Group already exists\n");
+            return;
+        }
+        else if(groupAddresses[i] == atoi(Message) && !strstr(Message, names[i]))
+        {
+            createGroupFinal(Message, i);
+            return;
+        }
+    }
+    createGroupFinal(Message, nameCount);
     nameCount++;
 }
 
@@ -159,15 +183,18 @@ void readPc()
     {
         memmove(Message, Message + 13 + mr, strlen(Message) - 13 + mr + 1); //removes create_group_ from message
         createGroup(Message);
+        mr = 1;
     }
     else if(strstr(Message, "delete_group_"))
     {
         memmove(Message, Message + 13 + mr, strlen(Message) - 13 + mr + 1); //removes delete_group_ from message
         deleteGroup(Message);
+        mr = 1;
     }
     else if(strlen(Message) > 0) // if the message is not empty and does not contain any of the above defined commands
     {
         printk("Unknown command\n");
+        mr = 1;
     }
     k_msgq_cleanup(&uart_msgq);
 }
