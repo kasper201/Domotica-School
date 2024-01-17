@@ -100,7 +100,7 @@ void groupToggle(char *Message)
     gen_onoff_send(!onoffVal(), groupAddress); //send onoff message to group
 }
 
-void uartSubscribeGroup(char *Message)
+void uartSubscribeGroup(char *Message, bool sub)
 {
     printk("Message: %s\n", Message);
     uint16_t netKeyIndex = 0x0002;
@@ -117,26 +117,10 @@ void uartSubscribeGroup(char *Message)
     k_msleep(1); // wait for netKeyIndex to be set
     printk("netKeyIndex: %04x\n", netKeyIndex);	
     printk("index: 0x%04x, address: 0x%04x, elementAddress: 0x%04x, groupAddress: 0x%04x, mod_id: 0x%04x\n", netKeyIndex, address, elementAddress, groupAddress, mod_id);
-    subscribeToGroup(groupAddress, elementAddress, mod_id, netKeyIndex, address);
-}
-
-void uartUnsubscribeGroup(char *Message)
-{
-    uint16_t netKeyIndex = 0x0000;
-    uint16_t groupAddress = atoi(Message); // address of the group that is being subscribed to
-    memmove(Message, Message + 6, strlen(Message) - 6 + 1);
-    uint16_t elementAddress = atoi(Message); // element address of the device that is subscribing to the group
-    memmove(Message, Message + 6, strlen(Message) - 6 + 1);
-    uint16_t mod_id = atoi(Message); // model id of the device that is subscribing to the group
-    memmove(Message, Message + 6, strlen(Message) - 6 + 1);
-    uint16_t address = atoi(Message); // address of the device that is subscribing to the group
-
-    printk("Unsubscribing from group %04x\n", groupAddress);
-    getNetIdx(&netKeyIndex);
-    k_msleep(1); // wait for netKeyIndex to be set
-    printk("netKeyIndex: %04x\n", netKeyIndex);	
-    printk("index: 0x%04x, address: 0x%04x, elementAddress: 0x%04x, groupAddress: 0x%04x, mod_id: 0x%04x\n", netKeyIndex, address, elementAddress, groupAddress, mod_id);
-    unsubscribeFromGroup(groupAddress, elementAddress, mod_id, netKeyIndex, address);
+    if(sub)
+        subscribeToGroup(groupAddress, elementAddress, mod_id, netKeyIndex, address);
+    else
+        unsubscribeFromGroup(groupAddress, elementAddress, mod_id, netKeyIndex, address);
 }
 
 // Reads input from the application and decides what to do with it
@@ -169,14 +153,14 @@ void readPc()
     {
         memmove(Message, Message + 18 + mr, strlen(Message) - 18 + mr + 1); //removes unsubscribe_group_ from message
         // printk("Message: %s\n", Message);
-        uartUnsubscribeGroup(Message);
+        uartSubscribeGroup(Message, false);
         mr = 1;
     }
     else if(strstr(Message, "subscribe_group_"))
     {
         memmove(Message, Message + 16+ mr, strlen(Message) - 16 + mr + 1); //removes subscribe_group_ from message
         // printk("Message: %s\n", Message);
-        uartSubscribeGroup(Message);
+        uartSubscribeGroup(Message, true);
         mr = 1;
     }
     else if(strstr(Message, "create_group_"))
