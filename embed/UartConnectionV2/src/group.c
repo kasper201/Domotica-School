@@ -10,7 +10,7 @@ void subscribeToGroup(uint16_t groupAddress, uint16_t elementAddress, uint16_t m
         printk("Subscription failed (err %d)\n", err);
     }
     printk("Sub Network Index: 0x%04x, Address: 0x%04x\n", netKeyIndex, address);
-    printk("Subscription add (err: %d, status: %d)\n", err, status);
+    printk("Subscription add (err: %d)\n", err);
 }
 
 void unsubscribeFromGroup(uint16_t groupAddress, uint16_t elementAddress, uint16_t mod_id, uint16_t netKeyIndex, uint16_t address)
@@ -22,5 +22,5 @@ void unsubscribeFromGroup(uint16_t groupAddress, uint16_t elementAddress, uint16
         printk("Unsubscription failed (err %d)\n", err);
     }
     printk("unsub Network Index: 0x%04x, Address: 0x%04x\n", netKeyIndex, address);
-    printk("Subscription remove (err: %d, status: %d)\n", err, status);
+    printk("Subscription remove (err: %d)\n", err);
 }
