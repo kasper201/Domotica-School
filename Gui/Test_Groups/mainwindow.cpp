@@ -187,12 +187,12 @@ void MainWindow::readData()
                     actuatorUpdate = actuatorsTriggered.first();
                     if (actuatorUpdate.contains("App_LED"))
                     {
-                        if(node.getActuatorStatus("Application_", "App_LED_____") == "false")
+                        if(node.getActuatorStatus("Application", "App_LED") == "false")
                         {
-                            node.updateActuatorStatus("Application_", "App_LED_____", "true");
+                            node.updateActuatorStatus("Application", "App_LED", "true");
                             ui->widget_led->setStyleSheet("background-color: yellow;");
                         } else {
-                            node.updateActuatorStatus("Application_", "App_LED_____", "false");
+                            node.updateActuatorStatus("Application", "App_LED", "false");
                             ui->widget_led->setStyleSheet("background-color: black;");
                         }
                         actuatorsTriggered.removeOne(actuatorUpdate);
@@ -443,7 +443,7 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
         function.addTitles(false, nodeList, sensorList, actuatorList, node);
     } else if(index == 3)
     {
-        if(node.getActuatorStatus("Application_", "App_LED_____") == "true")
+        if(node.getActuatorStatus("Application", "App_LED") == "true")
         {
             ui->widget_led->setStyleSheet("background-color: yellow;");
         } else {
@@ -455,20 +455,20 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
 //Triggers when the application button is clicked
 void MainWindow::on_appButton_clicked()
 {
-    groupsTriggered = sensorInput.sensorTrigger(groups, "TriggerSensor Application_ App_Button__");
+    groupsTriggered = sensorInput.sensorTrigger(groups, "TriggerSensor Application App_Button");
     for (const QString& groupName : groupsTriggered)
     {
         actuatorsTriggered = groups.getActuators(groupName);
         for (const QString& actuatorShit : actuatorsTriggered)
         {
-            if (actuatorShit.contains("App_LED_____"))
+            if (actuatorShit.contains("App_LED"))
             {
-                if(node.getActuatorStatus("Application_", "App_LED_____") == "false")
+                if(node.getActuatorStatus("Application", "App_LED") == "false")
                 {
-                    node.updateActuatorStatus("Application_", "App_LED_____", "true");
+                    node.updateActuatorStatus("Application", "App_LED", "true");
                     ui->widget_led->setStyleSheet("background-color: yellow;");
                 } else {
-                    node.updateActuatorStatus("Application_", "App_LED_____", "false");
+                    node.updateActuatorStatus("Application", "App_LED", "false");
                     ui->widget_led->setStyleSheet("background-color: black;");
                 }
                 actuatorsTriggered.removeOne(actuatorUpdate);
