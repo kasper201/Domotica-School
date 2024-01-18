@@ -190,17 +190,17 @@ static int gen_onoff_set_unack(struct bt_mesh_model *model,
 		return 0;
 	}
 
-	if (val == onoff.val) {
-		/* No change */
-		return 0;
-	}
+	// if (val == onoff.val) {
+	// 	/* No change */
+	// 	return 0;
+	// }
 
 	printk("set: %s delay: %d ms time: %d ms\n", onoff_str[val], delay,
 	       trans);
 
 	onoff.tid = tid;
 	onoff.src = ctx->addr;
-	onoff.val = val;
+	onoff.val = !onoff.val;
 	onoff.transition_time = trans;
 
 	/* Schedule the next action to happen on the delay, and keep
