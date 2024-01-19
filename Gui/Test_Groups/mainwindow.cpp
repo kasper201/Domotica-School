@@ -122,17 +122,20 @@ void MainWindow::on_pushButton_Connect_clicked()
         isComportConnected = true;
     } else if(isComportConnected == true)
     {
+        //Close connection and clean out all list widgets
         closeConnection();
         comportList->clear();
         nodeList->clear();
         function.addTitles(false, nodeList, sensorList, actuatorList, node);
         setupComportList();
 
+        //disable all irrelevant tabs
         tabs->tabBar()->setTabEnabled(1, false);
         tabs->tabBar()->setTabEnabled(2, false);
         tabs->tabBar()->setTabEnabled(3, false);
         tabs->setCurrentIndex(0);
 
+        //Change what the user sees
         comLabel->setText("Not connected");
         connectComport->setText("Connect");
         ui->userFeedbackLabel->setText("Connected");
@@ -175,7 +178,7 @@ void MainWindow::readData()
             Data_From_SerialPort = function.addNodes(Data_From_SerialPort, node, nodeList);
             Data_From_SerialPort = function.addGroups(Data_From_SerialPort, groups, groupList);
 
-
+            //This is all for the Application LED turning on and off
             if(Data_From_SerialPort.contains("toggle group"))
             {
                 QString input = Data_From_SerialPort;
@@ -271,6 +274,7 @@ void MainWindow::on_pushButton_Add_Actuator_Group_clicked()
     {
         if(!groupLinkList->selectedItems().isEmpty())
         {
+            //Get all names
             QString groupName = groupLinkList->currentItem()->text();
             QString nodeName = nodeList->currentItem()->text();
             QString actuatorName = actuatorList->currentItem()->text().split('\t').value(0);
@@ -313,8 +317,12 @@ void MainWindow::on_pushButton_Add_Group_clicked()
             }
             newGroupName = newGroupName.left(requiredGroupNameLength);
             groups.addGroupInstance(newGroupName);
+
+            //Send create group out
             QString CreateGroup = "create_group_" + QString("%1").arg(groups.getGroupAddress(newGroupName), 5, 10, QChar('0')) + "_" + newGroupName;
             portSetup.WriteToComport(CreateGroup);
+
+            //update UI
             function.updateGroupLists(groupList, groupLinkList, sensorAddButton, actuatorAddButton, groups, nodeList);
             addGroupLine->clear();
         }
@@ -336,10 +344,10 @@ void MainWindow::on_pushButton_Delete_Group_clicked()
         QString unsubscribe = "delete_group_" + QString("%1").arg(groups.getGroupAddress(groupName), 5, 10, QChar('0'));
         portSetup.WriteToComport(unsubscribe);
 
+        //Delete group out of the maps
         groups.deleteGroupInstance(groupName);
 
-
-
+        //Remove group from UI
         groupList->takeItem(groupList->currentRow());
         function.updateCurrentGroupOverview(sensorListGroup, actuatorListGroup, groupList, groups);
 
@@ -364,10 +372,12 @@ void MainWindow::on_pushButton_Delete_Sensor_clicked()
 {
     if(!sensorListGroup->selectedItems().isEmpty() && !groupList->selectedItems().isEmpty())
     {
+        //Get all names
         QString sensorName = sensorListGroup->currentItem()->text().split('\t').value(0);
         QString nodeName = sensorListGroup->currentItem()->text().split('\t').value(1);
         QString groupName = groupList->currentItem()->text();
 
+        //Send out unsubscribe for sensor
         QString deleteSensor = "unsubscribe_group_" + QString("%1").arg(groups.getGroupAddress(groupName), 5, 10, QChar('0')) + "_" + QString("%1").arg(node.getNodeAddress(nodeName), 5, 10, QChar('0'))  + "_" + "04097" + "_" + QString("%1").arg(node.getNodeElement(nodeName), 5, 10, QChar('0'));
         portSetup.WriteToComport(deleteSensor);
 
@@ -385,10 +395,12 @@ void MainWindow::on_pushButton_Delete_Actuator_clicked()
 {
     if(!actuatorListGroup->selectedItems().isEmpty() && !groupList->selectedItems().isEmpty())
     {
+        //Get all names
         QString actuatorName = actuatorListGroup->currentItem()->text().split('\t').value(0);
         QString nodeName = actuatorListGroup->currentItem()->text().split('\t').value(1);
         QString groupName = groupList->currentItem()->text();
 
+        //Send out unsubscribe for actuator
         QString deleteActuator = "unsubscribe_group_" + QString("%1").arg(groups.getGroupAddress(groupName), 5, 10, QChar('0')) + "_" + QString("%1").arg(node.getNodeAddress(nodeName), 5, 10, QChar('0'))  + "_" + "04096"  + "_" + QString("%1").arg(node.getNodeElement(nodeName), 5, 10, QChar('0'));
         portSetup.WriteToComport(deleteActuator);
 
@@ -481,12 +493,12 @@ void MainWindow::on_appButton_clicked()
     }
 }
 
-
-
+//Add a new node by hand
 void MainWindow::on_pushButton_NewNode_clicked()
 {
     NodeDialogBox nodeDialogBox("Filler", 1);
     if (nodeDialogBox.exec() == QDialog::Accepted) {
+        //Create all string parts required
         QString nodeName = " " + nodeDialogBox.getNodeName();
         QString nodeAddress = " " + QString("%1").arg(nodeDialogBox.getNodeAddress(), 5, 10, QChar('0'));
         QString nodeElement = " " + QString("%1").arg(nodeDialogBox.getNodeElement(), 5, 10, QChar('0'));

@@ -22,6 +22,7 @@ void Groups::addGroupInstance(QString groupName)
             alreadyExist = true;
         }
     }
+    //Only add if the group does not exist yet
     if(alreadyExist == false)
     {
         groupParts newGroupParts;
@@ -165,11 +166,13 @@ QStringList Groups::checkGroups(QString sensorName, QString nodeName)
     return groupList;
 }
 
+//Gets the address that belongs to this group name
 int Groups::getGroupAddress(QString groupName)
 {
     return groupAddress.value(groupName);
 }
 
+//Gets the group name that belongs to this group address
 QString Groups::getGroupName(int groupAddress)
 {
     for (auto it = this->groupAddress.begin(); it != this->groupAddress.end(); ++it)
@@ -184,6 +187,7 @@ QString Groups::getGroupName(int groupAddress)
     return QString();
 }
 
+//Add a address to an existing group
 void Groups::addGroupAddress(QString groupName, int address)
 {
     groupAddress.insert(groupName, address);
