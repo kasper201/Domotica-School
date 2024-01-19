@@ -21,6 +21,7 @@ This is the change log for release v2.0.0
 - Is currently in a final product state
 - Nodes can be added by hand
 - Works with addresses and other identification numbers as well
+- Solved bug that application LED did not work anymore
 
 ## Known bugs
 - {placeholder}
