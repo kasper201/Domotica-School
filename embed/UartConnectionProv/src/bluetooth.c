@@ -23,6 +23,8 @@
 #include "board.h"
 #include "bluetooth.h"
 
+#define SW0_NODE	DT_ALIAS(sw0)
+
 uint16_t extern_net_idx = 0;
 uint16_t extern_addr = 0;
 
@@ -34,7 +36,9 @@ static uint8_t node_uuid[16];
 
 K_SEM_DEFINE(sem_unprov_beacon, 0, 1);
 K_SEM_DEFINE(sem_node_added, 0, 1);
+#if DT_NODE_HAS_STATUS(SW0_NODE, okay)
 K_SEM_DEFINE(sem_button_pressed, 0, 1);
+#endif
 
 #define OP_ONOFF_GET       BT_MESH_MODEL_OP_2(0x82, 0x01)
 #define OP_ONOFF_SET       BT_MESH_MODEL_OP_2(0x82, 0x02)
@@ -50,6 +54,42 @@ static void attention_off(struct bt_mesh_model *mod)
 {
 	ledSet(false);
 }
+
+
+static struct bt_mesh_cfg_cli cfg_cli = {
+};
+
+static void health_current_status(struct bt_mesh_health_cli *cli, uint16_t addr,
+				  uint8_t test_id, uint16_t cid, uint8_t *faults,
+				  size_t fault_count)
+{
+	size_t i;
+
+	printk("Health Current Status from 0x%04x\n", addr);
+
+	if (!fault_count) {
+		printk("Health Test ID 0x%02x Company ID 0x%04x: no faults\n",
+		       test_id, cid);
+		return;
+	}
+
+	printk("Health Test ID 0x%02x Company ID 0x%04x Fault Count %zu:\n",
+	       test_id, cid, fault_count);
+
+	for (i = 0; i < fault_count; i++) {
+		printk("\t0x%02x\n", faults[i]);
+	}
+}
+
+/*static struct bt_mesh_health_cli health_cli = {
+	.current_status = health_current_status,
+};
+
+static struct bt_mesh_model root_models[] = {
+	BT_MESH_MODEL_CFG_SRV,
+	BT_MESH_MODEL_CFG_CLI(&cfg_cli),
+	BT_MESH_MODEL_HEALTH_CLI(&health_cli),
+};*/
 
 static const struct bt_mesh_health_srv_cb health_cb = {
 	.attn_on = attention_on,
@@ -271,6 +311,8 @@ static const struct bt_mesh_model_op gen_onoff_cli_op[] = {
 /* This application only needs one element to contain its models */
 static struct bt_mesh_model models[] = {
 	BT_MESH_MODEL_CFG_SRV,
+	BT_MESH_MODEL_CFG_CLI(&cfg_cli),
+	//BT_MESH_MODEL_HEALTH_CLI(&health_cli),
 	BT_MESH_MODEL_HEALTH_SRV(&health_srv, &health_pub),
 	BT_MESH_MODEL(BT_MESH_MODEL_ID_GEN_ONOFF_SRV, gen_onoff_srv_op, NULL,
 		      NULL),
@@ -443,7 +485,7 @@ static void configure_self(struct bt_mesh_cdb_node *self)
 	}
 
 	err = bt_mesh_cfg_cli_mod_app_bind(self->net_idx, self->addr, self->addr, app_idx,
-					   BT_MESH_MODEL_ID_HEALTH_CLI, &status);
+					   BT_MESH_MODEL_ID_HEALTH_SRV, &status);
 	if (err || status) {
 		printk("Failed to bind app-key (err %d, status %d)\n", err,
 		       status);
@@ -632,6 +674,40 @@ static uint8_t check_unconfigured(struct bt_mesh_cdb_node *node, void *data)
 	return BT_MESH_CDB_ITER_CONTINUE;
 }
 
+#if DT_NODE_HAS_STATUS(SW0_NODE, okay)
+static const struct gpio_dt_spec button = GPIO_DT_SPEC_GET_OR(SW0_NODE, gpios, {0});
+static struct gpio_callback button_cb_data;
+
+static void button_pressed(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
+{
+	k_sem_give(&sem_button_pressed);
+}
+
+static void button_init(void)
+{
+	int ret;
+
+	if (!gpio_is_ready_dt(&button)) {
+		printk("Error: button device %s is not ready\n", button.port->name);
+		return;
+	}
+	ret = gpio_pin_configure_dt(&button, GPIO_INPUT);
+	if (ret != 0) {
+		printk("Error %d: failed to configure %s pin %d\n", ret, button.port->name,
+		       button.pin);
+		return;
+	}
+	ret = gpio_pin_interrupt_configure_dt(&button, GPIO_INT_EDGE_TO_ACTIVE);
+	if (ret != 0) {
+		printk("Error %d: failed to configure interrupt on %s pin %d\n", ret,
+		       button.port->name, button.pin);
+		return;
+	}
+	gpio_init_callback(&button_cb_data, button_pressed, BIT(button.pin));
+	gpio_add_callback(button.port, &button_cb_data);
+}
+#endif
+
 void provMain()
 {
 	char uuid_hex_str[32 + 1];
@@ -679,6 +755,10 @@ int bluetoothInit(void)
 	int err = -1;
 
 	printk("Initializing...\n");
+
+#if DT_NODE_HAS_STATUS(SW0_NODE, okay)
+	button_init();
+#endif
 
 	if (IS_ENABLED(CONFIG_HWINFO)) {
 		err = hwinfo_get_device_id(dev_uuid, sizeof(dev_uuid));
