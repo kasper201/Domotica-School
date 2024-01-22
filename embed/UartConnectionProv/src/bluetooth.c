@@ -518,20 +518,20 @@ static void configure_node(struct bt_mesh_cdb_node *node)
 		printk("No app-key 0x%04x\n", app_idx);
 		return;
 	}
-
+	printk("App key found\n");
 	err = bt_mesh_cdb_app_key_export(key, 0, app_key);
 	if (err) {
 		printk("Failed to export appkey from cdb. Err:%d\n", err);
 		return;
 	}
-
+	printk("App key exported\n");
 	/* Add Application Key */
 	err = bt_mesh_cfg_cli_app_key_add(net_idx, node->addr, net_idx, app_idx, app_key, &status);
 	if (err || status) {
 		printk("Failed to add app-key (err %d status %d)\n", err, status);
 		return;
 	}
-
+	printk("App key added\n");
 	/* Get the node's composition data and bind all models to the appkey */
 	err = bt_mesh_cfg_cli_comp_data_get(net_idx, node->addr, 0, &status, &buf);
 	if (err || status) {
@@ -539,15 +539,16 @@ static void configure_node(struct bt_mesh_cdb_node *node)
 		       err, status);
 		return;
 	}
-
+	printk("Composition data got\n");
 	err = bt_mesh_comp_p0_get(&comp, &buf);
 	if (err) {
 		printk("Unable to parse composition data (err: %d)\n", err);
 		return;
 	}
-
+	printk("Composition data parsed\n");
 	elem_addr = node->addr;
 	while (bt_mesh_comp_p0_elem_pull(&comp, &elem)) {
+		printk("eyooo WHILLEE WHAAT?!?");
 		printk("Element @ 0x%04x: %u + %u models\n", elem_addr,
 		       elem.nsig, elem.nvnd);
 		for (int i = 0; i < elem.nsig; i++) {
