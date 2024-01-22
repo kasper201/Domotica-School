@@ -11,5 +11,6 @@ uint16_t getElem(uint8_t index);
 int gen_onoff_send(bool val, uint16_t groupAddress); //send onoff message to group
 int bluetoothInit();
 void btnPressed();
+void provMain();
 
 #endif // BLUETOOTH_H_

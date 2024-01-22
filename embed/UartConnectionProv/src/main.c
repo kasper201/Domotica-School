@@ -17,6 +17,7 @@ int main(void)
     printk("Starting\n");
     while(1)
     {
+        provMain();
         readPc();
     }
     return 0;
