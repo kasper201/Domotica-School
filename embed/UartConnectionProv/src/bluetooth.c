@@ -527,7 +527,7 @@ static void configure_node(struct bt_mesh_cdb_node *node)
 	printk("App key exported\n");
 	/* Add Application Key */
 	printk("netidx 0x%04x, node addr 0x%04x, appidx 0x%04x\n", net_idx, node->addr, app_idx);
-	err = bt_mesh_cfg_cli_app_key_add(net_idx, node->addr, net_idx, app_idx, app_key, &status);
+	err = bt_mesh_cfg_cli_app_key_add(net_idx, node->addr, net_idx, app_idx, app_key, 0);
 	if (err || status) {
 		printk("Failed to add app-key (err %d status %d)\n", err, status);
 		return;
