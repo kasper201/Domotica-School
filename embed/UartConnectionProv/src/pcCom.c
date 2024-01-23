@@ -27,10 +27,10 @@ static int mr = 0;
 void caseConnected(char *Message)
 {
     char onoff[] = {"false"};
-    if(onoffVal())
-    {
-        strcpy(onoff, "true");
-    }
+    // if(onoffVal())
+    // {
+    //     strcpy(onoff, "true");
+    // }
     printk("Connection established\n");
     printk("AddNode PcNode %05d %05d AddSensor Button pcButton AddActuator LED pcLED %s\n", getAddr(), getElem(0), onoff);
     for (int i = 0; i < nameCount; i++)
@@ -98,7 +98,7 @@ void groupToggle(char *Message)
     uint16_t groupAddress = atoi(Message);
 
     printk("Toggling group %04x\n", groupAddress);
-    gen_onoff_send(!onoffVal(), groupAddress); //send onoff message to group
+    //gen_onoff_send(!onoffVal(), groupAddress); //send onoff message to group
 }
 
 void uartSubscribeGroup(char *Message, bool sub)
