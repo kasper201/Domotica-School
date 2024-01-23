@@ -166,6 +166,7 @@ static void configure_node(struct bt_mesh_cdb_node *node)
 	}
 
 	/* Add Application Key */
+	printk("Setting net_idx: %d, node->addr: %d, app_idx: %d, app_key: %d, status: %d\n", net_idx, node->addr, net_idx, app_idx, app_key, &status);
 	err = bt_mesh_cfg_cli_app_key_add(net_idx, node->addr, net_idx, app_idx, app_key, &status);
 	if (err || status) {
 		printk("Failed to add app-key (err %d status %d)\n", err, status);
