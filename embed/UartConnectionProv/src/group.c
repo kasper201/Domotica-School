@@ -5,6 +5,7 @@ void subscribeToGroup(uint16_t groupAddress, uint16_t elementAddress, uint16_t m
     int err = 0;
     netKeyIndex = 0x0000;
     // Using the Bluetooth Mesh Configuration Client API to add a subscription
+    printk("index: 0x%04x, address: 0x%04x, elementAddress: 0x%04x, groupAddress: 0x%04x, mod_id: 0x%04x\n", netKeyIndex, address, elementAddress, groupAddress, mod_id);
     err = bt_mesh_cfg_cli_mod_sub_add(netKeyIndex, address, elementAddress, groupAddress, mod_id, NULL);
     if (err) {
         printk("Subscription failed (err %d)\n", err);

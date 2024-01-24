@@ -176,6 +176,11 @@ void readPc()
         deleteGroup(Message);
         mr = 1;
     }
+    else if(strstr(Message, "StartProvisioning"))
+    {
+        provMain();
+        mr = 1;
+    }
     else if(strlen(Message) > 0) // if the message is not empty and does not contain any of the above defined commands
     {
         printk("Unknown command\n");

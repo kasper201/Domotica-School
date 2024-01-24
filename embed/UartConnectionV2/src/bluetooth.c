@@ -310,7 +310,6 @@ static void prov_complete(uint16_t net_idx, uint16_t addr)
 	boardProvComplete();
 	printk("Provisioning completed. Network Index: 0x%04x, Address: 0x%04x\n",
            net_idx, addr);
-
 }
 
 static void prov_reset(void)

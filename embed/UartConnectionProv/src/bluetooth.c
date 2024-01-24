@@ -10,6 +10,8 @@
 #include <zephyr/bluetooth/mesh.h>
 #include <zephyr/drivers/gpio.h>
 
+#include "board.h"
+
 #define SW0_NODE	DT_ALIAS(sw0)
 
 static const uint16_t net_idx;
@@ -23,6 +25,29 @@ K_SEM_DEFINE(sem_node_added, 0, 1);
 #if DT_NODE_HAS_STATUS(SW0_NODE, okay)
 K_SEM_DEFINE(sem_button_pressed, 0, 1);
 #endif
+
+static void attention_on(const struct bt_mesh_model *mod)
+{
+	(void)mod;
+	ledSet(true);
+}
+
+static void attention_off(const struct bt_mesh_model *mod)
+{
+	(void)mod;
+	ledSet(false);
+}
+
+static const struct bt_mesh_health_srv_cb health_cb = {
+	.attn_on = attention_on,
+	.attn_off = attention_off,
+};
+
+static struct bt_mesh_health_srv health_srv = {
+	.cb = &health_cb,
+};
+
+BT_MESH_HEALTH_PUB_DEFINE(health_pub, 0);
 
 static struct bt_mesh_cfg_cli cfg_cli = {
 };
@@ -57,6 +82,7 @@ static const struct bt_mesh_model root_models[] = {
 	BT_MESH_MODEL_CFG_SRV,
 	BT_MESH_MODEL_CFG_CLI(&cfg_cli),
 	BT_MESH_MODEL_HEALTH_CLI(&health_cli),
+	BT_MESH_MODEL_HEALTH_SRV(&health_srv, &health_pub)
 };
 
 static const struct bt_mesh_elem elements[] = {
@@ -166,7 +192,7 @@ static void configure_node(struct bt_mesh_cdb_node *node)
 	}
 
 	/* Add Application Key */
-	printk("Setting net_idx: %d, node->addr: %d, app_idx: %d, app_key: %d, status: %d\n", net_idx, node->addr, net_idx, app_idx, app_key, &status);
+	printk("Setting net_idx: %d, node->addr: %d, app_idx: %d\n", net_idx, node->addr, app_idx);
 	err = bt_mesh_cfg_cli_app_key_add(net_idx, node->addr, net_idx, app_idx, app_key, &status);
 	if (err || status) {
 		printk("Failed to add app-key (err %d status %d)\n", err, status);
@@ -194,8 +220,7 @@ static void configure_node(struct bt_mesh_cdb_node *node)
 		for (int i = 0; i < elem.nsig; i++) {
 			uint16_t id = bt_mesh_comp_p0_elem_mod(&elem, i);
 
-			if (id == BT_MESH_MODEL_ID_CFG_CLI ||
-			    id == BT_MESH_MODEL_ID_CFG_SRV) {
+			if (id == BT_MESH_MODEL_ID_CFG_CLI || id == BT_MESH_MODEL_ID_CFG_SRV) {
 				continue;
 			}
 			printk("Binding AppKey to model 0x%03x:%04x\n",
