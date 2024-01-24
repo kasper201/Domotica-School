@@ -366,7 +366,7 @@ static void button_init(void)
 #endif
 
 static char uuid_hex_str[32 + 1];
-int provMain(void)
+void provMain(void)
 {
 	int err;
 
@@ -419,7 +419,7 @@ void bluetoothInit()
 	err = bt_enable(NULL);
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
-		return 0;
+		return;
 	}
 
 	printk("Bluetooth initialized\n");

@@ -104,7 +104,7 @@ void groupToggle(char *Message)
 void uartSubscribeGroup(char *Message, bool sub)
 {
     printk("Message: %s\n", Message);
-    uint16_t netKeyIndex = 0x0002;
+    uint16_t netKeyIndex = 0x0000;
     uint16_t groupAddress = atoi(Message); // address of the group that is being subscribed to
     memmove(Message, Message + 6, strlen(Message) - 6 + 1);
     uint16_t elementAddress = atoi(Message); // element address of the device that is subscribing to the group
