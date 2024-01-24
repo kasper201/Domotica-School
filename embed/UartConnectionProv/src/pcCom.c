@@ -159,7 +159,7 @@ void readPc()
     }
     else if(strstr(Message, "subscribe_group_"))
     {
-        memmove(Message, Message + 16+ mr, strlen(Message) - 16 + mr + 1); //removes subscribe_group_ from message
+        memmove(Message, Message + 16 + mr, strlen(Message) - 16 + mr + 1); //removes subscribe_group_ from message
         // printk("Message: %s\n", Message);
         uartSubscribeGroup(Message, true);
         mr = 1;

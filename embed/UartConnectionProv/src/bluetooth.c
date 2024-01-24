@@ -400,7 +400,7 @@ void provMain(void)
 	bt_mesh_cdb_node_foreach(check_unconfigured, NULL);
 
 	printk("Waiting for unprovisioned beacon...\n");
-	err = k_sem_take(&sem_unprov_beacon, K_SECONDS(5));
+	err = k_sem_take(&sem_unprov_beacon, K_SECONDS(10));
 	if (err == -EAGAIN) {
 		return;
 	}
@@ -410,7 +410,7 @@ void provMain(void)
 #if DT_NODE_HAS_STATUS(SW0_NODE, okay)
 	k_sem_reset(&sem_button_pressed);
 	printk("Device %s detected, press button 1 to provision.\n", uuid_hex_str);
-	err = k_sem_take(&sem_button_pressed, K_SECONDS(5));
+	err = k_sem_take(&sem_button_pressed, K_SECONDS(10));
 	if (err == -EAGAIN) {
 		printk("Timed out, button 1 wasn't pressed in time.\n");
 		return;
@@ -425,7 +425,7 @@ void provMain(void)
 	}
 
 	printk("Waiting for node to be added...\n");
-	err = k_sem_take(&sem_node_added, K_SECONDS(5));
+	err = k_sem_take(&sem_node_added, K_SECONDS(10));
 	if (err == -EAGAIN) {
 		printk("Timeout waiting for node to be added\n");
 		return;
