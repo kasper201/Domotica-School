@@ -61,6 +61,8 @@ private slots:
 
     void on_pushButton_NewNode_clicked();
 
+    void on_StartProvision_clicked();
+
 private:
     Ui::MainWindow *ui;
 

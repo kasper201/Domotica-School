@@ -1,6 +1,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "nodedialogbox.h"
+#include <QDialog>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QPushButton>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -202,6 +206,35 @@ void MainWindow::readData()
                         //qDebug() << node.getActuatorStatus("Application", "App_LED");
                     }
                 }
+            }
+
+            //Know if you need to press a button
+            if (Data_From_SerialPort.contains("Device"))
+            {
+                // Create a QDialog
+                QDialog* messageDialog = new QDialog(this);
+                messageDialog->setWindowTitle("Message");
+
+                // Create widgets for the dialog
+                QLabel* messageLabel = new QLabel("Press button on node!", messageDialog);
+                QPushButton* okButton = new QPushButton("OK", messageDialog);
+
+                // Set up the layout
+                QVBoxLayout* layout = new QVBoxLayout(messageDialog);
+                layout->addWidget(messageLabel);
+                layout->addWidget(okButton);
+
+                // Connect the OK button to close the dialog
+                connect(okButton, &QPushButton::clicked, messageDialog, &QDialog::accept);
+
+                // Show the dialog
+                if (messageDialog->exec() == QDialog::Accepted)
+                {
+                    // User clicked OK, you can add additional handling here if needed
+                }
+
+                // Clean up the dialog (optional)
+                messageDialog->deleteLater();
             }
 
             if(Data_From_SerialPort.contains("UpdateAppActuator"))
@@ -499,11 +532,14 @@ void MainWindow::on_pushButton_NewNode_clicked()
     NodeDialogBox nodeDialogBox("Filler", 1);
     if (nodeDialogBox.exec() == QDialog::Accepted) {
         //Create all string parts required
+        ui->userFeedbackLabel->setText("Node has been added");
         QString nodeName = " " + nodeDialogBox.getNodeName();
         QString nodeAddress = " " + QString("%1").arg(nodeDialogBox.getNodeAddress(), 5, 10, QChar('0'));
         QString nodeElement = " " + QString("%1").arg(nodeDialogBox.getNodeElement(), 5, 10, QChar('0'));
         QString sensorName = " " + nodeDialogBox.getSensorName();
         QString actuatorName = " " + nodeDialogBox.getActuatorName();
+
+        portSetup.WriteToComport("StartProvisioning");
 
         QString nodeInfo = "AddNode" + nodeName + nodeAddress + nodeElement + " AddSensor Button" + sensorName + " AddActuator LED" + actuatorName + " false";
 
@@ -511,5 +547,12 @@ void MainWindow::on_pushButton_NewNode_clicked()
     } else {
         //qDebug() << "Operation canceled";
     }
+}
+
+
+void MainWindow::on_StartProvision_clicked()
+{
+    portSetup.WriteToComport("StartProvisioning");
+    ui->userFeedbackLabel->setText("Start Provisioning has been send");
 }
 
