@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "computercom.h": "c",
-        "uart.h": "c",
-        "string.h": "c"
-    }
-}
