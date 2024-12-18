@@ -27,10 +27,10 @@ static int mr = 0;
 void caseConnected(char *Message)
 {
     char onoff[] = {"false"};
-    if(onoffVal())
-    {
-        strcpy(onoff, "true");
-    }
+    // if(onoffVal())
+    // {
+    //     strcpy(onoff, "true");
+    // }
     printk("Connection established\n");
     printk("AddNode PcNode %05d %05d AddSensor Button pcButton AddActuator LED pcLED %s\n", getAddr(), getElem(0), onoff);
     for (int i = 0; i < nameCount; i++)
@@ -98,13 +98,13 @@ void groupToggle(char *Message)
     uint16_t groupAddress = atoi(Message);
 
     printk("Toggling group %04x\n", groupAddress);
-    gen_onoff_send(!onoffVal(), groupAddress); //send onoff message to group
+    //gen_onoff_send(!onoffVal(), groupAddress); //send onoff message to group
 }
 
 void uartSubscribeGroup(char *Message, bool sub)
 {
     printk("Message: %s\n", Message);
-    uint16_t netKeyIndex = 0x0002;
+    uint16_t netKeyIndex = 0x0000;
     uint16_t groupAddress = atoi(Message); // address of the group that is being subscribed to
     memmove(Message, Message + 6, strlen(Message) - 6 + 1);
     uint16_t elementAddress = atoi(Message); // element address of the device that is subscribing to the group
@@ -159,7 +159,7 @@ void readPc()
     }
     else if(strstr(Message, "subscribe_group_"))
     {
-        memmove(Message, Message + 16+ mr, strlen(Message) - 16 + mr + 1); //removes subscribe_group_ from message
+        memmove(Message, Message + 16 + mr, strlen(Message) - 16 + mr + 1); //removes subscribe_group_ from message
         // printk("Message: %s\n", Message);
         uartSubscribeGroup(Message, true);
         mr = 1;
@@ -174,6 +174,11 @@ void readPc()
     {
         memmove(Message, Message + 13 + mr, strlen(Message) - 13 + mr + 1); //removes delete_group_ from message
         deleteGroup(Message);
+        mr = 1;
+    }
+    else if(strstr(Message, "StartProvisioning"))
+    {
+        provMain();
         mr = 1;
     }
     else if(strlen(Message) > 0) // if the message is not empty and does not contain any of the above defined commands
