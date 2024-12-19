@@ -28,17 +28,11 @@
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
-        <widget class="QFrame" name="ComportFrame">
-         <property name="minimumSize">
-          <size>
-           <width>280</width>
-           <height>500</height>
-          </size>
-         </property>
+        <widget class="QFrame" name="frame_8">
          <property name="maximumSize">
           <size>
-           <width>300</width>
-           <height>900</height>
+           <width>310</width>
+           <height>16777215</height>
           </size>
          </property>
          <property name="frameShape">
@@ -47,115 +41,19 @@
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout">
+         <layout class="QVBoxLayout" name="verticalLayout_11">
           <item>
-           <widget class="QListWidget" name="ComportList">
+           <widget class="QFrame" name="ComportFrame">
             <property name="minimumSize">
              <size>
-              <width>0</width>
-              <height>100</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>300</height>
-             </size>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QFrame" name="frame_3">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>40</height>
-             </size>
-            </property>
-            <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_2">
-             <item>
-              <widget class="QPushButton" name="ComportRefresh">
-               <property name="text">
-                <string>Refresh</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="ComportStatus">
-               <property name="text">
-                <string>No Connection</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="ComportConnection">
-               <property name="text">
-                <string>Connect</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QFrame" name="frame_2">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>30</height>
-             </size>
-            </property>
-            <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_5">
-             <item>
-              <widget class="QLabel" name="GroupsLabel">
-               <property name="maximumSize">
-                <size>
-                 <width>50</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>Groups</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QListWidget" name="GroupList">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
+              <width>300</width>
               <height>200</height>
              </size>
             </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QFrame" name="frame">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>80</height>
-             </size>
-            </property>
             <property name="maximumSize">
              <size>
-              <width>16777215</width>
-              <height>80</height>
+              <width>300</width>
+              <height>400</height>
              </size>
             </property>
             <property name="frameShape">
@@ -164,42 +62,402 @@
             <property name="frameShadow">
              <enum>QFrame::Raised</enum>
             </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <layout class="QVBoxLayout" name="verticalLayout">
              <item>
-              <widget class="QLineEdit" name="GroupName"/>
+              <widget class="QListWidget" name="ComportList">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>100</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>300</height>
+                </size>
+               </property>
+              </widget>
              </item>
              <item>
-              <widget class="QFrame" name="frame_4">
+              <widget class="QFrame" name="frame_3">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>40</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>50</height>
+                </size>
+               </property>
                <property name="frameShape">
                 <enum>QFrame::StyledPanel</enum>
                </property>
                <property name="frameShadow">
                 <enum>QFrame::Raised</enum>
                </property>
-               <layout class="QVBoxLayout" name="verticalLayout_2">
+               <layout class="QHBoxLayout" name="horizontalLayout_2">
                 <item>
-                 <widget class="QPushButton" name="GroupAdd">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>20</height>
-                   </size>
-                  </property>
+                 <widget class="QPushButton" name="ComportRefresh">
                   <property name="text">
-                   <string>Add Group</string>
+                   <string>Refresh</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="GroupDelete">
-                  <property name="minimumSize">
+                 <widget class="QLabel" name="ComportStatus">
+                  <property name="text">
+                   <string>No Connection</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="ComportConnection">
+                  <property name="text">
+                   <string>Connect</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QFrame" name="GroupListView">
+            <property name="minimumSize">
+             <size>
+              <width>300</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>300</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_10">
+             <item>
+              <widget class="QFrame" name="frame_2">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>30</height>
+                </size>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_5">
+                <item>
+                 <widget class="QLabel" name="GroupsLabel">
+                  <property name="maximumSize">
                    <size>
-                    <width>0</width>
-                    <height>20</height>
+                    <width>50</width>
+                    <height>16777215</height>
                    </size>
                   </property>
                   <property name="text">
-                   <string>Delete Group</string>
+                   <string>Groups</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QListWidget" name="GroupList">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>200</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QFrame" name="frame">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>80</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>80</height>
+                </size>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_3">
+                <item>
+                 <widget class="QLineEdit" name="GroupName"/>
+                </item>
+                <item>
+                 <widget class="QFrame" name="frame_4">
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_2">
+                   <item>
+                    <widget class="QPushButton" name="GroupAdd">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>Add Group</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="GroupDelete">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>Delete Group</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFrame" name="frame_5">
+         <property name="maximumSize">
+          <size>
+           <width>600</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <widget class="QFrame" name="NodeOverview">
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_7">
+             <item>
+              <widget class="QFrame" name="frame_9">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>20</height>
+                </size>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_6">
+                <item>
+                 <widget class="QLabel" name="label">
+                  <property name="text">
+                   <string>Nodes</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QListWidget" name="NodesList"/>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QFrame" name="frame_10">
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_7">
+                <item>
+                 <widget class="QFrame" name="frame_11">
+                  <property name="minimumSize">
+                   <size>
+                    <width>30</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_9">
+                   <item>
+                    <widget class="QLabel" name="label_2">
+                     <property name="text">
+                      <string>Actuators</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QListWidget" name="listWidget"/>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="pushButton">
+                     <property name="text">
+                      <string>Add Actuator</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QFrame" name="frame_12">
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_8">
+                   <item>
+                    <widget class="QLabel" name="label_3">
+                     <property name="text">
+                      <string>Sensors</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QListWidget" name="listWidget_2"/>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="pushButton_2">
+                     <property name="text">
+                      <string>Add Sensor</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QFrame" name="GroupOverview">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>300</height>
+             </size>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_8">
+             <item>
+              <widget class="QFrame" name="FrameGroupActuators">
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_4">
+                <item>
+                 <widget class="QLabel" name="GroupActuatorsLabel">
+                  <property name="text">
+                   <string>Group Actuators</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QListWidget" name="GroupActuatorsList"/>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="GroupActuatorDelete">
+                  <property name="text">
+                   <string>Delete Actuator</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QFrame" name="FrameGroupSensors">
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_5">
+                <item>
+                 <widget class="QLabel" name="GroupSensorsLabel">
+                  <property name="text">
+                   <string>Group Sensors</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QListWidget" name="GroupSensorsList"/>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="GroupSensorDelete">
+                  <property name="text">
+                   <string>Delete Sensor</string>
                   </property>
                  </widget>
                 </item>
@@ -210,6 +468,16 @@
            </widget>
           </item>
          </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFrame" name="frame_6">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
         </widget>
        </item>
       </layout>

@@ -14,6 +14,8 @@ class Groups : public QObject
 public:
     explicit Groups(Domotica* domotica, QObject* parent = nullptr);
     ~Groups();
+    void AddGroup(QString groupName);
+    void DeleteGroup(QString groupName);
 
 public slots:
     void handleGroupAdd();

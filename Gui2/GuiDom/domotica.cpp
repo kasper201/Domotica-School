@@ -5,7 +5,22 @@ Domotica::Domotica(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::Domotica)
 {
+    QPalette palette = this->palette();
+    palette.setColor(QPalette::Window, Qt::darkCyan);
+    this->setPalette(palette);
+    this->setAutoFillBackground(true);
+
     ui->setupUi(this);
+    QPalette framePalette = ui->frame->palette();
+    framePalette.setColor(QPalette::Window, Qt::lightGray);
+    ui->ComportFrame->setPalette(framePalette);
+    ui->ComportFrame->setAutoFillBackground(true);
+    ui->GroupOverview->setPalette(framePalette);
+    ui->GroupListView->setAutoFillBackground(true);
+    ui->GroupListView->setPalette(framePalette);
+    ui->GroupOverview->setAutoFillBackground(true);
+    ui->NodeOverview->setPalette(framePalette);
+    ui->NodeOverview->setAutoFillBackground(true);
 }
 
 Domotica::~Domotica()
