@@ -2,6 +2,7 @@
 #define COMPORT_H
 
 #include "domotica.h"
+#include "easystring.h"
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 #include <QObject>
@@ -22,11 +23,16 @@ public:
 public slots:
     void handleComportConnection();     // Handle Connect
     void handleComportRefresh();        // Handle Refresh
+    void ReadData();
 
 private:
     Domotica* UIdomotica; // Pointer to the Domotica instance
+    EasyString EasyString;
+
     bool connected = false;
     QString Current_Comport;
+    QString Data_From_SerialPort;
+    bool Is_Data_Recieved = false;
 };
 
 #endif // COMPORT_H
