@@ -344,7 +344,7 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QListWidget" name="listWidget"/>
+                    <widget class="QListWidget" name="NodeActuatorsList"/>
                    </item>
                    <item>
                     <widget class="QPushButton" name="pushButton">
@@ -373,7 +373,7 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QListWidget" name="listWidget_2"/>
+                    <widget class="QListWidget" name="NodeSensorsList"/>
                    </item>
                    <item>
                     <widget class="QPushButton" name="pushButton_2">

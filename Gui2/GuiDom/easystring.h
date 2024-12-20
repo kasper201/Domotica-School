@@ -6,8 +6,13 @@
 class EasyString
 {
 public:
-    EasyString();
-    QString connected = "connected";
+    EasyString() = default;
+
+    //Out
+    QString connectedOut = "connected";
+
+    //In
+    QString connectedIn = "Connected";
 };
 
 #endif // EASYSTRING_H

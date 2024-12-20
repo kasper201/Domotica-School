@@ -51,6 +51,7 @@ void Comport::handleComportConnection()
     }
     else                                                                 //Disconnect
     {
+        COMPORT->close();
         UIdomotica->GetComportLabel()->setText("No connection");
         UIdomotica->GetConnectButton()->setText("Connect");
         connected = false;
@@ -78,8 +79,9 @@ void Comport::setupComport(const QString &comPortName)
     COMPORT->open(QIODevice::ReadWrite);
 
     if(COMPORT->isOpen()) {
+        connect(COMPORT, SIGNAL(readyRead()), this, SLOT(ReadData()));
+        WriteToComport(EasyString.connectedOut);
         qDebug() << "Serial Port is connected";
-        WriteToComport("connected");
     }
     else {
         qDebug() << "Serial Port is not connected";
@@ -92,4 +94,43 @@ void Comport::WriteToComport(QString sendString)
 {
     //qDebug() << "Data send: " << sendString;
     COMPORT->write(sendString.toLatin1() + char(10) );
+}
+
+void Comport::ReadData()
+{
+    if(COMPORT->isOpen())
+    {
+        //Reads uart
+        while(COMPORT->bytesAvailable())
+        {
+            Data_From_SerialPort += COMPORT->readAll();
+
+            //Checks if the line has ended
+            if(Data_From_SerialPort.at(Data_From_SerialPort.length() - 1) == char(10))
+            {
+                Is_Data_Recieved = true;
+            }
+        }
+
+        //turns data recieved off again
+        if(Is_Data_Recieved == true)
+        {
+            Data_From_SerialPort.remove("\r").remove("\n");
+            Is_Data_Recieved = false;
+            qDebug() << "Message recieved: " << Data_From_SerialPort;
+
+            if(Data_From_SerialPort.contains(EasyString.connectedIn))
+            {
+                qDebug() << "External device is connected";
+            }
+
+            //Reset Data recieved
+            Data_From_SerialPort = "";
+        }
+
+    }
+    else
+    {
+        qDebug() << COMPORT->error();
+    }
 }

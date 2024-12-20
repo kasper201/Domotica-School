@@ -2,6 +2,7 @@
 #define GROUPS_H
 
 #include "domotica.h"
+#include "nodes.h"
 #include <QObject>
 #include <QLineEdit>
 #include <QMap>
@@ -12,7 +13,7 @@ class Groups : public QObject
     Q_OBJECT
 
 public:
-    explicit Groups(Domotica* domotica, QObject* parent = nullptr);
+    explicit Groups(Domotica* domotica, Nodes* nodes, QObject* parent = nullptr);
     ~Groups();
     void AddGroup(QString groupName);
     void DeleteGroup(QString groupName);
@@ -24,8 +25,8 @@ public slots:
 private:
     Domotica* UIdomotica; // Pointer to the Domotica instance
     struct groupParts {
-        QMultiHash<QString, QPair<QString, QString>> sensorsInGroup;
-        QMultiHash<QString, QPair<QString, QString>> actuatorsInGroup;
+        QPair<QString, QString> sensorList;     //Nodename, Sensorname
+        QPair<QString, QString> actuatorList;   //Nodename, Actuatorname
     };
 
     QMap<QString, groupParts> groupsMap;

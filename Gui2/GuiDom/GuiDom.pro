@@ -10,16 +10,24 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    actuator.cpp \
     comport.cpp \
     groups.cpp \
     main.cpp \
-    domotica.cpp
+    domotica.cpp \
+    node.cpp \
+    nodes.cpp \
+    sensor.cpp
 
 HEADERS += \
+    actuator.h \
     comport.h \
     domotica.h \
     easystring.h \
-    groups.h
+    groups.h \
+    node.h \
+    nodes.h \
+    sensor.h
 
 FORMS += \
     domotica.ui

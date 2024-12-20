@@ -58,6 +58,27 @@ QLineEdit* Domotica::GetGroupName()
     return ui->GroupName;
 }
 
+//For Nodes
+QListWidget* Domotica::GetNodeList()
+{
+    return ui->NodesList;
+}
+
+//For Nodes
+QListWidget* Domotica::GetNodeActuatorsList()
+{
+    return ui->NodeActuatorsList;
+}
+
+//For Nodes
+QListWidget* Domotica::GetNodeSensorsList()
+{
+    return ui->NodeSensorsList;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// Signals underneath
+///
 void Domotica::on_ComportConnection_clicked()
 {
     emit comportConnectionRequested();
@@ -88,6 +109,16 @@ void Domotica::on_GroupList_currentRowChanged(int currentRow)
     {
         ui->GroupActuatorsLabel->setText("Actuators from group: " + ui->GroupList->currentItem()->text());
         ui->GroupSensorsLabel->setText("Sensors from group: " + ui->GroupList->currentItem()->text());
+    }
+}
+
+
+void Domotica::on_NodesList_currentRowChanged(int currentRow)
+{
+    if(currentRow >= 0)
+    {
+        QString nodeName = ui->NodesList->currentItem()->text();
+        emit updateNodeParts(nodeName);
     }
 }
 

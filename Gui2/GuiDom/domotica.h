@@ -27,11 +27,17 @@ public:
     QListWidget* GetGroupList();
     QLineEdit* GetGroupName();
 
+    //For Nodes
+    QListWidget* GetNodeList();
+    QListWidget* GetNodeActuatorsList();
+    QListWidget* GetNodeSensorsList();
+
 signals:
-    void comportConnectionRequested();  // Signal to notify Comport
-    void comportRefreshRequested();     // Signal to notify Comport
-    void groupAddRequested();           // Signal to notify Groups
-    void groupDeleteRequested();        // Signal to notify Groups
+    void comportConnectionRequested();      // Signal to notify Comport
+    void comportRefreshRequested();         // Signal to notify Comport
+    void groupAddRequested();               // Signal to notify Groups
+    void groupDeleteRequested();            // Signal to notify Groups
+    void updateNodeParts(QString nodeName); // Signal to notify Nodes
 
 private slots:
     void on_ComportConnection_clicked();
@@ -39,6 +45,8 @@ private slots:
     void on_GroupAdd_clicked();
     void on_GroupDelete_clicked();
     void on_GroupList_currentRowChanged(int currentRow);
+
+    void on_NodesList_currentRowChanged(int currentRow);
 
 private:
     Ui::Domotica *ui;
