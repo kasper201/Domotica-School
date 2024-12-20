@@ -418,7 +418,7 @@
                 <item>
                  <widget class="QLabel" name="GroupActuatorsLabel">
                   <property name="text">
-                   <string>Group Actuators</string>
+                   <string>Actuators from group:</string>
                   </property>
                  </widget>
                 </item>
@@ -447,7 +447,7 @@
                 <item>
                  <widget class="QLabel" name="GroupSensorsLabel">
                   <property name="text">
-                   <string>Group Sensors</string>
+                   <string>Sensors from group:</string>
                   </property>
                  </widget>
                 </item>

@@ -38,6 +38,7 @@ private slots:
     void on_ComportRefresh_clicked();
     void on_GroupAdd_clicked();
     void on_GroupDelete_clicked();
+    void on_GroupList_currentRowChanged(int currentRow);
 
 private:
     Ui::Domotica *ui;

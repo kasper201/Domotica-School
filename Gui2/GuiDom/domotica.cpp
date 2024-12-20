@@ -81,3 +81,13 @@ void Domotica::on_GroupDelete_clicked()
     emit groupDeleteRequested();
 }
 
+
+void Domotica::on_GroupList_currentRowChanged(int currentRow)
+{
+    if(currentRow >= 0)
+    {
+        ui->GroupActuatorsLabel->setText("Actuators from group: " + ui->GroupList->currentItem()->text());
+        ui->GroupSensorsLabel->setText("Sensors from group: " + ui->GroupList->currentItem()->text());
+    }
+}
+

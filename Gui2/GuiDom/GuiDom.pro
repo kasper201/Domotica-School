@@ -18,6 +18,7 @@ SOURCES += \
 HEADERS += \
     comport.h \
     domotica.h \
+    easystring.h \
     groups.h
 
 FORMS += \
