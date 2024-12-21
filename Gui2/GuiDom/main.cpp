@@ -23,6 +23,12 @@ int main(int argc, char *argv[])
                      groups, &Groups::handleGroupAdd);
     QObject::connect(domotica, &Domotica::groupDeleteRequested,
                      groups, &Groups::handleGroupDelete);
+    QObject::connect(domotica, &Domotica::groupSensorAdd,
+                     groups, &Groups::handleSensorAdd);
+    QObject::connect(domotica, &Domotica::groupActuatorAdd,
+                     groups, &Groups::handleActuatorAdd);
+    QObject::connect(domotica, &Domotica::updateGroupParts,
+                     groups, &Groups::showGroup);
     QObject::connect(domotica, &Domotica::updateNodeParts,
                      nodes, &Nodes::showParts);
 

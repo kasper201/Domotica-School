@@ -82,6 +82,18 @@ QLineEdit* Domotica::GetGroupName()
     return ui->GroupName;
 }
 
+//For Groups
+QListWidget* Domotica::GetGroupSensorsList()
+{
+    return ui->GroupSensorsList;
+}
+
+//For Groups
+QListWidget* Domotica::GetGroupActuatorsList()
+{
+    return ui->GroupActuatorsList;
+}
+
 //For Nodes
 QListWidget* Domotica::GetNodeList()
 {
@@ -131,6 +143,7 @@ void Domotica::on_GroupList_currentRowChanged(int currentRow)
 {
     if(currentRow >= 0)
     {
+        emit updateGroupParts(ui->GroupList->currentItem()->text());
         ui->GroupActuatorsLabel->setText("Actuators from group: " + ui->GroupList->currentItem()->text());
         ui->GroupSensorsLabel->setText("Sensors from group: " + ui->GroupList->currentItem()->text());
     }
@@ -144,5 +157,17 @@ void Domotica::on_NodesList_currentRowChanged(int currentRow)
         QString nodeName = ui->NodesList->currentItem()->text();
         emit updateNodeParts(nodeName);
     }
+}
+
+
+void Domotica::on_NodeAddActuator_clicked()
+{
+    emit groupActuatorAdd();
+}
+
+
+void Domotica::on_NodeAddSensor_clicked()
+{
+    emit groupSensorAdd();
 }
 

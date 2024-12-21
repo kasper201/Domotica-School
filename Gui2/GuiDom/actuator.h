@@ -6,11 +6,13 @@
 class Actuator
 {
 public:
-    Actuator(QString);
+    Actuator(QString nodeName, QString actuatorName);
     QString getActuatorName() const;
+    QString getNodeName() const;
 
 private:
     QString actuatorName;
+    QString nodeName;
 };
 
 #endif // ACTUATOR_H

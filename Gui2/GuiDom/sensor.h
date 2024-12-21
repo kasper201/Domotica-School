@@ -6,11 +6,13 @@
 class Sensor
 {
 public:
-    Sensor(QString);
+    Sensor(QString nodeName, QString sensorName);
     QString getSensorName() const;
+    QString getNodeName() const;
 
 private:
     QString sensorName;
+    QString nodeName;
 };
 
 #endif // SENSOR_H

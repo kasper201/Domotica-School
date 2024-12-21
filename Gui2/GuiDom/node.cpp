@@ -29,10 +29,10 @@ QStringList Node::getNodeActuators() const
 
 void Node::addSensor(QString sensorName)
 {
-    sensors.append(Sensor(sensorName));
+    sensors.append(Sensor(nodeName, sensorName));
 }
 
 void Node::addActuator(QString actuatorName)
 {
-    actuators.append(Actuator(actuatorName));
+    actuators.append(Actuator(nodeName, actuatorName));
 }
