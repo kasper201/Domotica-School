@@ -21,6 +21,30 @@ Domotica::Domotica(QWidget *parent)
     ui->GroupOverview->setAutoFillBackground(true);
     ui->NodeOverview->setPalette(framePalette);
     ui->NodeOverview->setAutoFillBackground(true);
+    ui->ApplicationBackground->setPalette(framePalette);
+    ui->ApplicationBackground->setAutoFillBackground(true);
+
+    QString buttonStyle = "QPushButton{"
+                          "background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, "
+                          "stop: 0 white, stop: 1 white);"
+                          "border-style: solid;"
+                          "border-width: 0px;"
+                          "border-color: black;"
+                          "border-radius: 15px;"
+                          "padding: 3px 3px 3px 3px;"
+                          "}";
+
+    ui->ComportConnection->setStyleSheet(buttonStyle);
+    ui->ComportRefresh->setStyleSheet(buttonStyle);
+    ui->GroupAdd->setStyleSheet(buttonStyle);
+    ui->GroupDelete->setStyleSheet(buttonStyle);
+    ui->GroupActuatorDelete->setStyleSheet(buttonStyle);
+    ui->GroupSensorDelete->setStyleSheet(buttonStyle);
+    ui->NodeAddActuator->setStyleSheet(buttonStyle);
+    ui->NodeAddSensor->setStyleSheet(buttonStyle);
+    ui->ApplicationSensor->setStyleSheet(buttonStyle);
+
+    ui->ApplicationActuator->setStyleSheet("background-color: black;");
 }
 
 Domotica::~Domotica()

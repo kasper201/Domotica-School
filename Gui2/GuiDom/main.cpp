@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     QObject::connect(domotica, &Domotica::updateNodeParts,
                      nodes, &Nodes::showParts);
 
-    //Add test
+    //Add Computer node
     nodes->addNode("Computer");
     nodes->addSensorToNode("Computer", "ApplicationButton");
     nodes->addActuatorToNode("Computer", "ApplicationLED");
