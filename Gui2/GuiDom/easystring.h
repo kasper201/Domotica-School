@@ -9,7 +9,7 @@ public:
     EasyString() = default;
 
     //Out
-    QString connectedOut = "connected";
+    QString connectedOut = "mesh init\r";
 
     //In
     QString connectedIn = "Connected";
