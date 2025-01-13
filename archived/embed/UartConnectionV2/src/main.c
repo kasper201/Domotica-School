@@ -17,6 +17,10 @@ int main(void)
     printk("Starting\n");
     while(1)
     {
+        ledSet(true);
+        k_msleep(500);
+        ledSet(false);
+        k_msleep(500);
         readPc();
     }
     return 0;

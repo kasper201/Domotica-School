@@ -11,10 +11,10 @@ int main(void)
     init();
     while(1)
     {
-        /*ledSet(true);
-        k_msleep(500);
-        ledSet(false);
-        k_msleep(500);*/
+        // ledSet(true);
+        // k_msleep(500);
+        // ledSet(false);
+        // k_msleep(500);
     }
     return 0;
 }

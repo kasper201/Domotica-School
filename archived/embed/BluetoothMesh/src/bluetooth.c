@@ -415,8 +415,13 @@ static void bt_ready(int err)
 	}
 
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
-		settings_load();
-	}
+	// 	printk("Deleting previous mesh settings\n\r");
+    // settings_delete("bt/mesh"); // remove corrupted data
+			printk("Loading stored settings\n\r");
+    settings_load();
+	printk("Got to here\n");
+	} 
+
 
 	/* This will be a no-op if settings_load() loaded provisioning info */
 	//bt_mesh_prov_enable(BT_MESH_PROV_ADV | BT_MESH_PROV_GATT); // for self provisioning
