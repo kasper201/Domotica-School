@@ -308,9 +308,12 @@ static void prov_complete(uint16_t net_idx, uint16_t addr)
 	extern_net_idx = net_idx;
 	extern_addr = addr;
 	boardProvComplete();
+	for(int i = 0; i < models[3].groups_cnt; i++)
+	{
+		printk("Group address %d\n", models[3].groups[i]);
+	}
 	printk("Provisioning completed. Network Index: 0x%04x, Address: 0x%04x\n",
            net_idx, addr);
-
 }
 
 static void prov_reset(void)
@@ -382,7 +385,8 @@ extern int gen_onoff_send(bool val, uint16_t groupAddress)
 
 void btnPressed()
 {
-	printk("amount of groups: %d\n", models[3].groups_cnt);	
+	printk("amount of groups 2: %d\n", models[2].groups_cnt);
+	printk("amount of groups 3: %d\n", models[3].groups_cnt);	
 	if (bt_mesh_is_provisioned()) 
 	{
 		for(int i = 0; i < models[3].groups_cnt; i++)
