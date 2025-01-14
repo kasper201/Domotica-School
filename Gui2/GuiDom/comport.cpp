@@ -1,12 +1,17 @@
 #include "comport.h"
 
 #include <QListWidgetItem>
+#include <QTimer>
 
 Comport::Comport(Domotica* domotica,  QObject* parent) : QObject(parent), UIdomotica(domotica)
 {
 }
 
-Comport::~Comport(){}
+Comport::~Comport()
+{
+    WriteToComport(EasyString.meshReset);
+    COMPORT->close();
+}
 
 //Add an item to the QListWidget
 void Comport::AddItem(QString itemText)
@@ -51,7 +56,8 @@ void Comport::handleComportConnection()
     }
     else                                                                 //Disconnect
     {
-        COMPORT->close();
+        WriteToComport(EasyString.meshReset);
+        QTimer::singleShot(100, [this](){ COMPORT->close(); });
         UIdomotica->GetComportLabel()->setText("No connection");
         UIdomotica->GetConnectButton()->setText("Connect");
         connected = false;
@@ -81,6 +87,14 @@ void Comport::setupComport(const QString &comPortName)
     if(COMPORT->isOpen()) {
         connect(COMPORT, SIGNAL(readyRead()), this, SLOT(ReadData()));
         WriteToComport(EasyString.connectedOut);
+        QTimer::singleShot(15, [this](){
+            qDebug() << "Timer has passed";
+            WriteToComport(EasyString.meshCreate);
+        });
+        QTimer::singleShot(100, [this](){
+            qDebug() << "Timer has passed";
+            WriteToComport(EasyString.meshProvCreate);
+        });
         qDebug() << "Serial Port is connected";
     }
     else {
@@ -92,8 +106,9 @@ void Comport::setupComport(const QString &comPortName)
 //Send a message
 void Comport::WriteToComport(QString sendString)
 {
-    //qDebug() << "Data send: " << sendString;
-    COMPORT->write(sendString.toLatin1() + char(10) );
+    qDebug() << "Data send: " << sendString;
+    QString close = "\r\n";
+    COMPORT->write(sendString.toLatin1() + close.toLatin1() );
 }
 
 void Comport::ReadData()
@@ -106,7 +121,7 @@ void Comport::ReadData()
             Data_From_SerialPort += COMPORT->readAll();
 
             //Checks if the line has ended
-            if(Data_From_SerialPort.at(Data_From_SerialPort.length() - 1) == char(10))
+            if(Data_From_SerialPort.contains("$"))
             {
                 Is_Data_Recieved = true;
             }
@@ -116,6 +131,8 @@ void Comport::ReadData()
         if(Is_Data_Recieved == true)
         {
             Data_From_SerialPort.remove("\r").remove("\n");
+            Data_From_SerialPort.remove("\u001B[1;32muart:~$").remove("\u001B[m").remove("\u001B[8D").remove("\u001B[0m").remove(Data_From_SerialPort.indexOf("\u001B[J"), 22);
+            Data_From_SerialPort.remove(EasyString.connectedOut).remove(EasyString.meshCreate).remove(EasyString.meshProvCreate);
             Is_Data_Recieved = false;
             qDebug() << "Message recieved: " << Data_From_SerialPort;
 
