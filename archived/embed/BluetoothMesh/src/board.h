@@ -6,6 +6,7 @@
 
 void init();
 int ledSet(bool value);
+int board_init(struct k_work *button_pressed);
 void boardOutputNumber(bt_mesh_output_action_t action, uint32_t number);
 void boardProvComplete(void);
 

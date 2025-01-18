@@ -349,10 +349,13 @@ static int gen_onoff_send(bool val)
 
 void btnPressed()
 {
-
+	printk("Entered btnPressed\n");
 	if (bt_mesh_is_provisioned()) {
 		(void)gen_onoff_send(!onoff.val);
 		return;
+	}
+	else{
+		printk("Provisioning not complete\n");
 	}
 
 	/* Self-provision with an arbitrary address.
@@ -415,11 +418,8 @@ static void bt_ready(int err)
 	}
 
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
-	// 	printk("Deleting previous mesh settings\n\r");
-    // settings_delete("bt/mesh"); // remove corrupted data
 			printk("Loading stored settings\n\r");
     settings_load();
-	printk("Got to here\n");
 	} 
 
 
@@ -432,6 +432,7 @@ static void bt_ready(int err)
 
 int bluetoothInit(void)
 {
+	static struct k_work button_work;
 	int err = -1;
 
 	printk("Initializing...\n");
@@ -443,6 +444,14 @@ int bluetoothInit(void)
 	if (err < 0) {
 		dev_uuid[0] = 0xdd;
 		dev_uuid[1] = 0xdd;
+	}
+
+	k_work_init(&button_work, btnPressed);
+
+	err = board_init(&button_work);
+	if (err) {
+		printk("Board init failed (err: %d)\n", err);
+		return 0;
 	}
 
 	k_work_init_delayable(&onoff.work, onoff_timeout);

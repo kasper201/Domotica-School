@@ -9,6 +9,6 @@
 	};
 
     aliases {
-        sw0 = &button0;
+        button0 = &button0;
     };
 };
