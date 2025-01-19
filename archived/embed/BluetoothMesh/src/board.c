@@ -7,26 +7,41 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/sys/printk.h>
+#include <zephyr/devicetree.h>
 #include <inttypes.h>
 
 #include "board.h"
 #include "bluetooth.h"
 
-#define BUTTON0_NODE	DT_ALIAS(button0)
-#if !DT_NODE_HAS_STATUS(BUTTON0_NODE, okay)
-#error "Unsupported board: sw0 devicetree alias is not defined"
+#if DT_NODE_EXISTS(DT_ALIAS(sw0))
+#define BUTTON0_NODE DT_ALIAS(sw0)
+#elif DT_NODE_EXISTS(DT_ALIAS(button0))
+#define BUTTON0_NODE DT_ALIAS(button0)
+#elif DT_NODE_EXISTS(DT_NODELABEL(sw0))
+#define BUTTON0_NODE DT_NODELABEL(sw0)
+#elif DT_NODE_EXISTS(DT_NODELABEL(button0))
+#define BUTTON0_NODE DT_NODELABEL(button0)
+#else
+#define BUTTON0_NODE DT_INVALID_NODE
 #endif
 
-#if DT_NODE_EXISTS(SW0_NODE)
-#define SW0_DEV DT_PHANDLE(SW0, gpios)
-#define SW0_PIN DT_PHA(SW0, gpios, pin)
-#define SW0_FLAGS DT_PHA(SW0, gpios, flags)
+#if DT_NODE_EXISTS(BUTTON0_NODE)
+#define BUTTON0_DEV DT_PHANDLE(BUTTON0_NODE, gpios)
+#define BUTTON0_PIN DT_PHA(BUTTON0_NODE, gpios, pin)
+#define BUTTON0_FLAGS DT_PHA(BUTTON0_NODE, gpios, flags)
 
-static const struct device *const button_dev = DEVICE_DT_GET(SW0_DEV);
-static const struct gpio_dt_spec button = GPIO_DT_SPEC_GET_OR(SW0_NODE, gpios,
+static const struct device *const button_dev = DEVICE_DT_GET(BUTTON0_DEV);
+static const struct gpio_dt_spec button = GPIO_DT_SPEC_GET_OR(BUTTON0_NODE, gpios,
 							      {0});
 static struct gpio_callback button_cb_data;
 
+static struct k_work *button_work;
+
+static void button_cb(const struct device *port, struct gpio_callback *cb,
+		      gpio_port_pins_t pins)
+{
+	k_work_submit(button_work);
+}
 #endif
 
 static struct gpio_dt_spec led = GPIO_DT_SPEC_GET_OR(DT_ALIAS(led0), gpios,
@@ -64,18 +79,18 @@ void button_pressed(const struct device *dev, struct gpio_callback *cb,
 
 int buttonInit(struct k_work *button_pressed)
 {
-#if DT_NODE_EXISTS(SW0_NODE)
+#if DT_NODE_EXISTS(BUTTON0_NODE)
 	int err;
 
-	err = gpio_pin_configure(button_dev, SW0_PIN,
-				 SW0_FLAGS | GPIO_INPUT);
+	err = gpio_pin_configure(button_dev, BUTTON0_PIN,
+				 BUTTON0_FLAGS | GPIO_INPUT);
 	if (err) {
 		return err;
 	}
 
 	static struct gpio_callback gpio_cb;
 
-	err = gpio_pin_interrupt_configure(button_dev, SW0_PIN,
+	err = gpio_pin_interrupt_configure(button_dev, BUTTON0_PIN,
 					   GPIO_INT_EDGE_TO_ACTIVE);
 	if (err) {
 		return err;
