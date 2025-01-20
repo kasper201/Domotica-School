@@ -18,12 +18,13 @@ public:
     void AddItem(QString itemText);
     void setupComportList();
     void setupComport(const QString &comPortName);
-    void WriteToComport(QString sendString);
+    void setupProv();
 
 public slots:
     void handleComportConnection();     // Handle Connect
     void handleComportRefresh();        // Handle Refresh
     void ReadData();
+    void WriteToComport(QString sendString);
 
 private:
     Domotica* UIdomotica; // Pointer to the Domotica instance

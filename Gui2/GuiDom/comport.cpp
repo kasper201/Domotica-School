@@ -86,15 +86,7 @@ void Comport::setupComport(const QString &comPortName)
 
     if(COMPORT->isOpen()) {
         connect(COMPORT, SIGNAL(readyRead()), this, SLOT(ReadData()));
-        WriteToComport(EasyString.connectedOut);
-        QTimer::singleShot(15, [this](){
-            qDebug() << "Timer has passed";
-            WriteToComport(EasyString.meshCreate);
-        });
-        QTimer::singleShot(100, [this](){
-            qDebug() << "Timer has passed";
-            WriteToComport(EasyString.meshProvCreate);
-        });
+        setupProv();
         qDebug() << "Serial Port is connected";
     }
     else {
@@ -109,6 +101,31 @@ void Comport::WriteToComport(QString sendString)
     qDebug() << "Data send: " << sendString;
     QString close = "\r\n";
     COMPORT->write(sendString.toLatin1() + close.toLatin1() );
+}
+
+void Comport::setupProv()
+{
+    WriteToComport(EasyString.connectedOut);
+    QTimer::singleShot(15, this, [this](){
+        qDebug() << "Timer has passed";
+        WriteToComport(EasyString.meshCreate);
+    });
+    QTimer::singleShot(80, this, [this](){
+        qDebug() << "Timer has passed";
+        WriteToComport(EasyString.meshProvCreate);
+    });
+    QTimer::singleShot(150, this, [this](){
+        qDebug() << "Timer has passed";
+        WriteToComport(EasyString.meshAppKeyCreate);
+    });
+    QTimer::singleShot(200, this, [this](){
+        qDebug() << "Timer has passed";
+        WriteToComport(EasyString.meshAppKeyBind + EasyString.meshAppKeyProv + EasyString.meshAppKeyClient);
+    });
+    QTimer::singleShot(220, this, [this](){
+        qDebug() << "Timer has passed";
+        WriteToComport(EasyString.meshAppKeyBind + EasyString.meshAppKeyProv + EasyString.meshAppKeyServer);
+    });
 }
 
 void Comport::ReadData()
