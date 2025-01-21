@@ -78,6 +78,31 @@ void Nodes::addActuatorToNode(QString nodeName, QString actuatorName)
     }
 }
 
+int Nodes::FirstFreeNodeAddress()
+{
+    int nodeAddress = 1;
+
+    while (true) {
+        bool found = false;
+        for (auto it = nodes.begin(); it != nodes.end(); ++it) {
+            if (it->getNodeAddress() == nodeAddress) {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            qDebug() << "First free nodeAddres is: " << nodeAddress;
+            return nodeAddress; // This is the first empty group address
+        }
+
+        for(int i = 0; i < NODE_ADDRESS_INCREMENTS; i++) // Increment to check the next address
+        {
+            ++nodeAddress;
+        }
+    }
+}
+
 QStringList Nodes::getNodeNames()
 {
     QStringList nodeNames;

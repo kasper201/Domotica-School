@@ -4,7 +4,7 @@
 #include "domotica.h"
 #include "nodes.h"
 #include "groups.h"
-#include "easystring.h"
+#include "inputchecks.h"
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 #include <QObject>
@@ -21,6 +21,7 @@ public:
     void setupComportList();
     void setupComport(const QString &comPortName);
     void setupProv();
+    void AddNewNode(QString uuid);
 
 public slots:
     void handleComportConnection();     // Handle Connect
@@ -34,12 +35,13 @@ private:
     Domotica* UIdomotica; // Pointer to the Domotica instance
     Nodes* nodes;
     Groups* groups;
-    EasyString EasyString;
+    InputChecks inputChecks;
 
     bool connected = false;
     QString Current_Comport;
     QString Data_From_SerialPort;
     bool Is_Data_Recieved = false;
+    QStringList uuidList;
 };
 
 #endif // COMPORT_H

@@ -9,6 +9,8 @@ Domotica::Domotica(QWidget *parent)
     palette.setColor(QPalette::Window, Qt::darkCyan);
     this->setPalette(palette);
     this->setAutoFillBackground(true);
+    this->setFixedSize(1280, 720);
+    this->resize(1280, 720);
 
     ui->setupUi(this);
     QPalette framePalette = ui->frame->palette();

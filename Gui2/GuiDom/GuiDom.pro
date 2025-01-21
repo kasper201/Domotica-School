@@ -13,6 +13,7 @@ SOURCES += \
     actuator.cpp \
     comport.cpp \
     groups.cpp \
+    inputchecks.cpp \
     main.cpp \
     domotica.cpp \
     node.cpp \
@@ -25,6 +26,7 @@ HEADERS += \
     domotica.h \
     easystring.h \
     groups.h \
+    inputchecks.h \
     node.h \
     nodes.h \
     sensor.h

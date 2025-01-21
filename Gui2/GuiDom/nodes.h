@@ -3,6 +3,7 @@
 
 #include "domotica.h"
 #include "node.h"
+#include "easystring.h"
 #include <QObject>
 
 class Nodes : public QObject
@@ -14,6 +15,7 @@ public:
     void addNode(QString nodeName, int nodeAddress);
     void addSensorToNode(QString nodeName, QString sensorName);
     void addActuatorToNode(QString nodeName, QString actuatorName);
+    int FirstFreeNodeAddress();
     QStringList getNodeNames();
     int getNodeAddress(QString nodeName);
 

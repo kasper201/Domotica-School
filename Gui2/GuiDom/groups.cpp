@@ -1,6 +1,6 @@
 #include "groups.h"
 
-Groups::Groups(Domotica* domotica, Nodes* nodes,  QObject* parent) : QObject(parent), UIdomotica(domotica)
+Groups::Groups(Domotica* domotica,  QObject* parent) : QObject(parent), UIdomotica(domotica)
 {
 }
 
