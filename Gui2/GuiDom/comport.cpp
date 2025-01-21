@@ -119,11 +119,11 @@ void Comport::setupProv()
         qDebug() << "Timer has passed";
         WriteToComport(EasyString.meshAppKeyCreate);
     });
-    QTimer::singleShot(200, this, [this](){
+    QTimer::singleShot(300, this, [this](){
         qDebug() << "Timer has passed";
         WriteToComport(EasyString.meshAppKeyBind + EasyString.meshAppKeyProv + EasyString.meshAppKey + EasyString.meshServer);
     });
-    QTimer::singleShot(220, this, [this](){
+    QTimer::singleShot(350, this, [this](){
         qDebug() << "Timer has passed";
         WriteToComport(EasyString.meshAppKeyBind + EasyString.meshAppKeyProv + EasyString.meshAppKey + EasyString.meshClient);
     });
