@@ -20,6 +20,7 @@ public:
     QString meshServer = " 0x1000";
     QString meshClient = " 0x1001";
     QString meshSubscribe = "mesh models cfg model sub-add";
+    QString meshUnsubscribe = "mesh models cfg model sub-del";
 
     //easy use
     QString hexPrefix = " 0x";

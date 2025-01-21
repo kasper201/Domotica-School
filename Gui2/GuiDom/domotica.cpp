@@ -138,6 +138,16 @@ void Domotica::on_GroupDelete_clicked()
     emit groupDeleteRequested();
 }
 
+void Domotica::on_GroupSensorDelete_clicked()
+{
+    emit groupSensorDeleteRequested();
+}
+
+
+void Domotica::on_GroupActuatorDelete_clicked()
+{
+    emit groupActuatorDeleteRequested();
+}
 
 void Domotica::on_GroupList_currentRowChanged(int currentRow)
 {
@@ -170,4 +180,3 @@ void Domotica::on_NodeAddSensor_clicked()
 {
     emit groupSensorAdd();
 }
-

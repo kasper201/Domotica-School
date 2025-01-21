@@ -139,6 +139,67 @@ void Groups::AddActuator(QString groupName, QString nodeName, QString actuatorNa
     }
 }
 
+void Groups::DeleteSensor(QString groupName, QString nodeName, QString sensorName)
+{
+    if(!groupName.isEmpty() && !nodeName.isEmpty() && !sensorName.isEmpty())
+    {
+        bool alreadyExist = false;
+        // Check if the sensor is in the sensorList for the specified groupName
+        if (groupsMap.contains(groupName)) {
+                    const groupParts &group = groupsMap[groupName];
+                    alreadyExist = group.sensorList.contains(nodeName, sensorName);
+        } else {
+                    qDebug() << "First select a group";
+                    return;
+        }
+
+        if (alreadyExist ) {
+                    // Delete the sensor to the sensorList
+                    groupsMap[groupName].sensorList.remove(nodeName, sensorName);
+                    qDebug() << "Sensor successfully deleted from group: " << groupName;
+        } else {
+                    qDebug() << "The sensor is not in group: " << groupName;
+        }
+        showGroup(groupName);
+        unsubscribeFromGroup(groupName, nodeName, true);
+    }
+    else
+    {
+        qDebug() << "Not everything has been selected";
+    }
+}
+
+void Groups::DeleteActuator(QString groupName, QString nodeName, QString actuatorName)
+{
+    if(!groupName.isEmpty() && !nodeName.isEmpty() && !actuatorName.isEmpty())
+    {
+        bool alreadyExist = false;
+        // Check if the actuator is in the actuatorList for the specified groupName
+        if (groupsMap.contains(groupName)) {
+                    const groupParts &group = groupsMap[groupName];
+                    alreadyExist = group.actuatorList.contains(nodeName, actuatorName);
+        } else {
+                    qDebug() << "First select a group";
+                    return;
+        }
+
+        if (alreadyExist ) {
+                    // Delete the actuator from the actuatorList
+                    groupsMap[groupName].actuatorList.remove(nodeName, actuatorName);
+                    qDebug() << "Actuator successfully deleted from group: " << groupName;
+        } else {
+                    qDebug() << "The actuator is not in group: " << groupName;
+        }
+        showGroup(groupName);
+        unsubscribeFromGroup(groupName, nodeName, false);
+    }
+    else
+    {
+        qDebug() << "Not everything has been selected";
+    }
+
+}
+
 void Groups::handleGroupAdd()
 {
     AddGroup(UIdomotica->GetGroupName()->text());
@@ -197,6 +258,48 @@ void Groups::handleActuatorAdd()
 
     //add the actuator
     AddActuator(groupName, nodeName, actuatorName);
+}
+
+void Groups::handleSensorDelete()
+{
+    //Check if everything has been selected
+    if (UIdomotica->GetGroupList()->currentRow() == -1)
+    {
+        qDebug() << "No group has been selected";
+        return;
+    } else if (UIdomotica->GetGroupSensorsList()->currentRow() == -1)
+    {
+        qDebug() << "No sensor has been selected";
+        return;
+    }
+
+    //save the names
+    QString groupName = UIdomotica->GetGroupList()->currentItem()->text();
+    QStringList sensorInfo = UIdomotica->GetGroupSensorsList()->currentItem()->text().split(" | ");
+    QString nodeName = sensorInfo[0];
+    QString sensorName = sensorInfo[1];
+    DeleteSensor(groupName, nodeName, sensorName);
+}
+
+void Groups::handleActuatorDelete()
+{
+    //Check if everything has been selected
+    if (UIdomotica->GetGroupList()->currentRow() == -1)
+    {
+        qDebug() << "No group has been selected";
+        return;
+    } else if (UIdomotica->GetGroupActuatorsList()->currentRow() == -1)
+    {
+        qDebug() << "No actuator has been selected";
+        return;
+    }
+
+    //save the names
+    QString groupName = UIdomotica->GetGroupList()->currentItem()->text();
+    QStringList actuatorInfo = UIdomotica->GetGroupActuatorsList()->currentItem()->text().split(" | ");
+    QString nodeName = actuatorInfo[0];
+    QString actuatorName = actuatorInfo[1];
+    DeleteActuator(groupName, nodeName, actuatorName);
 }
 
 int Groups::GetGroupAddress(QString groupName)

@@ -145,6 +145,20 @@ void Comport::SubcribeToGroup(QString groupName, QString nodeName, bool server)
     }
 }
 
+//Unsubscribes the model from a group
+void Comport::UnsubcribeFromGroup(QString groupName, QString nodeName, bool server)
+{
+    //Use the addresses and send them in the right way ( adds 0x as prefix from easystring and than a 4 didget hexadecimal number)
+    QString nodeAddress = EasyString.hexPrefix + QString("%1").arg(QString::number(nodes->getNodeAddress(nodeName), 16).rightJustified(4, '0'));
+    QString groupAddress = EasyString.hexPrefix + QString("%1").arg(QString::number(groups->GetGroupAddress(groupName), 16).rightJustified(4, '0'));
+    if(server){
+        WriteToComport(EasyString.meshUnsubscribe + nodeAddress + groupAddress + EasyString.meshServer);
+    } else {
+        WriteToComport(EasyString.meshUnsubscribe + nodeAddress + groupAddress + EasyString.meshClient);
+    }
+}
+
+//Reads incoming data
 void Comport::ReadData()
 {
     if(COMPORT->isOpen())

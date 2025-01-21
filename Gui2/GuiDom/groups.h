@@ -20,16 +20,21 @@ public:
     void DeleteGroup(QString groupName);
     void AddSensor(QString groupName, QString nodeName, QString sensorName);
     void AddActuator(QString groupName, QString nodeName, QString actuatorName);
+    void DeleteSensor(QString groupName, QString nodeName, QString sensorName);
+    void DeleteActuator(QString groupName, QString nodeName, QString actuatorName);
     int GetGroupAddress(QString groupName);
 
 signals:
     void subscribeToGroup(QString groupName, QString nodeName, bool server);
+    void unsubscribeFromGroup(QString groupName, QString nodeName, bool server);
 
 public slots:
     void handleGroupAdd();
     void handleGroupDelete();
     void handleSensorAdd();
     void handleActuatorAdd();
+    void handleSensorDelete();
+    void handleActuatorDelete();
     void showGroup(QString groupName);
 
 private:

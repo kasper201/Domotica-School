@@ -41,6 +41,8 @@ signals:
     void groupDeleteRequested();                // Signal to notify Groups
     void groupSensorAdd();                      // Signal to notify Groups
     void groupActuatorAdd();                    // Signal to notify Groups
+    void groupSensorDeleteRequested();          // Signal to notify Groups
+    void groupActuatorDeleteRequested();        // Signal to notify Groups
     void updateGroupParts(QString groupName);   // Signal to notify Groups
     void updateNodeParts(QString nodeName);     // Signal to notify Nodes
 
@@ -55,6 +57,10 @@ private slots:
 
     void on_NodeAddActuator_clicked();
     void on_NodeAddSensor_clicked();
+
+    void on_GroupActuatorDelete_clicked();
+
+    void on_GroupSensorDelete_clicked();
 
 private:
     Ui::Domotica *ui;

@@ -27,6 +27,7 @@ public slots:
     void handleComportRefresh();        // Handle Refresh
     void ReadData();
     void SubcribeToGroup(QString groupName, QString nodeName, bool server);
+    void UnsubcribeFromGroup(QString groupName, QString nodeName, bool server);
     void WriteToComport(QString sendString);
 
 private:

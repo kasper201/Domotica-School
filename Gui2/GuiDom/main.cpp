@@ -33,6 +33,12 @@ int main(int argc, char *argv[])
                      nodes, &Nodes::showParts);
     QObject::connect(groups, &Groups::subscribeToGroup,
                      comport, &Comport::SubcribeToGroup);
+    QObject::connect(domotica, &Domotica::groupSensorDeleteRequested,
+                     groups, &Groups::handleSensorDelete);
+    QObject::connect(domotica, &Domotica::groupActuatorDeleteRequested,
+                     groups, &Groups::handleActuatorDelete);
+    QObject::connect(groups, &Groups::unsubscribeFromGroup,
+                     comport, &Comport::UnsubcribeFromGroup);
 
     //Add Computer node
     nodes->addNode("Computer", 0);
