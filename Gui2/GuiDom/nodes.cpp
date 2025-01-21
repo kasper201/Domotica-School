@@ -5,7 +5,7 @@ Nodes::Nodes(Domotica* domotica, QObject* parent) : UIdomotica(domotica)
 
 Nodes::~Nodes() {}
 
-void Nodes::addNode(QString nodeName)
+void Nodes::addNode(QString nodeName, int nodeAddress)
 {
     bool alreadyExist = false;
     for (const Node& node : nodes) {
@@ -16,7 +16,7 @@ void Nodes::addNode(QString nodeName)
     }
     if(!alreadyExist)
     {
-        nodes.append(Node(nodeName));
+        nodes.append(Node(nodeName, nodeAddress));
         UIdomotica->GetNodeList()->addItem(nodeName);
         qDebug() << "Node added: " << nodeName;
     }
@@ -85,6 +85,17 @@ QStringList Nodes::getNodeNames()
         nodeNames.append(node.getNodeName());
     }
     return nodeNames;
+}
+
+int Nodes::getNodeAddress(QString nodeName)
+{
+    for (Node& node : nodes) {
+        if(node.getNodeName() == nodeName)
+        {
+            return node.getNodeAddress();
+        }
+    }
+    return -1;
 }
 
 void Nodes::showParts(QString nodeName)

@@ -24,6 +24,7 @@ void Groups::AddGroup(QString groupName)
             qDebug() << "Add: " << groupName;
             groupParts newGroupParts;
             groupsMap.insert(groupName, newGroupParts);
+            groupsMap[groupName].groupAddress = FirstFreeGroupAddress();
             UIdomotica->GetGroupList()->addItem(groupName);
             UIdomotica->GetGroupName()->clear();
         }
@@ -54,6 +55,28 @@ void Groups::DeleteGroup(QString groupName)
     }
 }
 
+int Groups::FirstFreeGroupAddress()
+{
+    int groupAddress = 49152;
+
+    while (true) {
+    bool found = false;
+    for (auto it = groupsMap.begin(); it != groupsMap.end(); ++it) {
+            if (it.value().groupAddress == groupAddress) {
+                found = true;
+                break;
+            }
+    }
+
+    if (!found) {
+            qDebug() << "GroupAddres is: " << groupAddress;
+            return groupAddress; // This is the first empty group address
+    }
+
+    ++groupAddress; // Increment to check the next address
+    }
+}
+
 //Add a sensor to the group
 void Groups::AddSensor(QString groupName, QString nodeName, QString sensorName)
 {
@@ -64,9 +87,12 @@ void Groups::AddSensor(QString groupName, QString nodeName, QString sensorName)
         if (groupsMap.contains(groupName)) {
                 const groupParts &group = groupsMap[groupName];
                 alreadyExist = group.sensorList.contains(nodeName, sensorName);
+        } else {
+                qDebug() << "First select a group";
+                return;
         }
 
-        if (!alreadyExist) {
+        if (!alreadyExist ) {
                 // Add the sensor to the sensorList
                 groupsMap[groupName].sensorList.insert(nodeName, sensorName);
                 qDebug() << "Sensor added successfully to group: " << groupName;
@@ -74,6 +100,7 @@ void Groups::AddSensor(QString groupName, QString nodeName, QString sensorName)
                 qDebug() << "Sensor already exists in group: " << groupName;
         }
         showGroup(groupName);
+        subscribeToGroup(groupName, nodeName, true);
     }
     else
     {
@@ -91,6 +118,9 @@ void Groups::AddActuator(QString groupName, QString nodeName, QString actuatorNa
         if (groupsMap.contains(groupName)) {
                     const groupParts &group = groupsMap[groupName];
                     alreadyExist = group.actuatorList.contains(nodeName, actuatorName);
+        } else {
+                    qDebug() << "First select a group";
+                    return;
         }
 
         if (!alreadyExist) {
@@ -101,6 +131,7 @@ void Groups::AddActuator(QString groupName, QString nodeName, QString actuatorNa
                     qDebug() << "Actuator already exists in group: " << groupName;
         }
         showGroup(groupName);
+        subscribeToGroup(groupName, nodeName, false);
     }
     else
     {
@@ -120,18 +151,57 @@ void Groups::handleGroupDelete()
 
 void Groups::handleSensorAdd()
 {
+    //Check if everything has been selected
+    if (UIdomotica->GetGroupList()->currentRow() == -1)
+    {
+        qDebug() << "No group has been selected";
+        return;
+    } else if (UIdomotica->GetNodeList()->currentRow() == -1)
+    {
+        qDebug() << "No node has been selected";
+        return;
+    } else if (UIdomotica->GetNodeSensorsList()->currentRow() == -1)
+    {
+        qDebug() << "No sensor has been selected";
+        return;
+    }
+    //save the names
     QString groupName = UIdomotica->GetGroupList()->currentItem()->text();
     QString nodeName = UIdomotica->GetNodeList()->currentItem()->text();
     QString sensorName = UIdomotica->GetNodeSensorsList()->currentItem()->text();
+
+    //add the sensor
     AddSensor(groupName, nodeName, sensorName);
 }
 
 void Groups::handleActuatorAdd()
 {
+    //Check if everything has been selected
+    if (UIdomotica->GetGroupList()->currentRow() == -1)
+    {
+        qDebug() << "No group has been selected";
+        return;
+    } else if (UIdomotica->GetNodeList()->currentRow() == -1)
+    {
+        qDebug() << "No node has been selected";
+        return;
+    } else if (UIdomotica->GetNodeActuatorsList()->currentRow() == -1)
+    {
+        qDebug() << "No actuator has been selected";
+        return;
+    }
+    //save the names
     QString groupName = UIdomotica->GetGroupList()->currentItem()->text();
     QString nodeName = UIdomotica->GetNodeList()->currentItem()->text();
     QString actuatorName = UIdomotica->GetNodeActuatorsList()->currentItem()->text();
+
+    //add the actuator
     AddActuator(groupName, nodeName, actuatorName);
+}
+
+int Groups::GetGroupAddress(QString groupName)
+{
+    return groupsMap[groupName].groupAddress;
 }
 
 void Groups::showGroup(QString groupName)

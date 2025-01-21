@@ -16,8 +16,13 @@ public:
     QString meshAppKeyCreate = "mesh models cfg appkey add 0 0";
     QString meshAppKeyBind = "mesh models cfg model app-bind ";
     QString meshAppKeyProv = "0x0001";
-    QString meshAppKeyClient = " 0x000 0x1000";
-    QString meshAppKeyServer = " 0x000 0x1001";
+    QString meshAppKey = " 0x000";
+    QString meshServer = " 0x1000";
+    QString meshClient = " 0x1001";
+    QString meshSubscribe = "mesh models cfg model sub-add";
+
+    //easy use
+    QString hexPrefix = " 0x";
 
     //In
     QString connectedIn = "Connected";

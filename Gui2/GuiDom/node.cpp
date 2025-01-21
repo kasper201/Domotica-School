@@ -1,6 +1,6 @@
 #include "node.h"
 
-Node::Node(QString name) : nodeName(name)
+Node::Node(QString name, int address) : nodeName(name), nodeAddress(address)
 {}
 
 Node::~Node() {}
@@ -9,6 +9,12 @@ QString Node::getNodeName() const
 {
     return nodeName;
 }
+
+int Node::getNodeAddress()
+{
+    return nodeAddress;
+}
+
 QStringList Node::getNodeSensors() const
 {
     QStringList sensorNames;

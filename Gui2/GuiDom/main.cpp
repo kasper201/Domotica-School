@@ -10,9 +10,9 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     Domotica* domotica = new Domotica;
-    Comport* comport = new Comport(domotica);
     Nodes* nodes = new Nodes(domotica);
     Groups* groups = new Groups(domotica, nodes);
+    Comport* comport = new Comport(domotica, nodes, groups);
 
     // Connect all Signals
     QObject::connect(domotica, &Domotica::comportConnectionRequested,
@@ -31,9 +31,11 @@ int main(int argc, char *argv[])
                      groups, &Groups::showGroup);
     QObject::connect(domotica, &Domotica::updateNodeParts,
                      nodes, &Nodes::showParts);
+    QObject::connect(groups, &Groups::subscribeToGroup,
+                     comport, &Comport::SubcribeToGroup);
 
     //Add Computer node
-    nodes->addNode("Computer");
+    nodes->addNode("Computer", 0);
     nodes->addSensorToNode("Computer", "ApplicationButton");
     nodes->addActuatorToNode("Computer", "ApplicationLED");
 

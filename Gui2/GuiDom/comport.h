@@ -2,6 +2,8 @@
 #define COMPORT_H
 
 #include "domotica.h"
+#include "nodes.h"
+#include "groups.h"
 #include "easystring.h"
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
@@ -12,7 +14,7 @@ class Comport : public QObject
     Q_OBJECT
 
 public:
-    explicit Comport(Domotica* domotica, QObject* parent = nullptr);
+    explicit Comport(Domotica* domotica, Nodes* nodes, Groups* groups, QObject* parent = nullptr);
     ~Comport();
     QSerialPort* COMPORT;
     void AddItem(QString itemText);
@@ -24,10 +26,13 @@ public slots:
     void handleComportConnection();     // Handle Connect
     void handleComportRefresh();        // Handle Refresh
     void ReadData();
+    void SubcribeToGroup(QString groupName, QString nodeName, bool server);
     void WriteToComport(QString sendString);
 
 private:
     Domotica* UIdomotica; // Pointer to the Domotica instance
+    Nodes* nodes;
+    Groups* groups;
     EasyString EasyString;
 
     bool connected = false;

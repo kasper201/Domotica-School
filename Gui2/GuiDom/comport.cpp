@@ -3,7 +3,7 @@
 #include <QListWidgetItem>
 #include <QTimer>
 
-Comport::Comport(Domotica* domotica,  QObject* parent) : QObject(parent), UIdomotica(domotica)
+Comport::Comport(Domotica* domotica , Nodes* nodes, Groups* groups,  QObject* parent) : QObject(parent), UIdomotica(domotica), nodes(nodes), groups(groups)
 {
 }
 
@@ -86,7 +86,7 @@ void Comport::setupComport(const QString &comPortName)
 
     if(COMPORT->isOpen()) {
         connect(COMPORT, SIGNAL(readyRead()), this, SLOT(ReadData()));
-        setupProv();
+        setupProv(); //Trigger setup of provisioner
         qDebug() << "Serial Port is connected";
     }
     else {
@@ -103,6 +103,7 @@ void Comport::WriteToComport(QString sendString)
     COMPORT->write(sendString.toLatin1() + close.toLatin1() );
 }
 
+//setup the provisioner and appkey
 void Comport::setupProv()
 {
     WriteToComport(EasyString.connectedOut);
@@ -120,12 +121,28 @@ void Comport::setupProv()
     });
     QTimer::singleShot(200, this, [this](){
         qDebug() << "Timer has passed";
-        WriteToComport(EasyString.meshAppKeyBind + EasyString.meshAppKeyProv + EasyString.meshAppKeyClient);
+        WriteToComport(EasyString.meshAppKeyBind + EasyString.meshAppKeyProv + EasyString.meshAppKey + EasyString.meshServer);
     });
     QTimer::singleShot(220, this, [this](){
         qDebug() << "Timer has passed";
-        WriteToComport(EasyString.meshAppKeyBind + EasyString.meshAppKeyProv + EasyString.meshAppKeyServer);
+        WriteToComport(EasyString.meshAppKeyBind + EasyString.meshAppKeyProv + EasyString.meshAppKey + EasyString.meshClient);
     });
+    nodes->addNode("Provisioner", 1);
+    nodes->addActuatorToNode("Provisioner", "Provisioner Light");
+    nodes->addSensorToNode("Provisioner", "Provisioner Sensor");
+}
+
+//Subscibes the model to a group
+void Comport::SubcribeToGroup(QString groupName, QString nodeName, bool server)
+{
+    //Use the addresses and send them in the right way ( adds 0x as prefix from easystring and than a 4 didget hexadecimal number)
+    QString nodeAddress = EasyString.hexPrefix + QString("%1").arg(QString::number(nodes->getNodeAddress(nodeName), 16).rightJustified(4, '0'));
+    QString groupAddress = EasyString.hexPrefix + QString("%1").arg(QString::number(groups->GetGroupAddress(groupName), 16).rightJustified(4, '0'));
+    if(server){
+        WriteToComport(EasyString.meshSubscribe + nodeAddress + groupAddress + EasyString.meshServer);
+    } else {
+        WriteToComport(EasyString.meshSubscribe + nodeAddress + groupAddress + EasyString.meshClient);
+    }
 }
 
 void Comport::ReadData()
@@ -149,6 +166,7 @@ void Comport::ReadData()
         {
             Data_From_SerialPort.remove("\r").remove("\n");
             Data_From_SerialPort.remove("\u001B[1;32muart:~$").remove("\u001B[m").remove("\u001B[8D").remove("\u001B[0m").remove(Data_From_SerialPort.indexOf("\u001B[J"), 22);
+            Data_From_SerialPort.remove("\u001B{");
             Data_From_SerialPort.remove(EasyString.connectedOut).remove(EasyString.meshCreate).remove(EasyString.meshProvCreate);
             Is_Data_Recieved = false;
             qDebug() << "Message recieved: " << Data_From_SerialPort;

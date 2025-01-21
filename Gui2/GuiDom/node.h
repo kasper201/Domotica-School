@@ -8,9 +8,10 @@
 class Node
 {
 public:
-    Node(QString);
+    Node(QString, int);
     ~Node();
     QString getNodeName() const;
+    int getNodeAddress();
     QStringList getNodeSensors() const;
     QStringList getNodeActuators() const;
     void addSensor(QString);
@@ -18,6 +19,7 @@ public:
 
 private:
     QString nodeName;
+    int nodeAddress;
     QVector<Sensor> sensors;
     QVector<Actuator> actuators;
 };

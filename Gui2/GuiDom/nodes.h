@@ -11,10 +11,11 @@ class Nodes : public QObject
 public:
     explicit Nodes(Domotica*, QObject* parent = nullptr);
     ~Nodes();
-    void addNode(QString nodeName);
+    void addNode(QString nodeName, int nodeAddress);
     void addSensorToNode(QString nodeName, QString sensorName);
     void addActuatorToNode(QString nodeName, QString actuatorName);
     QStringList getNodeNames();
+    int getNodeAddress(QString nodeName);
 
 public slots:
     void showParts(QString nodeName);
