@@ -17,6 +17,7 @@
 #define MESH_UNSUBSCRIBE "mesh models cfg model sub-del"        // <NodeAddress> <GroupAddress> <ModelID>
 #define MESH_BEACON_ON "mesh prov beacon-listen on"
 #define MESH_ADD_NODE "mesh prov remote-adv "                  // <uuid> <network key index> <NodeAddress> <duration>
+#define MESH_TARGET "mesh target dst"                          // <NodeAddress>
 
 // Easy use
 #define HEX_PREFIX " 0x"

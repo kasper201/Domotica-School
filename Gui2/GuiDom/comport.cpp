@@ -178,12 +178,24 @@ void Comport::AddNewNode(QString uuid)
     nodes->addActuatorToNode(nodeName, STRING_TO_SHOW_LED + QString(NODE_SHOW) + nodeName);
     nodes->addSensorToNode(nodeName, STRING_TO_SHOW_BUTTON + QString(NODE_SHOW) + nodeName);
 
-    WriteToComport(MESH_ADD_NODE + uuid + MESH_NETWORK_KEY + nodeName + " " + QString::number(ADD_NODE_DURATION));
-    QTimer::singleShot(300, this, [this, nodeName](){
+    //all commands
+    QTimer::singleShot(50, this, [this, uuid, nodeName](){
+        qDebug() << "Timer has passed: add new node";
+        WriteToComport(MESH_ADD_NODE + uuid + MESH_NETWORK_KEY + nodeName + " " + QString::number(ADD_NODE_DURATION));
+    });
+    QTimer::singleShot(250, this, [this, nodeName](){
+        qDebug() << "Timer has passed: target new node";
+        WriteToComport(MESH_TARGET + nodeName);
+    });
+    QTimer::singleShot(300, this, [this](){
+        qDebug() << "Timer has passed: appkey create";
+        WriteToComport(MESH_APP_KEY_CREATE);
+    });
+    QTimer::singleShot(400, this, [this, nodeName](){
         qDebug() << "Timer has passed: appkey bind 1";
         WriteToComport(MESH_APP_KEY_BIND + nodeName + MESH_APP_KEY + MESH_SERVER);
     });
-    QTimer::singleShot(450, this, [this, nodeName](){
+    QTimer::singleShot(550, this, [this, nodeName](){
         qDebug() << "Timer has passed: appkey bind 1";
         WriteToComport(MESH_APP_KEY_BIND + nodeName + MESH_APP_KEY + MESH_CLIENT);
     });
@@ -231,6 +243,7 @@ void Comport::ReadData()
                     }
                 }
                 if(!alreadyExist){
+                    qDebug() << "new uuid found and trying to add node now";
                     AddNewNode(uuid);
                     uuidList.append(uuid);
                 }
