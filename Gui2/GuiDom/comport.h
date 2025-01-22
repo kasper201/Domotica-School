@@ -23,12 +23,16 @@ public:
     void setupProv();
     void AddNewNode(QString uuid);
 
+signals:
+    void updateGroup(int groupAddress, bool newState);
+
 public slots:
     void handleComportConnection();     // Handle Connect
     void handleComportRefresh();        // Handle Refresh
     void ReadData();
     void SubcribeToGroup(QString groupName, QString nodeName, bool server);
     void UnsubcribeFromGroup(QString groupName, QString nodeName, bool server);
+    void SendOutComputerSensor(int groupAddress, bool isGroupOn);
     void WriteToComport(QString sendString);
 
 private:

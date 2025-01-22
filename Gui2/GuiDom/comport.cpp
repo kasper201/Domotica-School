@@ -169,6 +169,17 @@ void Comport::UnsubcribeFromGroup(QString groupName, QString nodeName, bool serv
     }
 }
 
+void Comport::SendOutComputerSensor(int groupAddress, bool isGroupOn)
+{
+    QString stringGroupAddress = HEX_PREFIX + QString("%1").arg(QString::number(groupAddress, 16).rightJustified(4, '0'));
+    if(isGroupOn)
+    {
+        WriteToComport(MESH_SEND + stringGroupAddress + MESH_GEN_ON);
+    } else {
+        WriteToComport(MESH_SEND + stringGroupAddress + MESH_GEN_OFF);
+    }
+}
+
 void Comport::AddNewNode(QString uuid)
 {
     int FreeNodeAddress = nodes->FirstFreeNodeAddress();
@@ -232,6 +243,8 @@ void Comport::ReadData()
             {
                 qDebug() << "External device is connected";
             }
+
+            // Add a new node
             QString uuid = inputChecks.CheckForUuid(Data_From_SerialPort);
 
             if (!uuid.isEmpty()){
@@ -248,6 +261,12 @@ void Comport::ReadData()
                     uuidList.append(uuid);
                 }
             }
+
+            // Update a Group
+            // if condition for a groupstate
+            // get groupAddress (int)
+            // get newState (on or off) (on is true off is false)
+            // emit updateGroup(groupAddress, newState);
 
             //Reset Data recieved
             Data_From_SerialPort = "";

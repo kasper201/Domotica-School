@@ -114,6 +114,11 @@ QListWidget* Domotica::GetNodeSensorsList()
     return ui->NodeSensorsList;
 }
 
+QListWidget* Domotica::GetComputerNode()
+{
+    return ui->ApplicationActuator;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Signals underneath
 ///
@@ -182,3 +187,9 @@ void Domotica::on_NodeAddSensor_clicked()
 {
     emit groupSensorAdd();
 }
+
+void Domotica::on_ApplicationSensor_clicked()
+{
+    emit sendOutComputer();
+}
+

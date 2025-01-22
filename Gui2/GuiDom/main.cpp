@@ -39,12 +39,17 @@ int main(int argc, char *argv[])
                      groups, &Groups::handleActuatorDelete);
     QObject::connect(groups, &Groups::unsubscribeFromGroup,
                      comport, &Comport::UnsubcribeFromGroup);
+    QObject::connect(domotica, &Domotica::sendOutComputer,
+                     groups, &Groups::handleComputerToGroups);
+    QObject::connect(groups, &Groups::sendToGroup,
+                     comport, &Comport::SendOutComputerSensor);
+    QObject::connect(comport, &Comport::updateGroup,
+                     groups, &Groups::handleGroupsToComputer);
 
     //Add Computer node
-    QString nodeName = "computer";
-    nodes->addNode(nodeName, 0);
-    nodes->addSensorToNode(nodeName, STRING_TO_SHOW_BUTTON + QString(NODE_SHOW) + nodeName);
-    nodes->addActuatorToNode(nodeName, STRING_TO_SHOW_LED + QString(NODE_SHOW) + nodeName);
+    nodes->addNode(COMPUTER_NODE_NAME, 0);
+    nodes->addSensorToNode(COMPUTER_NODE_NAME, STRING_TO_SHOW_BUTTON + QString(NODE_SHOW) + COMPUTER_NODE_NAME);
+    nodes->addActuatorToNode(COMPUTER_NODE_NAME, STRING_TO_SHOW_LED + QString(NODE_SHOW) + COMPUTER_NODE_NAME);
 
     comport->setupComportList();
     domotica->show();

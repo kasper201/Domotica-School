@@ -29,6 +29,8 @@ public:
     QListWidget* GetGroupSensorsList();
     QListWidget* GetGroupActuatorsList();
 
+    QListWidget* GetComputerNode(); //Is for groups to be able to update the LED
+
     //For Nodes
     QListWidget* GetNodeList();
     QListWidget* GetNodeActuatorsList();
@@ -44,6 +46,7 @@ signals:
     void groupSensorDeleteRequested();          // Signal to notify Groups
     void groupActuatorDeleteRequested();        // Signal to notify Groups
     void updateGroupParts(QString groupName);   // Signal to notify Groups
+    void sendOutComputer();                     // Signal to notify Groups
     void updateNodeParts(QString nodeName);     // Signal to notify Nodes
 
 private slots:
@@ -51,16 +54,13 @@ private slots:
     void on_ComportRefresh_clicked();
     void on_GroupAdd_clicked();
     void on_GroupDelete_clicked();
-
     void on_GroupList_currentRowChanged(int currentRow);
     void on_NodesList_currentRowChanged(int currentRow);
-
     void on_NodeAddActuator_clicked();
     void on_NodeAddSensor_clicked();
-
     void on_GroupActuatorDelete_clicked();
-
     void on_GroupSensorDelete_clicked();
+    void on_ApplicationSensor_clicked();
 
 private:
     Ui::Domotica *ui;

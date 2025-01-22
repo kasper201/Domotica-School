@@ -18,10 +18,14 @@
 #define MESH_BEACON_ON "mesh prov beacon-listen on"
 #define MESH_ADD_NODE "mesh prov remote-adv "                  // <uuid> <network key index> <NodeAddress> <duration>
 #define MESH_TARGET "mesh target dst"                          // <NodeAddress>
+#define MESH_SEND "mesh test net-send "                        // <GroupAddress> <message>
+#define MESH_GEN_ON " 82020100"
+#define MESH_GEN_OFF " 82020000"
 
 // Easy use
 #define HEX_PREFIX " 0x"
 #define PROVISIONER_NODE_NAME "Provisioner"
+#define COMPUTER_NODE_NAME "Computer"
 #define NODE_SHOW "Node: "
 #define STRING_TO_SHOW_LED "LED of "
 #define STRING_TO_SHOW_BUTTON "Button of "
