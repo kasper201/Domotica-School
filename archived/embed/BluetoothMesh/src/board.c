@@ -68,7 +68,7 @@ int ledSet(bool value)
     gpio_pin_set_dt(&led, value);
     return 0;	
 }
-//borks at this when button is pressed while provisioned
+
 void button_pressed(const struct device *dev, struct gpio_callback *cb,
 		    uint32_t pins)
 {

@@ -19,22 +19,55 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/hwinfo.h>
 
+// Button init/control
+#if DT_NODE_EXISTS(DT_ALIAS(sw0))
+#define BUTTON0_NODE DT_ALIAS(sw0)
+#elif DT_NODE_EXISTS(DT_ALIAS(button0))
+#define BUTTON0_NODE DT_ALIAS(button0)
+#elif DT_NODE_EXISTS(DT_NODELABEL(sw0))
+#define BUTTON0_NODE DT_NODELABEL(sw0)
+#elif DT_NODE_EXISTS(DT_NODELABEL(button0))
+#define BUTTON0_NODE DT_NODELABEL(button0)
+#else
+#define BUTTON0_NODE DT_INVALID_NODE
+#endif
+
+#if DT_NODE_EXISTS(BUTTON0_NODE)
+#define BUTTON0_DEV DT_PHANDLE(BUTTON0_NODE, gpios)
+#define BUTTON0_PIN DT_PHA(BUTTON0_NODE, gpios, pin)
+#define BUTTON0_FLAGS DT_PHA(BUTTON0_NODE, gpios, flags)
+
+static const struct device *const button_dev = DEVICE_DT_GET(BUTTON0_DEV);
+static const struct gpio_dt_spec button = GPIO_DT_SPEC_GET_OR(BUTTON0_NODE, gpios,
+							      {0});
+static struct gpio_callback button_cb_data;
+
+static struct k_work *button_work;
+
+static void button_cb(const struct device *port, struct gpio_callback *cb,
+		      gpio_port_pins_t pins)
+{
+	k_work_submit(button_work);
+}
+#endif
+
 static struct gpio_dt_spec led = GPIO_DT_SPEC_GET_OR(DT_ALIAS(led0), gpios,
 						     {0});
 
 
-void ledInit() // most can be removed after testing
+int ledInit() // most can be removed after testing
 {
     k_msleep(1000);
     if (!gpio_is_ready_dt(&led))
     {
         printk("Error: LED device %s is not ready\n", led.port->name);
-        return;
+        return -1;
     }
     gpio_pin_configure_dt(&led, GPIO_OUTPUT);
     gpio_pin_set_dt(&led, 1);
     k_msleep(100);
     gpio_pin_set_dt(&led, 0);
+	return 0;
 }
 
 int ledSet(bool value)
@@ -43,6 +76,59 @@ int ledSet(bool value)
     return 0;	
 }
 
+void button_pressed(const struct device *dev, struct gpio_callback *cb,
+		    uint32_t pins)
+{
+	printk("Button pressed at %" PRIu32 "\n", k_cycle_get_32());
+    // event to happen when button is pressed
+	btnPressed();
+}
+
+int buttonInit(struct k_work *button_pressed)
+{
+#if DT_NODE_EXISTS(BUTTON0_NODE)
+	int err;
+
+	err = gpio_pin_configure(button_dev, BUTTON0_PIN,
+				 BUTTON0_FLAGS | GPIO_INPUT);
+	if (err) {
+		return err;
+	}
+
+	static struct gpio_callback gpio_cb;
+
+	err = gpio_pin_interrupt_configure(button_dev, BUTTON0_PIN,
+					   GPIO_INT_EDGE_TO_ACTIVE);
+	if (err) {
+		return err;
+	}
+
+	button_work = button_pressed;
+
+	gpio_init_callback(&gpio_cb, button_cb, BIT(BUTTON0_PIN));
+	gpio_add_callback(button_dev, &gpio_cb);
+#else
+	printk("WARNING: Buttons not supported on this board.\n");
+#endif
+
+	return 0;
+}
+
+int board_init(struct k_work *button_pressed)
+{
+	int err;
+
+	err = ledInit();
+	if (err) {
+		return err;
+	}
+
+	return buttonInit(button_pressed);
+}
+
+// Bluetooth settings
+
+// bluetooth mesh led control
 #define OP_ONOFF_GET       BT_MESH_MODEL_OP_2(0x82, 0x01)
 #define OP_ONOFF_SET       BT_MESH_MODEL_OP_2(0x82, 0x02)
 #define OP_ONOFF_SET_UNACK BT_MESH_MODEL_OP_2(0x82, 0x03)
@@ -355,6 +441,44 @@ static const struct bt_mesh_comp comp = {
 	.elem_count = ARRAY_SIZE(elements),
 };
 
+/** Send an OnOff Set message from the Generic OnOff Client to all nodes. */
+static int gen_onoff_send(bool val)
+{
+	struct bt_mesh_msg_ctx ctx = {
+		.app_idx = root_models[4].keys[0], /* Use the bound key */
+		.addr = BT_MESH_ADDR_ALL_NODES, 
+		.send_ttl = BT_MESH_TTL_DEFAULT,
+	};
+	static uint8_t tid;
+
+	if (ctx.app_idx == BT_MESH_KEY_UNUSED) {
+		printk("The Generic OnOff Client must be bound to a key before "
+		       "sending.\n");
+		return -ENOENT;
+	}
+
+	BT_MESH_MODEL_BUF_DEFINE(buf, OP_ONOFF_SET_UNACK, 2);
+	bt_mesh_model_msg_init(&buf, OP_ONOFF_SET_UNACK);
+	net_buf_simple_add_u8(&buf, val);
+	net_buf_simple_add_u8(&buf, tid++);
+
+	printk("Sending OnOff Set: %s\n", onoff_str[val]);
+
+	return bt_mesh_model_send(&root_models[4], &ctx, &buf, NULL, NULL);
+}
+
+void btnPressed()
+{
+	printk("Entered btnPressed\n");
+	if (bt_mesh_is_provisioned()) {
+		(void)gen_onoff_send(!onoff.val);
+		return;
+	}
+	else{
+		printk("Provisioning not complete\n");
+	}
+}
+
 static void bt_ready(int err)
 {
 	if (err && err != -EALREADY) {
@@ -388,9 +512,25 @@ static void bt_ready(int err)
 
 int main(void)
 {
+	static struct k_work button_work;
 	int err;
 
 	printk("Initializing...\n");
+
+	uint8_t dev_uuid[16];
+
+	if (IS_ENABLED(CONFIG_HWINFO)) {
+		err = hwinfo_get_device_id(dev_uuid, sizeof(dev_uuid));
+	}
+
+    // init k_work thread
+	k_work_init(&button_work, btnPressed);
+
+	err = board_init(&button_work);
+	if (err) {
+		printk("Board init failed (err: %d)\n", err);
+		return 0;
+	}
 
 	/* Initialize the Bluetooth Subsystem */
 	err = bt_enable(bt_ready);
@@ -398,9 +538,8 @@ int main(void)
 		printk("Bluetooth init failed (err %d)\n", err);
 	}
 
-	k_work_init_delayable(&onoff.work, onoff_timeout);
 
-	printk("Press the <Tab> button for supported commands.\n");
-	printk("Before any Mesh commands you must run \"mesh init\"\n");
+	// init delayable work
+	k_work_init_delayable(&onoff.work, onoff_timeout);
 	return 0;
 }

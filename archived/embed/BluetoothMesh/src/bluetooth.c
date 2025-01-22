@@ -441,10 +441,10 @@ int bluetoothInit(void)
 		err = hwinfo_get_device_id(dev_uuid, sizeof(dev_uuid));
 	}
 
-	if (err < 0) {
-		dev_uuid[0] = 0xdd;
-		dev_uuid[1] = 0xdd;
-	}
+	// if (err < 0) {
+	// 	dev_uuid[0] = 0xdd;
+	// 	dev_uuid[1] = 0xdd;
+	// }
 
 	k_work_init(&button_work, btnPressed);
 
