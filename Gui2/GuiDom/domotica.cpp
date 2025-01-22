@@ -45,6 +45,8 @@ Domotica::Domotica(QWidget *parent)
     ui->NodeAddActuator->setStyleSheet(buttonStyle);
     ui->NodeAddSensor->setStyleSheet(buttonStyle);
     ui->ApplicationSensor->setStyleSheet(buttonStyle);
+    ui->ForceNodeOffButton->setStyleSheet(buttonStyle);
+    ui->ForceNodeOnButton->setStyleSheet(buttonStyle);
 
     ui->ApplicationActuator->setStyleSheet("background-color: grey;");
 }
@@ -203,5 +205,11 @@ void Domotica::on_ForceNodeOnButton_clicked()
 void Domotica::on_ForceNodeOffButton_clicked()
 {
     emit sendForceToNode(false);
+}
+
+
+void Domotica::on_RemoveNodeButton_clicked()
+{
+    emit removeNode();
 }
 

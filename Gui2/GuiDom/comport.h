@@ -31,6 +31,7 @@ public slots:
     void UnsubcribeFromGroup(QString groupName, QString nodeName, bool server);
     void SendOutComputerStatusRequest();
     void SendOutForceState(bool turnOn);
+    void removeNode();
     void WriteToComport(QString sendString);
 
 private:

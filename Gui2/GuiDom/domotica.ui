@@ -309,6 +309,13 @@
                 <item>
                  <widget class="QListWidget" name="NodesList"/>
                 </item>
+                <item>
+                 <widget class="QPushButton" name="RemoveNodeButton">
+                  <property name="text">
+                   <string>Remove Node</string>
+                  </property>
+                 </widget>
+                </item>
                </layout>
               </widget>
              </item>

@@ -103,6 +103,20 @@ int Nodes::FirstFreeNodeAddress()
     }
 }
 
+void Nodes::removeNode(QString nodeName)
+{
+    for (int i = 0; i < nodes.size(); ++i) {
+        if (nodes[i].getNodeName() == nodeName) {
+            // Remove the node at the found index
+            nodes.removeAt(i);
+            if (UIdomotica->GetNodeList()->currentItem()) {
+                delete UIdomotica->GetNodeList()->takeItem(UIdomotica->GetNodeList()->row(UIdomotica->GetNodeList()->currentItem()));  // Remove the item from the list and delete it
+            }
+            break;  // Exit the loop after removing the node
+        }
+    }
+}
+
 QStringList Nodes::getNodeNames()
 {
     QStringList nodeNames;

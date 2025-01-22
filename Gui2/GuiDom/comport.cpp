@@ -79,7 +79,7 @@ void Comport::setupComport(const QString &comPortName)
     Current_Comport = comPortName;
     COMPORT = new QSerialPort();
     COMPORT->setPortName(Current_Comport);
-    COMPORT->setBaudRate(QSerialPort::BaudRate::Baud9600);
+    COMPORT->setBaudRate(QSerialPort::BaudRate::Baud115200);
     COMPORT->setParity(QSerialPort::Parity::NoParity);
     COMPORT->setDataBits(QSerialPort::DataBits::Data8);
     COMPORT->setStopBits(QSerialPort::StopBits::OneStop);
@@ -203,6 +203,26 @@ void Comport::SendOutForceState(bool turnOn)
             } else {
                 WriteToComport(MESH_SEND + QString(MESH_GEN_OFF));
             }
+        });
+    }
+}
+
+void Comport::removeNode()
+{
+    QString nodeName = UIdomotica->GetNodeList()->currentItem()->text();
+    if(!nodeName.isEmpty()) {
+        int nodeAddressDec = nodes->getNodeAddress(nodeName);
+        if(nodeAddressDec == 1) { //Makes sure the provisioner wont get deleted
+            return;
+        }
+        nodes->removeNode(nodeName);
+        qDebug() << "Address: " << nodeAddressDec;
+        QString nodeAddressHex = HEX_PREFIX + QString::number((nodeAddressDec), 16).rightJustified(4, '0');
+        getState = true;
+        WriteToComport(MESH_TARGET + nodeAddressHex);
+        QTimer::singleShot(100, this, [this](){
+            qDebug() << "Timer has passed: send remove node";
+            WriteToComport(MESH_DELETE);
         });
     }
 }

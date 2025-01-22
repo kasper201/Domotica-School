@@ -43,6 +43,8 @@ int main(int argc, char *argv[])
                      comport, &Comport::SendOutComputerStatusRequest);
     QObject::connect(domotica, &Domotica::sendForceToNode,
                      comport, &Comport::SendOutForceState);
+    QObject::connect(domotica, &Domotica::removeNode,
+                     comport, &Comport::removeNode);
 
     comport->setupComportList();
     domotica->show();

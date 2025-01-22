@@ -21,6 +21,7 @@ public:
 
 public slots:
     void showParts(QString nodeName);
+    void removeNode(QString nodeName);
 
 private:
     Domotica* UIdomotica;
