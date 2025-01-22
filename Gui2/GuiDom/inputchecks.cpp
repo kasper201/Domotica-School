@@ -19,3 +19,19 @@ QString InputChecks::CheckForUuid(QString &input)
         return QString();
     }
 }
+
+QString InputChecks::CheckForStatus(QString &input)
+{
+    // Define the pattern to look for "OnOff status: on" or "OnOff status: off"
+    static const QRegularExpression regex(R"(OnOff status: (on|off))");
+    QRegularExpressionMatch match = regex.match(input);
+
+    if (match.hasMatch()) {
+        // Capture group 1 contains the status (either "on" or "off")
+        return match.captured(1);
+    } else {
+        // Return "nothing" if the pattern is not found
+        return "nothing";
+    }
+}
+

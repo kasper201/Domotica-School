@@ -480,11 +480,11 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_12">
           <item>
-           <widget class="QFrame" name="ApplicationBackground">
+           <widget class="QFrame" name="frame_14">
             <property name="maximumSize">
              <size>
               <width>16777215</width>
-              <height>200</height>
+              <height>450</height>
              </size>
             </property>
             <property name="frameShape">
@@ -493,30 +493,80 @@
             <property name="frameShadow">
              <enum>QFrame::Raised</enum>
             </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <layout class="QVBoxLayout" name="verticalLayout_14">
              <item>
-              <widget class="QListWidget" name="ApplicationActuator"/>
-             </item>
-             <item>
-              <widget class="QFrame" name="frame_13">
+              <widget class="QFrame" name="ApplicationBackground">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>200</height>
+                </size>
+               </property>
                <property name="frameShape">
                 <enum>QFrame::StyledPanel</enum>
                </property>
                <property name="frameShadow">
                 <enum>QFrame::Raised</enum>
                </property>
-               <layout class="QVBoxLayout" name="verticalLayout_13">
+               <layout class="QHBoxLayout" name="horizontalLayout_6">
                 <item>
-                 <widget class="QLabel" name="label_4">
+                 <widget class="QListWidget" name="ApplicationActuator"/>
+                </item>
+                <item>
+                 <widget class="QFrame" name="frame_13">
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_13">
+                   <item>
+                    <widget class="QLabel" name="label_4">
+                     <property name="text">
+                      <string>Request Node Information</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="ApplicationSensor">
+                     <property name="text">
+                      <string>Button</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QFrame" name="frame_7">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>200</height>
+                </size>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_9">
+                <item>
+                 <widget class="QPushButton" name="ForceNodeOnButton">
                   <property name="text">
-                   <string>Application Interaction</string>
+                   <string>Force Node On</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="ApplicationSensor">
+                 <widget class="QPushButton" name="ForceNodeOffButton">
                   <property name="text">
-                   <string>Button</string>
+                   <string>Force Node Off</string>
                   </property>
                  </widget>
                 </item>

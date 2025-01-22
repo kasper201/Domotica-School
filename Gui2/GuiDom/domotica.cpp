@@ -46,7 +46,7 @@ Domotica::Domotica(QWidget *parent)
     ui->NodeAddSensor->setStyleSheet(buttonStyle);
     ui->ApplicationSensor->setStyleSheet(buttonStyle);
 
-    ui->ApplicationActuator->setStyleSheet("background-color: black;");
+    ui->ApplicationActuator->setStyleSheet("background-color: grey;");
 }
 
 Domotica::~Domotica()
@@ -190,6 +190,18 @@ void Domotica::on_NodeAddSensor_clicked()
 
 void Domotica::on_ApplicationSensor_clicked()
 {
-    emit sendOutComputer();
+    emit sendOutComputerStatusRequest();
+}
+
+
+void Domotica::on_ForceNodeOnButton_clicked()
+{
+    emit sendForceToNode(true);
+}
+
+
+void Domotica::on_ForceNodeOffButton_clicked()
+{
+    emit sendForceToNode(false);
 }
 

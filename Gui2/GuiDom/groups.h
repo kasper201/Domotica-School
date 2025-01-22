@@ -27,7 +27,6 @@ public:
 signals:
     void subscribeToGroup(QString groupName, QString nodeName, bool server);
     void unsubscribeFromGroup(QString groupName, QString nodeName, bool server);
-    void sendToGroup(int GroupAddress, bool isGroupOn);
 
 public slots:
     void handleGroupAdd();
@@ -36,8 +35,6 @@ public slots:
     void handleActuatorAdd();
     void handleSensorDelete();
     void handleActuatorDelete();
-    void handleComputerToGroups();
-    void handleGroupsToComputer(int groupAddress, bool newState);
     void showGroup(QString groupName);
 
 private:

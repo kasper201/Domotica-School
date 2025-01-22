@@ -18,7 +18,7 @@ void Nodes::addNode(QString nodeName, int nodeAddress)
     {
         nodes.append(Node(nodeName, nodeAddress));
         UIdomotica->GetNodeList()->addItem(nodeName);
-        qDebug() << "Node added: " << nodeName;
+        qDebug() << "Node added: " << nodeName << " Node address: " << nodeAddress;
     }
     else
     {

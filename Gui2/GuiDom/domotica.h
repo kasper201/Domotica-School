@@ -39,6 +39,8 @@ public:
 signals:
     void comportConnectionRequested();          // Signal to notify Comport
     void comportRefreshRequested();             // Signal to notify Comport
+    void sendOutComputerStatusRequest();        // Signal to notify Comport
+    void sendForceToNode(bool turnOn);          // Signal to notify Comport
     void groupAddRequested();                   // Signal to notify Groups
     void groupDeleteRequested();                // Signal to notify Groups
     void groupSensorAdd();                      // Signal to notify Groups
@@ -46,7 +48,6 @@ signals:
     void groupSensorDeleteRequested();          // Signal to notify Groups
     void groupActuatorDeleteRequested();        // Signal to notify Groups
     void updateGroupParts(QString groupName);   // Signal to notify Groups
-    void sendOutComputer();                     // Signal to notify Groups
     void updateNodeParts(QString nodeName);     // Signal to notify Nodes
 
 private slots:
@@ -61,6 +62,10 @@ private slots:
     void on_GroupActuatorDelete_clicked();
     void on_GroupSensorDelete_clicked();
     void on_ApplicationSensor_clicked();
+
+    void on_ForceNodeOnButton_clicked();
+
+    void on_ForceNodeOffButton_clicked();
 
 private:
     Ui::Domotica *ui;

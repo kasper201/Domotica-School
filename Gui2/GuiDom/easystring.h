@@ -18,9 +18,10 @@
 #define MESH_BEACON_ON "mesh prov beacon-listen on"
 #define MESH_ADD_NODE "mesh prov remote-adv "                  // <uuid> <network key index> <NodeAddress> <duration>
 #define MESH_TARGET "mesh target dst"                          // <NodeAddress>
-#define MESH_SEND "mesh test net-send "                        // <GroupAddress> <message>
+#define MESH_SEND "mesh test net-send"                        // <GroupAddress> <message>
 #define MESH_GEN_ON " 82020100"
 #define MESH_GEN_OFF " 82020000"
+#define MESH_GEN_STATUS " 82010000"
 
 // Easy use
 #define HEX_PREFIX " 0x"

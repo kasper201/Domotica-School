@@ -302,37 +302,6 @@ void Groups::handleActuatorDelete()
     DeleteActuator(groupName, nodeName, actuatorName);
 }
 
-void Groups::handleComputerToGroups()
-{
-    for (auto it = groupsMap.begin(); it != groupsMap.end(); ++it) {
-        groupParts &group = it.value();
-        if (group.sensorList.contains(COMPUTER_NODE_NAME, STRING_TO_SHOW_BUTTON + QString(NODE_SHOW) + COMPUTER_NODE_NAME)) {
-            group.groupState = !group.groupState;
-            emit sendToGroup(group.groupAddress, group.groupState);
-            handleGroupsToComputer(group.groupAddress, group.groupState);
-            qDebug() << "Group activated: " << it.key() << " Updated to state: " << group.groupState;
-        }
-    }
-}
-
-void Groups::handleGroupsToComputer(int groupAddress, bool newState)
-{
-    for (auto it = groupsMap.begin(); it != groupsMap.end(); ++it) {
-        groupParts &group = it.value();
-        if(group.groupAddress == groupAddress)
-        {
-            group.groupState = newState;
-            if (group.actuatorList.contains(COMPUTER_NODE_NAME, STRING_TO_SHOW_LED + QString(NODE_SHOW) + COMPUTER_NODE_NAME)) {
-                if(newState) {
-                    UIdomotica->GetComputerNode()->setStyleSheet("background-color: yellow;");
-                } else {
-                    UIdomotica->GetComputerNode()->setStyleSheet("background-color: black;");
-                }
-            }
-        }
-    }
-}
-
 int Groups::GetGroupAddress(QString groupName)
 {
     return groupsMap[groupName].groupAddress;

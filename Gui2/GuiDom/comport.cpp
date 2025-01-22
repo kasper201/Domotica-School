@@ -79,7 +79,7 @@ void Comport::setupComport(const QString &comPortName)
     Current_Comport = comPortName;
     COMPORT = new QSerialPort();
     COMPORT->setPortName(Current_Comport);
-    COMPORT->setBaudRate(QSerialPort::BaudRate::Baud115200);
+    COMPORT->setBaudRate(QSerialPort::BaudRate::Baud9600);
     COMPORT->setParity(QSerialPort::Parity::NoParity);
     COMPORT->setDataBits(QSerialPort::DataBits::Data8);
     COMPORT->setStopBits(QSerialPort::StopBits::OneStop);
@@ -169,14 +169,41 @@ void Comport::UnsubcribeFromGroup(QString groupName, QString nodeName, bool serv
     }
 }
 
-void Comport::SendOutComputerSensor(int groupAddress, bool isGroupOn)
+void Comport::SendOutComputerStatusRequest()
 {
-    QString stringGroupAddress = HEX_PREFIX + QString("%1").arg(QString::number(groupAddress, 16).rightJustified(4, '0'));
-    if(isGroupOn)
-    {
-        WriteToComport(MESH_SEND + stringGroupAddress + MESH_GEN_ON);
-    } else {
-        WriteToComport(MESH_SEND + stringGroupAddress + MESH_GEN_OFF);
+    QString nodeName = UIdomotica->GetNodeList()->currentItem()->text();
+
+    if(!nodeName.isEmpty()) {
+        int nodeAddressDec = nodes->getNodeAddress(nodeName);
+        qDebug() << "Address: " << nodeAddressDec;
+        QString nodeAddressHex = HEX_PREFIX + QString::number((nodeAddressDec), 16).rightJustified(4, '0');
+        getState = true;
+        WriteToComport(MESH_TARGET + nodeAddressHex);
+        QTimer::singleShot(100, this, [this](){
+            qDebug() << "Timer has passed: send request for status";
+            WriteToComport(MESH_SEND + QString(MESH_GEN_STATUS));
+        });
+    }
+}
+
+void Comport::SendOutForceState(bool turnOn)
+{
+    QString nodeName = UIdomotica->GetNodeList()->currentItem()->text();
+
+    if(!nodeName.isEmpty()) {
+        int nodeAddressDec = nodes->getNodeAddress(nodeName);
+        qDebug() << "Address: " << nodeAddressDec;
+        QString nodeAddressHex = HEX_PREFIX + QString::number((nodeAddressDec), 16).rightJustified(4, '0');
+        getState = true;
+        WriteToComport(MESH_TARGET + nodeAddressHex);
+        QTimer::singleShot(100, this, [this, turnOn](){
+            qDebug() << "Timer has passed: send force status" << turnOn;
+            if(turnOn){
+                WriteToComport(MESH_SEND + QString(MESH_GEN_ON));
+            } else {
+                WriteToComport(MESH_SEND + QString(MESH_GEN_OFF));
+            }
+        });
     }
 }
 
@@ -262,11 +289,25 @@ void Comport::ReadData()
                 }
             }
 
-            // Update a Group
-            // if condition for a groupstate
-            // get groupAddress (int)
-            // get newState (on or off) (on is true off is false)
-            // emit updateGroup(groupAddress, newState);
+            // Get the state after request
+            if(getState)
+            {
+                QString newState = inputChecks.CheckForStatus(Data_From_SerialPort);
+                qDebug() << "newState: " << newState;
+                if(newState.contains("on")) {
+                    UIdomotica->GetComputerNode()->setStyleSheet("background-color: yellow;");
+                    getState = false;
+                    QTimer::singleShot(2000, this, [this](){
+                        UIdomotica->GetComputerNode()->setStyleSheet("background-color: grey;");
+                    });
+                } else if (newState.contains("off")){
+                    UIdomotica->GetComputerNode()->setStyleSheet("background-color: black;");
+                    getState = false;
+                    QTimer::singleShot(2000, this, [this](){
+                        UIdomotica->GetComputerNode()->setStyleSheet("background-color: grey;");
+                    });
+                }
+            }
 
             //Reset Data recieved
             Data_From_SerialPort = "";
