@@ -1,3 +1,5 @@
+/* main.c - Application main entry point */
+
 /*
  * Copyright (c) 2017 Intel Corporation
  *
@@ -5,166 +7,45 @@
  */
 
 #include <zephyr/sys/printk.h>
-#include <stdlib.h>
-#include <zephyr/kernel.h>
 
-#include <zephyr/shell/shell.h>
-
-#include <zephyr/bluetooth/bluetooth.h>
-#include <zephyr/bluetooth/mesh.h>
-#include <zephyr/bluetooth/mesh/shell.h>
-
-// LED control
+#include <zephyr/settings/settings.h>
+#include <zephyr/devicetree.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/hwinfo.h>
+#include <zephyr/sys/byteorder.h>
 
-// Button init/control
-#if DT_NODE_EXISTS(DT_ALIAS(sw0))
-#define BUTTON0_NODE DT_ALIAS(sw0)
-#elif DT_NODE_EXISTS(DT_ALIAS(button0))
-#define BUTTON0_NODE DT_ALIAS(button0)
-#elif DT_NODE_EXISTS(DT_NODELABEL(sw0))
-#define BUTTON0_NODE DT_NODELABEL(sw0)
-#elif DT_NODE_EXISTS(DT_NODELABEL(button0))
-#define BUTTON0_NODE DT_NODELABEL(button0)
-#else
-#define BUTTON0_NODE DT_INVALID_NODE
-#endif
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/mesh.h>
 
-#if DT_NODE_EXISTS(BUTTON0_NODE)
-#define BUTTON0_DEV DT_PHANDLE(BUTTON0_NODE, gpios)
-#define BUTTON0_PIN DT_PHA(BUTTON0_NODE, gpios, pin)
-#define BUTTON0_FLAGS DT_PHA(BUTTON0_NODE, gpios, flags)
+#include "board.h"
+#include "bluetooth.h"
 
-static const struct device *const button_dev = DEVICE_DT_GET(BUTTON0_DEV);
-static const struct gpio_dt_spec button = GPIO_DT_SPEC_GET_OR(BUTTON0_NODE, gpios,
-							      {0});
-static struct gpio_callback button_cb_data;
-
-static struct k_work *button_work;
-
-static void button_cb(const struct device *port, struct gpio_callback *cb,
-		      gpio_port_pins_t pins)
-{
-	k_work_submit(button_work);
-}
-#endif
-
-static struct gpio_dt_spec led = GPIO_DT_SPEC_GET_OR(DT_ALIAS(led0), gpios,
-						     {0});
-
-
-int ledInit() // most can be removed after testing
-{
-    k_msleep(1000);
-    if (!gpio_is_ready_dt(&led))
-    {
-        printk("Error: LED device %s is not ready\n", led.port->name);
-        return -1;
-    }
-    gpio_pin_configure_dt(&led, GPIO_OUTPUT);
-    gpio_pin_set_dt(&led, 1);
-    k_msleep(100);
-    gpio_pin_set_dt(&led, 0);
-	return 0;
-}
-
-int ledSet(bool value)
-{
-    gpio_pin_set_dt(&led, value);
-    return 0;	
-}
-
-void button_pressed(const struct device *dev, struct gpio_callback *cb,
-		    uint32_t pins)
-{
-	printk("Button pressed at %" PRIu32 "\n", k_cycle_get_32());
-    // event to happen when button is pressed
-	btnPressed();
-}
-
-int buttonInit(struct k_work *button_pressed)
-{
-#if DT_NODE_EXISTS(BUTTON0_NODE)
-	int err;
-
-	err = gpio_pin_configure(button_dev, BUTTON0_PIN,
-				 BUTTON0_FLAGS | GPIO_INPUT);
-	if (err) {
-		return err;
-	}
-
-	static struct gpio_callback gpio_cb;
-
-	err = gpio_pin_interrupt_configure(button_dev, BUTTON0_PIN,
-					   GPIO_INT_EDGE_TO_ACTIVE);
-	if (err) {
-		return err;
-	}
-
-	button_work = button_pressed;
-
-	gpio_init_callback(&gpio_cb, button_cb, BIT(BUTTON0_PIN));
-	gpio_add_callback(button_dev, &gpio_cb);
-#else
-	printk("WARNING: Buttons not supported on this board.\n");
-#endif
-
-	return 0;
-}
-
-int board_init(struct k_work *button_pressed)
-{
-	int err;
-
-	err = ledInit();
-	if (err) {
-		return err;
-	}
-
-	return buttonInit(button_pressed);
-}
-
-// Bluetooth settings
-
-// previous message sent led on or off
-static bool prevMessage = false;
-
-// bluetooth mesh led control
 #define OP_ONOFF_GET       BT_MESH_MODEL_OP_2(0x82, 0x01)
 #define OP_ONOFF_SET       BT_MESH_MODEL_OP_2(0x82, 0x02)
 #define OP_ONOFF_SET_UNACK BT_MESH_MODEL_OP_2(0x82, 0x03)
 #define OP_ONOFF_STATUS    BT_MESH_MODEL_OP_2(0x82, 0x04)
 
-static struct bt_mesh_cfg_cli cfg_cli;
+static void attention_on(struct bt_mesh_model *mod)
+{
+	ledSet(true);
+}
 
-#if defined(CONFIG_BT_MESH_DFD_SRV)
-static struct bt_mesh_dfd_srv dfd_srv;
-#endif
+static void attention_off(struct bt_mesh_model *mod)
+{
+	ledSet(false);
+}
 
-#if defined(CONFIG_BT_MESH_SAR_CFG_CLI)
-static struct bt_mesh_sar_cfg_cli sar_cfg_cli;
-#endif
+static const struct bt_mesh_health_srv_cb health_cb = {
+	.attn_on = attention_on,
+	.attn_off = attention_off,
+};
 
-#if defined(CONFIG_BT_MESH_PRIV_BEACON_CLI)
-static struct bt_mesh_priv_beacon_cli priv_beacon_cli;
-#endif
+static struct bt_mesh_health_srv health_srv = {
+	.cb = &health_cb,
+};
 
-#if defined(CONFIG_BT_MESH_SOL_PDU_RPL_CLI)
-static struct bt_mesh_sol_pdu_rpl_cli srpl_cli;
-#endif
-
-
-#if defined(CONFIG_BT_MESH_OD_PRIV_PROXY_CLI)
-static struct bt_mesh_od_priv_proxy_cli od_priv_proxy_cli;
-#endif
-
-#if defined(CONFIG_BT_MESH_LARGE_COMP_DATA_CLI)
-struct bt_mesh_large_comp_data_cli large_comp_data_cli;
-#endif
-
-BT_MESH_SHELL_HEALTH_PUB_DEFINE(health_pub);
+BT_MESH_HEALTH_PUB_DEFINE(health_pub, 0);
 
 static const char *const onoff_str[] = { "off", "on" };
 
@@ -269,6 +150,9 @@ static void onoff_timeout(struct k_work *work)
 	ledSet(onoff.val);
 }
 
+/* Generic OnOff Server message handlers */
+
+
 static int gen_onoff_get(struct bt_mesh_model *model,
 			 struct bt_mesh_msg_ctx *ctx,
 			 struct net_buf_simple *buf)
@@ -365,90 +249,83 @@ static const struct bt_mesh_model_op gen_onoff_cli_op[] = {
 	BT_MESH_MODEL_OP_END,
 };
 
-static struct bt_mesh_model root_models[] = 
-{
+/* This application only needs one element to contain its models */
+static struct bt_mesh_model models[] = {
 	BT_MESH_MODEL_CFG_SRV,
-	BT_MESH_MODEL_CFG_CLI(&cfg_cli),
-	BT_MESH_MODEL_HEALTH_SRV(&bt_mesh_shell_health_srv, &health_pub),
-	BT_MESH_MODEL_HEALTH_CLI(&bt_mesh_shell_health_cli),
+	BT_MESH_MODEL_HEALTH_SRV(&health_srv, &health_pub),
 	BT_MESH_MODEL(BT_MESH_MODEL_ID_GEN_ONOFF_SRV, gen_onoff_srv_op, NULL,
 		      NULL),
 	BT_MESH_MODEL(BT_MESH_MODEL_ID_GEN_ONOFF_CLI, gen_onoff_cli_op, NULL,
 		      NULL),
-#if defined(CONFIG_BT_MESH_DFD_SRV)
-	BT_MESH_MODEL_DFD_SRV(&dfd_srv),
-#else
-#if defined(CONFIG_BT_MESH_SHELL_DFU_SRV)
-	BT_MESH_MODEL_DFU_SRV(&bt_mesh_shell_dfu_srv),
-#elif defined(CONFIG_BT_MESH_SHELL_BLOB_SRV)
-	BT_MESH_MODEL_BLOB_SRV(&bt_mesh_shell_blob_srv),
-#endif
-#if defined(CONFIG_BT_MESH_SHELL_DFU_CLI)
-	BT_MESH_MODEL_DFU_CLI(&bt_mesh_shell_dfu_cli),
-#elif defined(CONFIG_BT_MESH_SHELL_BLOB_CLI)
-	BT_MESH_MODEL_BLOB_CLI(&bt_mesh_shell_blob_cli),
-#endif
-#endif /* CONFIG_BT_MESH_DFD_SRV */
-#if defined(CONFIG_BT_MESH_SHELL_RPR_CLI)
-	BT_MESH_MODEL_RPR_CLI(&bt_mesh_shell_rpr_cli),
-#endif
-#if defined(CONFIG_BT_MESH_RPR_SRV)
-	BT_MESH_MODEL_RPR_SRV,
-#endif
-
-#if defined(CONFIG_BT_MESH_SAR_CFG_SRV)
-	BT_MESH_MODEL_SAR_CFG_SRV,
-#endif
-#if defined(CONFIG_BT_MESH_SAR_CFG_CLI)
-	BT_MESH_MODEL_SAR_CFG_CLI(&sar_cfg_cli),
-#endif
-
-#if defined(CONFIG_BT_MESH_OP_AGG_SRV)
-	BT_MESH_MODEL_OP_AGG_SRV,
-#endif
-#if defined(CONFIG_BT_MESH_OP_AGG_CLI)
-	BT_MESH_MODEL_OP_AGG_CLI,
-#endif
-
-#if defined(CONFIG_BT_MESH_LARGE_COMP_DATA_SRV)
-	BT_MESH_MODEL_LARGE_COMP_DATA_SRV,
-#endif
-#if defined(CONFIG_BT_MESH_LARGE_COMP_DATA_CLI)
-	BT_MESH_MODEL_LARGE_COMP_DATA_CLI(&large_comp_data_cli),
-#endif
-
-#if defined(CONFIG_BT_MESH_PRIV_BEACON_SRV)
-	BT_MESH_MODEL_PRIV_BEACON_SRV,
-#endif
-#if defined(CONFIG_BT_MESH_PRIV_BEACON_CLI)
-	BT_MESH_MODEL_PRIV_BEACON_CLI(&priv_beacon_cli),
-#endif
-#if defined(CONFIG_BT_MESH_OD_PRIV_PROXY_CLI)
-	BT_MESH_MODEL_OD_PRIV_PROXY_CLI(&od_priv_proxy_cli),
-#endif
-#if defined(CONFIG_BT_MESH_SOL_PDU_RPL_CLI)
-	BT_MESH_MODEL_SOL_PDU_RPL_CLI(&srpl_cli),
-#endif
-#if defined(CONFIG_BT_MESH_OD_PRIV_PROXY_SRV)
-	BT_MESH_MODEL_OD_PRIV_PROXY_SRV,
-#endif
 };
 
 static struct bt_mesh_elem elements[] = {
-	BT_MESH_ELEM(0, root_models, BT_MESH_MODEL_NONE),
+	BT_MESH_ELEM(0, models, BT_MESH_MODEL_NONE),
 };
 
 static const struct bt_mesh_comp comp = {
-	.cid = CONFIG_BT_COMPANY_ID,
+	.cid = BT_COMP_ID_LF,
 	.elem = elements,
 	.elem_count = ARRAY_SIZE(elements),
+};
+
+/* Provisioning */
+
+static int output_number(bt_mesh_output_action_t action, uint32_t number)
+{
+	printk("OOB Number: %u\n", number);
+
+	boardOutputNumber(action, number);
+
+	return 0;
+}
+
+void clear_provisioning_data(void)
+{
+    int err;
+
+    // Clear provisioning data from settings
+    err = settings_delete("bt/mesh");
+    if (err) {
+        printk("Failed to clear provisioning data (err %d)\n", err);
+        return;
+    }
+
+    printk("Provisioning data cleared\n");
+}
+
+static void prov_complete(uint16_t net_idx, uint16_t addr)
+{
+	boardProvComplete();
+	printk("Provisioning completed. Network Index: 0x%04x, Address: 0x%04x\n",
+           net_idx, addr);
+
+}
+
+static void prov_reset(void)
+{
+	bt_mesh_prov_disable(BT_MESH_PROV_ADV | BT_MESH_PROV_GATT | BT_MESH_PROV_REMOTE);//disable mesh provisioning
+	clear_provisioning_data();//reset provisioning data
+	bt_mesh_prov_enable(BT_MESH_PROV_ADV | BT_MESH_PROV_GATT);
+	//bt_mesh_prov_enable(BT_MESH_PROV_ADV | BT_MESH_PROV_GATT);
+}
+
+static uint8_t dev_uuid[16];
+
+static const struct bt_mesh_prov prov = {
+	.uuid = dev_uuid,
+	.output_size = 4,
+	.output_actions = BT_MESH_DISPLAY_NUMBER,
+	.output_number = output_number,
+	.complete = prov_complete,
+	.reset = prov_reset,
 };
 
 /** Send an OnOff Set message from the Generic OnOff Client to all nodes. */
 static int gen_onoff_send(bool val)
 {
 	struct bt_mesh_msg_ctx ctx = {
-		.app_idx = root_models[4].keys[0], /* Use the bound key */
+		.app_idx = models[3].keys[0], /* Use the bound key */
 		.addr = BT_MESH_ADDR_ALL_NODES, 
 		.send_ttl = BT_MESH_TTL_DEFAULT,
 	};
@@ -462,75 +339,113 @@ static int gen_onoff_send(bool val)
 
 	BT_MESH_MODEL_BUF_DEFINE(buf, OP_ONOFF_SET_UNACK, 2);
 	bt_mesh_model_msg_init(&buf, OP_ONOFF_SET_UNACK);
-
-	// toggle the led based on the previous message
-	prevMessage = !prevMessage;
-    net_buf_simple_add_u8(&buf, prevMessage);
-
+	net_buf_simple_add_u8(&buf, val);
 	net_buf_simple_add_u8(&buf, tid++);
 
 	printk("Sending OnOff Set: %s\n", onoff_str[val]);
 
-	return bt_mesh_model_send(&root_models[4], &ctx, &buf, NULL, NULL);
+	return bt_mesh_model_send(&models[3], &ctx, &buf, NULL, NULL);
 }
 
 void btnPressed()
 {
 	printk("Entered btnPressed\n");
 	if (bt_mesh_is_provisioned()) {
-		(void)gen_onoff_send(prevMessage);
+		(void)gen_onoff_send(!onoff.val);
 		return;
 	}
 	else{
 		printk("Provisioning not complete\n");
 	}
+
+	/* Self-provision with an arbitrary address.
+	 *
+	 * NOTE: This should never be done in a production environment.
+	 *       Addresses should be assigned by a provisioner, and keys should
+	 *       be generated from true random numbers. It is done in this
+	 *       sample to allow testing without a provisioner.
+	 */
+	/*
+	static uint8_t net_key[16];
+	static uint8_t dev_key[16];
+	static uint8_t app_key[16];
+	uint16_t addr;
+	int err;
+
+	if (IS_ENABLED(CONFIG_HWINFO)) {
+		addr = sys_get_le16(&dev_uuid[0]) & BIT_MASK(15);
+	} else {
+		addr = k_uptime_get_32() & BIT_MASK(15);
+	}
+
+	printk("Self-provisioning with address 0x%04x\n", addr);
+	err = bt_mesh_provision(net_key, 0, 0, 0, addr, dev_key);
+	if (err) {
+		printk("Provisioning failed (err: %d)\n", err);
+		return;
+	}
+
+	// Add an application key to both Generic OnOff models: 
+	err = bt_mesh_app_key_add(0, 0, app_key);
+	if (err) {
+		printk("App key add failed (err: %d)\n", err);
+		return;
+	}
+
+	/* Models must be bound to an app key to send and receive messages with
+	 * it:
+	 *//*
+	models[2].keys[0] = 0;
+	models[3].keys[0] = 0;
+
+	printk("Provisioned and configured!\n");*/
 }
 
 static void bt_ready(int err)
 {
-	if (err && err != -EALREADY) {
+	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
 		return;
 	}
 
 	printk("Bluetooth initialized\n");
 
-	err = bt_mesh_init(&bt_mesh_shell_prov, &comp);
+
+	err = bt_mesh_init(&prov, &comp);
 	if (err) {
 		printk("Initializing mesh failed (err %d)\n", err);
 		return;
 	}
 
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
-		printk("LoadingConfig\n");
-		settings_load();
-		printk("Config Loaded\n");
-	}
+			printk("Loading stored settings\n\r");
+    settings_load();
+	} 
+
+
+	/* This will be a no-op if settings_load() loaded provisioning info */
+	//bt_mesh_prov_enable(BT_MESH_PROV_ADV | BT_MESH_PROV_GATT); // for self provisioning
+	bt_mesh_prov_enable(BT_MESH_PROV_ADV | BT_MESH_PROV_GATT);
 
 	printk("Mesh initialized\n");
-
-	if (bt_mesh_is_provisioned()) {
-		printk("Mesh network restored from flash\n");
-	} else {
-		printk("Use \"prov pb-adv on\" or \"prov pb-gatt on\" to "
-			    "enable advertising\n");
-	}
 }
 
-int main(void)
+int bluetoothInit(void)
 {
 	static struct k_work button_work;
-	int err;
+	int err = -1;
 
 	printk("Initializing...\n");
-
-	uint8_t dev_uuid[16];
 
 	if (IS_ENABLED(CONFIG_HWINFO)) {
 		err = hwinfo_get_device_id(dev_uuid, sizeof(dev_uuid));
 	}
 
-    // init k_work thread
+	// if (err < 0) {
+	// 	dev_uuid[0] = 0xdd;
+	// 	dev_uuid[1] = 0xdd;
+	// }
+
 	k_work_init(&button_work, btnPressed);
 
 	err = board_init(&button_work);
@@ -539,14 +454,13 @@ int main(void)
 		return 0;
 	}
 
+	k_work_init_delayable(&onoff.work, onoff_timeout);
+
 	/* Initialize the Bluetooth Subsystem */
 	err = bt_enable(bt_ready);
-	if (err && err != -EALREADY) {
+	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
 	}
-
-
-	// init delayable work
-	k_work_init_delayable(&onoff.work, onoff_timeout);
+	//prov_reset();
 	return 0;
 }
