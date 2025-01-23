@@ -149,11 +149,14 @@ void Comport::SubcribeToGroup(QString groupName, QString nodeName, bool server)
     //Use the addresses and send them in the right way ( adds 0x as prefix from easystring and than a 4 didget hexadecimal number)
     QString nodeAddress = HEX_PREFIX + QString("%1").arg(QString::number(nodes->getNodeAddress(nodeName), 16).rightJustified(4, '0'));
     QString groupAddress = HEX_PREFIX + QString("%1").arg(QString::number(groups->GetGroupAddress(groupName), 16).rightJustified(4, '0'));
-    if(server){
-        WriteToComport(MESH_SUBSCRIBE + nodeAddress + groupAddress + MESH_SERVER);
-    } else {
-        WriteToComport(MESH_SUBSCRIBE + nodeAddress + groupAddress + MESH_CLIENT);
-    }
+    WriteToComport(MESH_TARGET + nodeAddress);
+    QTimer::singleShot(600, this, [this, server, nodeAddress, groupAddress](){
+        if(server){
+            WriteToComport(MESH_SUBSCRIBE + nodeAddress + groupAddress + MESH_SERVER);
+        } else {
+            WriteToComport(MESH_SUBSCRIBE + nodeAddress + groupAddress + MESH_CLIENT);
+        }
+    });
 }
 
 //Unsubscribes the model from a group
@@ -162,11 +165,14 @@ void Comport::UnsubcribeFromGroup(QString groupName, QString nodeName, bool serv
     //Use the addresses and send them in the right way ( adds 0x as prefix from easystring and than a 4 didget hexadecimal number)
     QString nodeAddress = HEX_PREFIX + QString("%1").arg(QString::number(nodes->getNodeAddress(nodeName), 16).rightJustified(4, '0'));
     QString groupAddress = HEX_PREFIX + QString("%1").arg(QString::number(groups->GetGroupAddress(groupName), 16).rightJustified(4, '0'));
-    if(server){
-        WriteToComport(MESH_UNSUBSCRIBE + nodeAddress + groupAddress + MESH_SERVER);
-    } else {
-        WriteToComport(MESH_UNSUBSCRIBE + nodeAddress + groupAddress + MESH_CLIENT);
-    }
+    WriteToComport(MESH_TARGET + nodeAddress);
+    QTimer::singleShot(600, this, [this, server, nodeAddress, groupAddress](){
+        if(server){
+            WriteToComport(MESH_UNSUBSCRIBE + nodeAddress + groupAddress + MESH_SERVER);
+        } else {
+            WriteToComport(MESH_UNSUBSCRIBE + nodeAddress + groupAddress + MESH_CLIENT);
+        }
+    });
 }
 
 void Comport::SendOutComputerStatusRequest()
@@ -245,19 +251,19 @@ void Comport::AddNewNode(QString uuid)
         qDebug() << "Timer has passed: add new node";
         WriteToComport(MESH_ADD_NODE + uuid + MESH_NETWORK_KEY + nodeName + " " + QString::number(ADD_NODE_DURATION));
     });
-    QTimer::singleShot(250, this, [this, nodeName](){
+    QTimer::singleShot(10250, this, [this, nodeName](){
         qDebug() << "Timer has passed: target new node";
         WriteToComport(MESH_TARGET + nodeName);
     });
-    QTimer::singleShot(300, this, [this](){
+    QTimer::singleShot(10300, this, [this](){
         qDebug() << "Timer has passed: appkey create";
         WriteToComport(MESH_APP_KEY_CREATE);
     });
-    QTimer::singleShot(400, this, [this, nodeName](){
+    QTimer::singleShot(10400, this, [this, nodeName](){
         qDebug() << "Timer has passed: appkey bind 1";
         WriteToComport(MESH_APP_KEY_BIND + nodeName + MESH_APP_KEY + MESH_SERVER);
     });
-    QTimer::singleShot(550, this, [this, nodeName](){
+    QTimer::singleShot(10550, this, [this, nodeName](){
         qDebug() << "Timer has passed: appkey bind 1";
         WriteToComport(MESH_APP_KEY_BIND + nodeName + MESH_APP_KEY + MESH_CLIENT);
     });
@@ -284,16 +290,19 @@ void Comport::ReadData()
         if(Is_Data_Recieved == true)
         {
             Data_From_SerialPort.remove("\r").remove("\n");
-            Data_From_SerialPort.remove("\u001B[1;32muart:~$").remove("\u001B[m").remove("\u001B[8D").remove("\u001B[0m").remove(Data_From_SerialPort.indexOf("\u001B[J"), 22);
+            Data_From_SerialPort.remove("\u001B[1;32muart:~$").remove("\u001B[m").remove("\u001B[8D").remove("\u001B[0m");//.remove(Data_From_SerialPort.indexOf("\u001B[J"), 10);
             Data_From_SerialPort.remove("\u001B{");
             Data_From_SerialPort.remove(CONNECTED_OUT).remove(MESH_CREATE);
             Is_Data_Recieved = false;
-            qDebug() << "Message recieved: " << Data_From_SerialPort;
 
-            if(Data_From_SerialPort.contains(CONNECTED_IN))
+            if(Data_From_SerialPort.contains("net_buf"))
             {
-                qDebug() << "External device is connected";
+                Data_From_SerialPort = "";
+                return;
             }
+
+
+            qDebug() << "Message recieved: " << Data_From_SerialPort;
 
             // Add a new node
             QString uuid = inputChecks.CheckForUuid(Data_From_SerialPort);

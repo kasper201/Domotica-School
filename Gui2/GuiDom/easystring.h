@@ -21,20 +21,19 @@
 #define MESH_SEND "mesh test net-send"                         // <message>
 #define MESH_DELETE "mesh models cfg reset"
 #define MESH_GEN_ON " 82020100"
-#define MESH_GEN_OFF " 82020000"
+#define MESH_GEN_OFF " 82020001"
 #define MESH_GEN_STATUS " 82010000"
 
 // Easy use
 #define HEX_PREFIX " 0x"
 #define PROVISIONER_NODE_NAME "Provisioner"
-#define COMPUTER_NODE_NAME "Computer"
 #define NODE_SHOW "Node: "
 #define STRING_TO_SHOW_LED "LED of "
 #define STRING_TO_SHOW_BUTTON "Button of "
 
 // Easy to change values
 #define NODE_ADDRESS_INCREMENTS 1
-#define ADD_NODE_DURATION 10
+#define ADD_NODE_DURATION 60
 
 // In
 #define CONNECTED_IN "Connected"
