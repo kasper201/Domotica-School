@@ -16,7 +16,6 @@ class Comport : public QObject
 public:
     explicit Comport(Domotica* domotica, Nodes* nodes, Groups* groups, QObject* parent = nullptr);
     ~Comport();
-    QSerialPort* COMPORT;
     void AddItem(QString itemText);
     void setupComportList();
     void setupComport(const QString &comPortName);
@@ -35,6 +34,7 @@ public slots:
     void WriteToComport(QString sendString);
 
 private:
+    QSerialPort* COMPORT = nullptr;
     Domotica* UIdomotica; // Pointer to the Domotica instance
     Nodes* nodes;
     Groups* groups;

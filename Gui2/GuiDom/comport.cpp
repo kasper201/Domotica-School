@@ -100,7 +100,7 @@ void Comport::setupComport(const QString &comPortName)
 //Send a message
 void Comport::WriteToComport(QString sendString)
 {
-    if(COMPORT->isOpen()) {
+    if(COMPORT != nullptr) {
         qDebug() << "Data send: " << sendString;
         QString close = "\r\n";
         COMPORT->write(sendString.toLatin1() + close.toLatin1() );
@@ -171,9 +171,8 @@ void Comport::UnsubcribeFromGroup(QString groupName, QString nodeName, bool serv
 
 void Comport::SendOutComputerStatusRequest()
 {
-    QString nodeName = UIdomotica->GetNodeList()->currentItem()->text();
-
-    if(!nodeName.isEmpty()) {
+    if (UIdomotica->GetNodeList()->currentRow() != -1 && COMPORT != nullptr) {
+        QString nodeName = UIdomotica->GetNodeList()->currentItem()->text();
         int nodeAddressDec = nodes->getNodeAddress(nodeName);
         qDebug() << "Address: " << nodeAddressDec;
         QString nodeAddressHex = HEX_PREFIX + QString::number((nodeAddressDec), 16).rightJustified(4, '0');
@@ -183,14 +182,15 @@ void Comport::SendOutComputerStatusRequest()
             qDebug() << "Timer has passed: send request for status";
             WriteToComport(MESH_SEND + QString(MESH_GEN_STATUS));
         });
+    } else if (COMPORT == nullptr) {
+        qDebug() << "Connect to a device first";
     }
 }
 
 void Comport::SendOutForceState(bool turnOn)
 {
-    QString nodeName = UIdomotica->GetNodeList()->currentItem()->text();
-
-    if(!nodeName.isEmpty()) {
+    if (UIdomotica->GetNodeList()->currentRow() != -1 && COMPORT != nullptr) {
+        QString nodeName = UIdomotica->GetNodeList()->currentItem()->text();
         int nodeAddressDec = nodes->getNodeAddress(nodeName);
         qDebug() << "Address: " << nodeAddressDec;
         QString nodeAddressHex = HEX_PREFIX + QString::number((nodeAddressDec), 16).rightJustified(4, '0');
@@ -204,13 +204,15 @@ void Comport::SendOutForceState(bool turnOn)
                 WriteToComport(MESH_SEND + QString(MESH_GEN_OFF));
             }
         });
+    } else if (COMPORT == nullptr) {
+        qDebug() << "Connect to a device first";
     }
 }
 
 void Comport::removeNode()
 {
-    QString nodeName = UIdomotica->GetNodeList()->currentItem()->text();
-    if(!nodeName.isEmpty()) {
+    if (UIdomotica->GetNodeList()->currentRow() != -1 && COMPORT != nullptr) {
+        QString nodeName = UIdomotica->GetNodeList()->currentItem()->text();
         int nodeAddressDec = nodes->getNodeAddress(nodeName);
         if(nodeAddressDec == 1) { //Makes sure the provisioner wont get deleted
             return;
@@ -224,6 +226,8 @@ void Comport::removeNode()
             qDebug() << "Timer has passed: send remove node";
             WriteToComport(MESH_DELETE);
         });
+    } else if (COMPORT == nullptr) {
+        qDebug() << "Connect to a device first";
     }
 }
 
